@@ -1,7 +1,8 @@
 #!/bin/sh
 
-pipenv install
+# Init Terraform.
+(cd terraform && terraform init)
 
-terraform init cluster
-
-ansible-galaxy install -r roles.yml
+# Init Ansible env, install roles.
+(cd ansible && pipenv install)
+(cd ansible && pipenv run ansible-galaxy install -r roles.yml)
