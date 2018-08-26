@@ -20,6 +20,7 @@
   apt:
     update_cache: yes
 
+# TODO: Pre-bake base image?
 - name: Install Docker
   include_role:
     name: geerlingguy.docker
