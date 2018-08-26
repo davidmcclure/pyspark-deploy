@@ -2,6 +2,8 @@
 
 - name: Deploy Spark
   hosts: all
+  # So we can wait for SSH.
+  gather_facts: no
   become: yes
   roles:
     - spark

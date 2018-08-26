@@ -1,5 +1,11 @@
 ---
 
+- name: Wait for SSH connection
+  wait_for_connection:
+
+- name: Gather facts, after SSH
+  setup:
+
 - name: Set worker count
   set_fact:
     spark_worker_count: '{{ groups["workers"] | length }}'
