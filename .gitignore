@@ -1,0 +1,11 @@
+
+env
+
+.terraform
+.roles
+.inventory
+
+*.tfstate*
+
+group_vars/all/local.yml
+local.tfvars

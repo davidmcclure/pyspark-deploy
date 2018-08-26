@@ -1,0 +1,46 @@
+---
+
+docker_image: dclure/spark
+docker_name: spark
+
+spark_version: 2.3.0
+
+spark_master_port: 7077
+spark_master_url: spark://{{ tf_master_private_dns }}:{{ spark_master_port }}
+
+spark_packages:
+  - org.apache.hadoop:hadoop-aws:2.7.3
+
+spark_task_max_failures: 20
+spark_s3a_connection_maximum: 2000
+
+spark_local_dir: /mnt/spark
+spark_derby_dir: /mnt/derby
+spark_warehouse_dir: /mnt/spark-warehouse
+spark_config_dir: /etc/spark
+spark_hadoop_tmp_dir: /mnt/hadoop
+
+spark_volumes:
+  - '{{ spark_config_dir }}:/opt/spark-{{ spark_version }}/conf'
+  - /mnt:/mnt
+
+# Use EC2 public DNS.
+spark_public_dns: >
+  `wget -q -O - http://169.254.169.254/latest/meta-data/public-hostname ||
+   wget -q -O - http://169.254.169.254/latest/meta-data/local-ipv4`
+
+spark_max_files: 100000
+
+spark_default_parallelism: '{{
+  spark_worker_count|int *
+  spark_worker_cpu_count|int
+}}'
+
+spark_docker_env:
+  SPARK_ENV: prod
+
+openblas_num_threads: 1
+
+# Provide locally.
+aws_access_key_id: null
+aws_secret_access_key: null

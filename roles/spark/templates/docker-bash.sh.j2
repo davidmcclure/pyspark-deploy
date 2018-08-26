@@ -1,0 +1,7 @@
+#!/bin/bash
+
+CONTAINER_ID=$(sudo docker ps -f "name=spark" | sed -n 2p | grep -o '[0-9a-z]\{12\}')
+
+DOCKER_CMD="sudo docker exec -it ${CONTAINER_ID} bash"
+
+tmux attach -t spark || tmux new -s spark "$DOCKER_CMD"
