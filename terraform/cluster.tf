@@ -46,6 +46,11 @@ resource "local_file" "inventory" {
   filename = "${path.module}/.inventory"
 }
 
-output "master-ip" {
+resource "local_file" "master_ip" {
+  content  = "${aws_instance.master.public_ip}"
+  filename = "${path.module}/.master-ip"
+}
+
+output "master_ip" {
   value = "${aws_instance.master.public_ip}"
 }
