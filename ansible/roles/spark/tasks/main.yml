@@ -7,6 +7,7 @@
 - name: Get worker facts
   become: no
   register: worker
+  run_once: yes
   local_action:
     module: ec2_instance_facts
     instance_ids: '{{ tf_first_worker_id }}'
