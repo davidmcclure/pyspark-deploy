@@ -15,11 +15,11 @@ variable "base_ami" {
 }
 
 variable "master_instance_type" {
-  default = "c3.8xlarge"
+  default = "c5d.2xlarge"
 }
 
 variable "worker_instance_type" {
-  default = "c3.8xlarge"
+  default = "c5d.2xlarge"
 }
 
 variable "worker_count" {
@@ -27,13 +27,13 @@ variable "worker_count" {
 }
 
 variable "driver_memory" {
-  default = "40g"
+  default = "10g"
 }
 
 variable "driver_max_result_size" {
-  default = "20g"
+  default = "5g"
 }
 
 variable "executor_memory" {
-  default = "40g"
+  default = "10g"
 }
