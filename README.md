@@ -13,9 +13,16 @@ There are three basic pieces to this, and the idea is to use a best-in-class too
 
 Integration with a Python codebase takes ~5 minutes. Then, control the cluster with the top-level scripts:
 
-- `./create.sh` - Start a cluster (~60s).
-- `./login.sh` - SSH into the master node, drop into tmux session, attach to bash shell on the Spark driver container. Ready to `spark-submit`.
-- `./update.sh` [TODO] - Update Docker containers on cluster nodes, restart Spark daemons to get the changes (~20s). Makes it easy to push updates to a running cluster.
-- `./destroy` - Terminate cluster and all related AWS resources.
+### `create.sh`
+Start a cluster (~60s).
+
+### `login.sh`
+SSH into the master node, drop into tmux session, attach to bash shell on the Spark driver container. Ready to `spark-submit`.
+
+### `update.sh` [TODO]
+Update Docker containers on cluster nodes, restart Spark daemons to get the changes (~20s). Makes it easy to push updates to a running cluster.
+
+### `destroy.sh`
+Terminate cluster and all related AWS resources.
 
 Main goal: **Just work**. Focus 100% on the actual data engineering, never think about ops.
