@@ -1,7 +1,7 @@
 
 # pyspark-deploy
 
-This project manages the full lifecycle of a Python + Spark project, from local development to full-size cluster deployments on AWS.
+This project manages the full lifecycle of a Python + Spark + S3 project, from local development to full-size cluster deployments on AWS.
 
 There are three basic pieces to this, and the idea is to use a best-in-class tool for each, and then connect them seamlessly:
 
@@ -11,6 +11,11 @@ There are three basic pieces to this, and the idea is to use a best-in-class too
 
 - [**Ansible**](https://www.ansible.com/) is used to configure the cluster - pull Docker images, inject production config values, and start the necessary Spark daemons.
 
-Integration with a Python codebase takes ~5 minutes. Then just run `./create.sh`, and the cluster starts in ~60 seconds. SSH into the master node and you're automatically dropped into a shell inside the Docker container, inside a tmux session, ready to submit a job.
+Integration with a Python codebase takes ~5 minutes. Then, control the cluster with the top-level scripts:
+
+- `./create.sh` - Start a cluster (~60s).
+- `./login.sh` - SSH into the master node, drop into tmux session, attach to bash shell on the Spark driver container. Ready to `spark-submit`.
+- `./update.sh` [TODO] - Update Docker containers on cluster nodes, restart Spark daemons to get the changes (~20s). Makes it easy to push updates to a running cluster.
+- `./destroy` - Terminate cluster and all related AWS resources.
 
 Main goal: **Just work**. Focus 100% on the actual data engineering, never think about ops.
