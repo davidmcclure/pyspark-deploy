@@ -1,0 +1,6 @@
+
+# Put local Terraform overrides here. This file (and any other files in this
+# directory that end with .auto.tfvars) will be automatically synced into the
+# Terraform configuration by the top-level scripts.
+
+worker_count = 5
