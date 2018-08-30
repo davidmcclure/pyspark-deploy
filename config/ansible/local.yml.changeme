@@ -1,6 +1,6 @@
 ---
 
-# Put local Terraform overrides here.
+# Put local Ansible overrides here.
 
 docker_image: XXX
 
