@@ -7,7 +7,7 @@ There are three basic pieces to this, and the idea is to use a best-in-class too
 
 - [**Docker**](https://www.docker.com/) is used to encapsulate the application environment, making it easy to develop locally and then deploy an identical environment to a cluster. Assuming you need some kind of custom configuration - just extend the base Dockerfile.
 
-- [**Terraform**](https://www.terraform.io/) is used to create a standalone Spark clusters on AWS. The assumption here is that you're not a huge company that can afford to run a permanent cluster, and that you need to be able to start / stop clusters easily and quickly. Terraform manages a completely self-contained set of resources, from the VPC up to the EC2 nodes. All you need is an AWS account.
+- [**Terraform**](https://www.terraform.io/) is used to create a standalone Spark clusters on AWS. Terraform manages a completely self-contained set of resources, from the VPC up to the EC2 nodes. All you need is an AWS account.
 
 - [**Ansible**](https://www.ansible.com/) is used to configure the cluster - pull Docker images, inject production config values, and start the necessary Spark daemons.
 
