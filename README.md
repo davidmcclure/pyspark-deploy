@@ -1,7 +1,7 @@
 
 # pyspark-deploy
 
-This project manages the full lifecycle of a Python + Spark + S3 project, from local development to full-size cluster deployments on AWS.
+This project manages the full lifecycle of a Python + Spark <-> S3 project, from local development to full-size cluster deployments on AWS.
 
 There are three basic pieces to this, and the idea is to use a best-in-class tool for each, and then connect them seamlessly:
 
@@ -9,7 +9,7 @@ There are three basic pieces to this, and the idea is to use a best-in-class too
 
 - [**Terraform**](https://www.terraform.io/) is used to create a standalone Spark clusters on AWS. Terraform manages a completely self-contained set of resources, from the VPC up to the EC2 nodes.
 
-- [**Ansible**](https://www.ansible.com/) is used to start the cluster. Since the environment is totally wrapped up in Docker, Ansible just pulls the image, injects production config values, and starts the Spark services.
+- [**Ansible**](https://www.ansible.com/) is used to start the cluster. Since the environment is totally wrapped up in Docker, Ansible just pulls the image on the nodes, injects production config values, and starts the Spark services.
 
 Integration with a Python codebase takes ~10 minutes. Then, control the cluster with the top-level scripts:
 
