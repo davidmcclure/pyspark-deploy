@@ -9,9 +9,9 @@ There are three basic pieces to this, and the idea is to use a best-in-class too
 
 - [**Terraform**](https://www.terraform.io/) is used to create a standalone Spark clusters on AWS. Terraform manages a completely self-contained set of resources, from the VPC up to the EC2 nodes.
 
-- [**Ansible**](https://www.ansible.com/) is used to configure the cluster - pull Docker images, inject production config values, and start the necessary Spark daemons.
+- [**Ansible**](https://www.ansible.com/) is used to start the cluster. Since the environment is totally wrapped up in Docker, Ansible just pulls the image, injects production config values, and starts the Spark services.
 
-Integration with a Python codebase takes ~5 minutes. Then, control the cluster with the top-level scripts:
+Integration with a Python codebase takes ~10 minutes. Then, control the cluster with the top-level scripts:
 
 - **`create.sh`** - Start a cluster (~60s).
 
