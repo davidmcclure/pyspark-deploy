@@ -20,5 +20,3 @@ Integration with a Python codebase takes ~10 minutes. Then, control the cluster 
 - **`web-admin.sh`** (TODO) - Open the Spark web admin for the master node in a browser tab.
 
 - **`destroy.sh`** - Terminate cluster and all related AWS resources.
-
-Main goal: Just work! Focus 100% on the actual data engineering, never think about ops.
