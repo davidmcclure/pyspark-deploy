@@ -17,7 +17,7 @@ Integration with a Python codebase takes ~10 minutes. Then, control the cluster 
 
 - **`destroy.sh`** - Terminate cluster and all related AWS resources.
 
-One big assumption - all data sits on s3. No HDFS, etc. There are some downsides to this, but overall it makes everything way simpler.
+One big assumption - all data sits on s3. No HDFS, etc. There are some downsides to this, but it's worth it, because everything becomes way simpler.
 
 ## The problem
 
