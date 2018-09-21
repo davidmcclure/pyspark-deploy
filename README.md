@@ -25,6 +25,4 @@ One difficulty of writing Spark applications in Python is that there isn't a cle
 
 Related to this - it's not clear how to keep things consistent between the cluster environment and the dev environments where code actually gets written and tested. (Or a CI environment, etc.) Even with small teams, it's annoying for every developer to have to manually install a local Spark distribution and set up the project environment.
 
-Of course, Docker solves all of these problems! But, deploying a Docker-ized Spark cluster also takes a bit of work. But, if we assume that everything is wrapped up in a single Dockerfile, though, the actual cluster deployment can be identical for almost all projects.
-
-`pyspark-deploy` wraps up all of this - just write a Dockerfile, develop locally, and then deploy to hundreds of cores on AWS with a single command.
+Of course, Docker solves all of these problems! But, deploying a Docker-ized Spark cluster also takes a bit of work. But, if we assume that everything is wrapped up in a single Dockerfile, the actual cluster deployment can be identical for almost all projects. `pyspark-deploy` wraps up all of this - just write a Dockerfile, develop locally, and then deploy to hundreds of cores on AWS with a single command.
