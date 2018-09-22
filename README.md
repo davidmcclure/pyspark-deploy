@@ -3,7 +3,7 @@
 
 This project manages the full lifecycle of a Python + Spark <-> S3 project, from local development to full-size cluster deployments on AWS. Extracted from work at the [Open Syllabus Project](http://explorer.opensyllabusproject.org/) and the [Laboratory for Social Machines](http://socialmachines.org/) at the MIT Media Lab, where this rig is used to chew though a corpus of ~20 billion tweets.
 
-- [**Docker**](https://www.docker.com/) is used to encapsulate the application environment, making it easy to develop locally and then deploy an identical environment to a cluster..
+- [**Docker**](https://www.docker.com/) is used to encapsulate the application environment, making it easy to develop locally and then deploy an identical environment to a cluster.
 
 - [**Terraform**](https://www.terraform.io/) is used to create a standalone Spark clusters on AWS. Terraform manages a completely self-contained set of resources, from the VPC up to the EC2 nodes.
 
