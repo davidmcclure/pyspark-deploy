@@ -9,7 +9,15 @@ This project manages the full lifecycle of a Python + Spark <-> S3 project, from
 
 - [**Ansible**](https://www.ansible.com/) is used to start the cluster. Since the environment is totally wrapped up in Docker, Ansible just pulls the image on the nodes, injects production config values, and starts the Spark services.
 
-Integration with a Python codebase takes ~10 minutes. Then, control the cluster with the top-level scripts:
+Integration with a Python codebase takes ~10 minutes:
+
+1. Add this repo as a submodule to your project.
+
+1. Extend the [base Dockerfile](docker/Dockerfile), which provides a complete Spark 2.3 + Python 3 environment. (Or write something totally custom). Push to Docker Hub.
+
+1. Edit [`config/ansible/local.yml`](config/ansible/local.yml.changeme#L5), point to your repo on Docker Hub.
+
+Then, control the cluster with the top-level scripts:
 
 - **`create.sh`** - Start a cluster (~60s).
 
