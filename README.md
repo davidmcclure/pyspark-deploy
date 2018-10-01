@@ -15,7 +15,7 @@ Integration with a Python codebase takes ~10 minutes:
 
 1. Extend the [base Dockerfile](docker/Dockerfile), which provides a complete Spark 2.3 + Python 3 environment. (Or write something totally custom). Push to Docker Hub.
 
-1. Edit [`config/ansible/local.yml`](config/ansible/local.yml.changeme#L5), point to your repo on Docker Hub.
+1. Edit [`config/local.yml`](config/local.yml.changeme#L5), point to your repo on Docker Hub.
 
 Then, control the cluster with the top-level scripts:
 
