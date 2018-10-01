@@ -5,7 +5,11 @@ ${master_ip}
 [workers]
 ${worker_ips}
 
-[all:vars]
+[spark:children]
+master
+workers
+
+[spark:vars]
 tf_aws_region=${aws_region}
 tf_master_private_dns=${master_private_dns}
 tf_first_worker_id=${first_worker_id}
