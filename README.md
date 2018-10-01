@@ -17,13 +17,13 @@ Integration with a Python codebase takes ~10 minutes:
 
 1. Edit [`config/local.yml`](config/local.yml.changeme#L5), point to your repo on Docker Hub.
 
-Then, control the cluster with the top-level scripts:
+Then, control the cluster with the Makefile:
 
-- **`create.sh`** - Start a cluster (~60s).
+- **`make create`** - Start a cluster (~60s).
 
-- **`login.sh`** - SSH into the master node, drop into tmux session, attach to bash shell on the Spark driver container. Ready to `spark-submit`.
+- **`make login`** - SSH into the master node, drop into tmux session, attach to bash shell on the Spark driver container. Ready to `spark-submit`.
 
-- **`destroy.sh`** - Terminate cluster and all related AWS resources.
+- **`make destroy`** - Terminate cluster and all related AWS resources.
 
 One big assumption - all data sits on s3. No HDFS, etc. There are some downsides to this, but it's worth it, because everything becomes way simpler.
 
