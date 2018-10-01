@@ -1,3 +1,3 @@
 #!/bin/sh
 
-(cd terraform && terraform destroy)
+(cd terraform/spark-cluster && terraform destroy)

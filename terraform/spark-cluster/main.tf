@@ -1,11 +1,15 @@
+module "vpc" {
+  source = "../modules/vpc"
+}
+
 provider "aws" {
-  region = "${var.aws_region}"
+  region = "${module.vpc.aws_region}"
 }
 
 resource "aws_security_group" "spark" {
-  name        = "${var.name}-spark"
+  name        = "${var.name}"
   description = "Standalone Spark cluster"
-  vpc_id      = "${aws_vpc.spark.id}"
+  vpc_id      = "${module.vpc.vpc_id}"
 
   ingress {
     from_port   = 22
@@ -74,16 +78,16 @@ resource "aws_security_group" "spark" {
   }
 
   tags {
-    Name = "${var.name}-spark"
+    Name = "${var.name}"
   }
 }
 
 resource "aws_instance" "master" {
   ami                         = "${var.base_ami}"
   instance_type               = "${var.master_instance_type}"
-  subnet_id                   = "${aws_subnet.spark.id}"
+  subnet_id                   = "${module.vpc.subnet_id}"
   vpc_security_group_ids      = ["${aws_security_group.spark.id}"]
-  key_name                    = "${aws_key_pair.spark.id}"
+  key_name                    = "${module.vpc.key_name}"
   associate_public_ip_address = true
 
   tags {
@@ -94,9 +98,9 @@ resource "aws_instance" "master" {
 resource "aws_instance" "worker" {
   ami                         = "${var.base_ami}"
   instance_type               = "${var.worker_instance_type}"
-  subnet_id                   = "${aws_subnet.spark.id}"
+  subnet_id                   = "${module.vpc.subnet_id}"
   vpc_security_group_ids      = ["${aws_security_group.spark.id}"]
-  key_name                    = "${aws_key_pair.spark.id}"
+  key_name                    = "${module.vpc.key_name}"
   associate_public_ip_address = true
 
   count = "${var.worker_count}"
@@ -112,7 +116,7 @@ data "template_file" "inventory" {
   vars {
     master_ip              = "${aws_instance.master.public_ip}"
     worker_ips             = "${join("\n", aws_instance.worker.*.public_ip)}"
-    aws_region             = "${var.aws_region}"
+    aws_region             = "${module.vpc.aws_region}"
     master_private_dns     = "${aws_instance.master.private_dns}"
     first_worker_id        = "${aws_instance.worker.0.id}"
     driver_memory          = "${var.driver_memory}"
@@ -123,14 +127,10 @@ data "template_file" "inventory" {
 
 resource "local_file" "inventory" {
   content  = "${data.template_file.inventory.rendered}"
-  filename = "${path.module}/.inventory"
+  filename = "${path.module}/../.inventory/spark-cluster"
 }
 
 resource "local_file" "master_ip" {
   content  = "${aws_instance.master.public_ip}"
-  filename = "${path.module}/.master-ip"
-}
-
-output "master_ip" {
-  value = "${aws_instance.master.public_ip}"
+  filename = "${path.module}/../.master-ip"
 }

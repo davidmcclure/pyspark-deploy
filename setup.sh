@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Init Terraform.
-(cd terraform && terraform init)
+(cd terraform/spark-cluster && terraform init)
 
 # Init Ansible env, install roles.
 (cd ansible && pipenv install)
