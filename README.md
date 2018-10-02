@@ -11,7 +11,7 @@ This project manages the full lifecycle of a Python + Spark <-> S3 project, from
 
 Integration with a Python codebase takes ~10 minutes:
 
-1. Add this repo as a submodule to your project.
+1. Add this repo as a submodule to your project, run `make setup`.
 
 1. Extend the [base Dockerfile](docker/Dockerfile), which provides a complete Spark 2.3 + Python 3 environment. (Or write something totally custom). Push to Docker Hub.
 
