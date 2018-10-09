@@ -1,8 +1,6 @@
 
 FROM ubuntu:xenial
 
-# Python 3.6
-
 ENV LC_ALL C.UTF-8
 ENV LANG C.UTF-8
 
@@ -25,11 +23,14 @@ RUN apt-get update && apt-get install -y \
   libxml2-dev \
   redis-tools
 
+# Python 3
+
+ARG PYTHON_VERSION=3.7.0
 ARG PYENV_ROOT=/opt/pyenv
 RUN git clone https://github.com/pyenv/pyenv.git $PYENV_ROOT
 ENV PATH $PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
-RUN pyenv install 3.6.5
-RUN pyenv global 3.6.5
+RUN pyenv install $PYTHON_VERSION
+RUN pyenv global $PYTHON_VERSION
 RUN pip install --upgrade pip
 
 # Java
@@ -40,7 +41,7 @@ ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 
 # Spark
 
-ARG SPARK_VERSION=2.3.0
+ARG SPARK_VERSION=2.3.2
 ARG SPARK_DIRNAME=spark-${SPARK_VERSION}
 ARG SPARK_PACKAGE=${SPARK_DIRNAME}-bin-hadoop2.7
 ARG SPARK_MIRROR=http://apache.cs.utah.edu/spark
