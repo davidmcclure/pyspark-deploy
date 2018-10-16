@@ -21,5 +21,18 @@
     pip_install_packages:
       - name: docker
 
+- name: Make snapshot
+  become: no
+  register: ami
+  local_action:
+    module: ec2_ami
+    name: '{{ docker_ami_name }}'
+    region: '{{ tf_aws_region }}'
+    instance_id: '{{ tf_instance_id }}'
+    wait: yes
+
+- debug:
+    var: ami.image_id
+
 # make public AMI
 # log id

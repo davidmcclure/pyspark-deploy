@@ -54,7 +54,9 @@ data "template_file" "inventory" {
   template = "${file("${path.module}/inventory.tpl")}"
 
   vars {
-    docker_ip = "${aws_instance.docker.public_ip}"
+    public_ip   = "${aws_instance.docker.public_ip}"
+    instance_id = "${aws_instance.docker.id}"
+    aws_region  = "${module.vpc.aws_region}"
   }
 }
 
