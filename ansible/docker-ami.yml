@@ -1,0 +1,8 @@
+---
+
+- name: Deploy Spark
+  hosts: docker
+  gather_facts: no
+  become: yes
+  roles:
+    - docker-ami

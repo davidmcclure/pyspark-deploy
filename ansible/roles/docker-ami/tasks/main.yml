@@ -1,0 +1,25 @@
+---
+
+- name: Wait for SSH connection
+  wait_for_connection:
+
+- name: Gather facts, after SSH
+  setup:
+
+# - name: apt-get update
+#   apt:
+#     update_cache: yes
+
+- name: Install Docker
+  include_role:
+    name: geerlingguy.docker
+
+- name: Install docker-py
+  include_role:
+    name: geerlingguy.pip
+  vars:
+    pip_install_packages:
+      - name: docker
+
+# make public AMI
+# log id
