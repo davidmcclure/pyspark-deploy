@@ -117,15 +117,10 @@ resource "aws_spot_instance_request" "worker" {
   subnet_id                   = "${module.vpc.subnet_id}"
   vpc_security_group_ids      = ["${aws_security_group.spark.id}"]
   key_name                    = "${module.vpc.key_name}"
+  spot_price                  = "${var.spot_price}"
+  count                       = "${var.worker_count}"
   associate_public_ip_address = true
   wait_for_fulfillment        = true
-  spot_price                  = "${var.spot_price}"
-
-  count = "${var.worker_count}"
-
-  tags {
-    Name = "spark-worker"
-  }
 }
 
 data "template_file" "inventory" {
