@@ -1,5 +1,5 @@
 module "vpc" {
-  source = "../modules/vpc"
+  source = "../vpc"
   name   = "${var.name}"
 }
 
