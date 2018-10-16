@@ -6,22 +6,6 @@
 - name: Gather facts, after SSH
   setup:
 
-- name: apt-get update
-  apt:
-    update_cache: yes
-
-# TODO: Pre-bake base image?
-- name: Install Docker
-  include_role:
-    name: geerlingguy.docker
-
-- name: Install docker-py
-  include_role:
-    name: geerlingguy.pip
-  vars:
-    pip_install_packages:
-      - name: docker
-
 - name: Create config directory
   file:
     path: '{{ spark_config_dir }}'

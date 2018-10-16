@@ -18,9 +18,11 @@
   include_role:
     name: geerlingguy.pip
   vars:
+    pip_package: python3-pip
     pip_install_packages:
       - name: docker
 
+# TODO: Public?
 - name: Make snapshot
   become: no
   register: ami
@@ -33,6 +35,3 @@
 
 - debug:
     var: ami.image_id
-
-# make public AMI
-# log id
