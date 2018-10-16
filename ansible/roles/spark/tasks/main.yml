@@ -10,19 +10,6 @@
   set_fact:
     spark_worker_count: '{{ groups["workers"] | length }}'
 
-- name: Get worker facts
-  become: no
-  register: worker
-  run_once: yes
-  local_action:
-    module: ec2_instance_facts
-    instance_ids: '{{ tf_first_worker_id }}'
-    region: '{{ tf_aws_region }}'
-
-- name: Set worker CPU count
-  set_fact:
-    spark_worker_cpu_count: '{{ worker.instances[0].cpu_options.core_count}}'
-
 - name: apt-get update
   apt:
     update_cache: yes

@@ -7,11 +7,11 @@ variable "base_ami" {
 }
 
 variable "master_instance_type" {
-  default = "c5d.2xlarge"
+  default = "c5.2xlarge"
 }
 
 variable "worker_instance_type" {
-  default = "c5d.2xlarge"
+  default = "c5.2xlarge"
 }
 
 variable "worker_count" {

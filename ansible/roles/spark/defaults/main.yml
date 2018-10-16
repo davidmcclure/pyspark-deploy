@@ -33,7 +33,7 @@ spark_max_files: 100000
 
 spark_default_parallelism: '{{
   spark_worker_count|int *
-  spark_worker_cpu_count|int
+  tf_worker_cpu_core_count|int
 }}'
 
 spark_docker_env:

@@ -118,7 +118,7 @@ data "template_file" "inventory" {
     worker_ips             = "${join("\n", aws_instance.worker.*.public_ip)}"
     aws_region             = "${module.vpc.aws_region}"
     master_private_dns     = "${aws_instance.master.private_dns}"
-    first_worker_id        = "${aws_instance.worker.0.id}"
+    worker_cpu_core_count  = "${aws_instance.worker.0.cpu_core_count}"
     driver_memory          = "${var.driver_memory}"
     driver_max_result_size = "${var.driver_max_result_size}"
     executor_memory        = "${var.executor_memory}"
