@@ -6,9 +6,9 @@
 - name: Gather facts, after SSH
   setup:
 
-# - name: apt-get update
-#   apt:
-#     update_cache: yes
+- name: apt-get update
+  apt:
+    update_cache: yes
 
 - name: Install Docker
   include_role:
