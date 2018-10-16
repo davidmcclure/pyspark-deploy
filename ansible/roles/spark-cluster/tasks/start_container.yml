@@ -9,6 +9,4 @@
     state: started
     network_mode: host
     pull: true
-    restart_policy: always
-    restart: true
     env: '{{ spark_docker_env }}'
