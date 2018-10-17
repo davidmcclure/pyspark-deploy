@@ -2,5 +2,5 @@
 
 - name: Destroy node
   terraform:
-    project_path: '{{ docker_ami_tf_dir }}'
+    project_path: '{{ docker_tf_dir }}'
     state: absent

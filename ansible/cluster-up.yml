@@ -1,19 +1,17 @@
 ---
 
-- name: Create nodes
+- name: Create cluster
   hosts: localhost
   tasks:
-
-    - terraform:
-        project_path: terraform/spark-cluster
-        state: present
-        force_init: yes
-
-    - meta: refresh_inventory
+    - include_role:
+        name: spark-cluster
+        tasks_from: create
 
 - name: Deploy Spark
   hosts: spark
   gather_facts: no
   become: yes
-  roles:
-    - spark-cluster
+  tasks:
+    - include_role:
+        name: spark-cluster
+        tasks_from: deploy

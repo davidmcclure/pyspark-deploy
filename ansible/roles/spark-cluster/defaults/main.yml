@@ -3,6 +3,8 @@
 docker_image: dclure/spark
 docker_name: spark
 
+spark_tf_dir: terraform/spark-cluster
+
 spark_version: 2.3.2
 
 spark_master_port: 7077
@@ -39,3 +41,4 @@ openblas_num_threads: 1
 # Provide locally.
 aws_access_key_id: null
 aws_secret_access_key: null
+spark_base_ami: null

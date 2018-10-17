@@ -1,10 +1,8 @@
 ---
 
-- name: Destroy nodes
+- name: Destroy cluster
   hosts: localhost
   tasks:
-
-    - terraform:
-        project_path: terraform/spark-cluster
-        state: absent
-        force_init: yes
+    - include_role:
+        name: spark-cluster
+        tasks_from: destroy
