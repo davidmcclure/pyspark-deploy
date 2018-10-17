@@ -131,3 +131,14 @@ resource "local_file" "master_ip" {
   content  = "${aws_instance.master.public_ip}"
   filename = "${path.module}/../.master-ip"
 }
+
+resource "null_resource" "deploy" {
+  triggers {
+    inventory = "${data.template_file.inventory.rendered}"
+  }
+
+  provisioner "local-exec" {
+    command = "pipenv run ansible-playbook spark-cluster.yml"
+    working_dir = "${path.module}/../../ansible"
+  }
+}
