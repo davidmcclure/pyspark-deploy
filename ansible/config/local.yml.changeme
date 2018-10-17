@@ -1,0 +1,12 @@
+---
+
+spark_base_ami: null
+spark_docker_image: null
+
+aws_access_key_id: null
+aws_secret_access_key: null
+
+# Override cluster configuration variables.
+spark_tfvars:
+  # worker_count: 2
+  # spot_price: 0.59
