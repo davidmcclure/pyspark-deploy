@@ -1,5 +1,0 @@
----
-
-docker_tf_dir: terraform/docker-ami
-
-docker_ami_name: docker-{{ ansible_date_time.epoch }}

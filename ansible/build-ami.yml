@@ -4,8 +4,8 @@
   hosts: localhost
   tasks:
     - include_role:
-        name: docker-ami
-        tasks_from: create
+        name: spark
+        tasks_from: create_base
 
 - name: Configure image
   hosts: docker
@@ -13,12 +13,12 @@
   become: yes
   tasks:
     - include_role:
-        name: docker-ami
-        tasks_from: deploy
+        name: spark
+        tasks_from: deploy_base
 
 - name: Destroy node
   hosts: localhost
   tasks:
     - include_role:
-        name: docker-ami
-        tasks_from: destroy
+        name: spark
+        tasks_from: destroy_base

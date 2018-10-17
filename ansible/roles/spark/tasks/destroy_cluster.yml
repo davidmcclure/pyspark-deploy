@@ -2,5 +2,5 @@
 
 - name: Destroy cluster
   terraform:
-    project_path: '{{ spark_tf_dir }}'
+    project_path: '{{ spark_cluster_tf_dir }}'
     state: absent

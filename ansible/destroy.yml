@@ -4,5 +4,5 @@
   hosts: localhost
   tasks:
     - include_role:
-        name: spark-cluster
-        tasks_from: destroy
+        name: spark
+        tasks_from: destroy_cluster

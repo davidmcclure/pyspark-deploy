@@ -29,7 +29,7 @@
   local_action:
     module: ec2_ami
     instance_id: '{{ tf_instance_id }}'
-    name: '{{ docker_ami_name }}'
+    name: '{{ spark_docker_ami_name }}'
     region: '{{ tf_aws_region }}'
     wait: yes
 

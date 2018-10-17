@@ -4,8 +4,8 @@
   hosts: localhost
   tasks:
     - include_role:
-        name: spark-cluster
-        tasks_from: create
+        name: spark
+        tasks_from: create_cluster
 
 - name: Deploy Spark
   hosts: spark
@@ -13,5 +13,5 @@
   become: yes
   tasks:
     - include_role:
-        name: spark-cluster
-        tasks_from: deploy
+        name: spark
+        tasks_from: deploy_cluster

@@ -3,7 +3,10 @@
 spark_docker_image: dclure/spark
 spark_docker_name: spark
 
-spark_tf_dir: terraform/spark-cluster
+spark_base_tf_dir: terraform/docker-ami
+spark_cluster_tf_dir: terraform/spark-cluster
+
+spark_docker_ami_name: docker-{{ ansible_date_time.epoch }}
 
 # TODO: Link with image?
 spark_version: 2.3.2
