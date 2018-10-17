@@ -5,4 +5,4 @@
   tasks:
     - include_role:
         name: spark
-        tasks_from: destroy_cluster
+        tasks_from: cluster_down

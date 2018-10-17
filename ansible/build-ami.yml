@@ -5,7 +5,7 @@
   tasks:
     - include_role:
         name: spark
-        tasks_from: create_base
+        tasks_from: ami_up
 
 - name: Configure image
   hosts: docker
@@ -14,11 +14,11 @@
   tasks:
     - include_role:
         name: spark
-        tasks_from: deploy_base
+        tasks_from: ami_deploy
 
 - name: Destroy node
   hosts: localhost
   tasks:
     - include_role:
         name: spark
-        tasks_from: destroy_base
+        tasks_from: ami_down

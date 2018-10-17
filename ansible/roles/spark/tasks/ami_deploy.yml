@@ -22,7 +22,6 @@
     pip_install_packages:
       - name: docker
 
-# TODO: Public?
 - name: Make snapshot
   become: no
   register: ami

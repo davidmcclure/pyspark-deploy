@@ -2,5 +2,5 @@
 
 - name: Destroy node
   terraform:
-    project_path: '{{ spark_base_tf_dir }}'
+    project_path: '{{ spark_ami_tf_dir }}'
     state: absent
