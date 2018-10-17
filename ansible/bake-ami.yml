@@ -3,25 +3,22 @@
 - name: Create node
   hosts: localhost
   tasks:
+    - include_role:
+        name: docker-ami
+        tasks_from: create
 
-    - terraform:
-        project_path: terraform/docker-ami
-        state: present
-        force_init: yes
-
-    - meta: refresh_inventory
-
-- name: Deploy Spark
+- name: Configure image
   hosts: docker
   gather_facts: no
   become: yes
-  roles:
-    - docker-ami
+  tasks:
+    - include_role:
+        name: docker-ami
+        tasks_from: deploy
 
 - name: Destroy node
   hosts: localhost
   tasks:
-
-    - terraform:
-        project_path: terraform/docker-ami
-        state: absent
+    - include_role:
+        name: docker-ami
+        tasks_from: destroy

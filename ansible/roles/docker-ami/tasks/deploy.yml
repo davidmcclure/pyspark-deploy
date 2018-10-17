@@ -28,9 +28,9 @@
   register: ami
   local_action:
     module: ec2_ami
-    name: '{{ docker_ami_name }}-{{ ansible_date_time.epoch }}'
-    region: '{{ tf_aws_region }}'
     instance_id: '{{ tf_instance_id }}'
+    name: '{{ docker_ami_name }}'
+    region: '{{ tf_aws_region }}'
     wait: yes
 
 - debug:
