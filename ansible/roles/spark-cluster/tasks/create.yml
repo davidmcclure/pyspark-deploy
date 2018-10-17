@@ -5,7 +5,6 @@
     project_path: '{{ spark_tf_dir }}'
     state: present
     force_init: yes
-    variables:
-      base_ami: '{{ spark_base_ami }}'
+    variables: '{{ spark_tfvars_combined }}'
 
 - meta: refresh_inventory
