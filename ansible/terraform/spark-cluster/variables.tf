@@ -2,8 +2,9 @@ variable "name" {
   default = "spark"
 }
 
+# TODO: Null value, in TF 0.12?
 variable "base_ami" {
-  default = "ami-38708b45"
+  default = "ami-0ac019f4fcb7cb7e6"
 }
 
 variable "master_instance_type" {

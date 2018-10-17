@@ -39,11 +39,6 @@ spark_docker_env:
 
 openblas_num_threads: 1
 
-# Provide locally.
-aws_access_key_id: null
-aws_secret_access_key: null
-spark_base_ami: null
-
 spark_tfvars_default:
   base_ami: '{{ spark_base_ami }}'
 
@@ -51,3 +46,8 @@ spark_tfvars_default:
 spark_tfvars:
 
 spark_tfvars_combined: '{{ spark_tfvars_default | combine(spark_tfvars)}}'
+
+# Provide locally.
+aws_access_key_id: null
+aws_secret_access_key: null
+spark_base_ami: null
