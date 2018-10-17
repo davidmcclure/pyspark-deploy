@@ -5,8 +5,9 @@
   tasks:
 
     - terraform:
-        project_path: ../terraform/docker-ami
+        project_path: terraform/docker-ami
         state: present
+        force_init: yes
 
     - meta: refresh_inventory
 
@@ -22,5 +23,5 @@
   tasks:
 
     - terraform:
-        project_path: ../terraform/docker-ami
+        project_path: terraform/docker-ami
         state: absent

@@ -5,8 +5,9 @@
   tasks:
 
     - terraform:
-        project_path: ../terraform/spark-cluster
+        project_path: terraform/spark-cluster
         state: present
+        force_init: yes
 
     - meta: refresh_inventory
 

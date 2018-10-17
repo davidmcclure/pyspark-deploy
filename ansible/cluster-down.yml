@@ -5,5 +5,6 @@
   tasks:
 
     - terraform:
-        project_path: ../terraform/spark-cluster
+        project_path: terraform/spark-cluster
         state: absent
+        force_init: yes
