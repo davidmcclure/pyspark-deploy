@@ -124,21 +124,10 @@ data "template_file" "inventory" {
 
 resource "local_file" "inventory" {
   content  = "${data.template_file.inventory.rendered}"
-  filename = "${path.module}/../.inventory/spark-cluster"
+  filename = "${module.vpc.inventory_dir}/spark-cluster"
 }
 
 resource "local_file" "master_ip" {
   content  = "${aws_instance.master.public_ip}"
-  filename = "${path.module}/../.master-ip"
-}
-
-resource "null_resource" "deploy" {
-  triggers {
-    inventory = "${data.template_file.inventory.rendered}"
-  }
-
-  provisioner "local-exec" {
-    command = "pipenv run ansible-playbook spark-cluster.yml"
-    working_dir = "${path.module}/../../ansible"
-  }
+  filename = "${path.module}/.master-ip"
 }
