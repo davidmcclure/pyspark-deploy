@@ -15,7 +15,7 @@ variable "worker_instance_type" {
 }
 
 variable "spot_price" {
-  default = 0.3
+  default = 0.6
 }
 
 variable "worker_count" {

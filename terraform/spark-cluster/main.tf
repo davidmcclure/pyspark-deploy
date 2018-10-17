@@ -96,21 +96,6 @@ resource "aws_instance" "master" {
   }
 }
 
-# resource "aws_instance" "worker" {
-#   ami                         = "${var.base_ami}"
-#   instance_type               = "${var.worker_instance_type}"
-#   subnet_id                   = "${module.vpc.subnet_id}"
-#   vpc_security_group_ids      = ["${aws_security_group.spark.id}"]
-#   key_name                    = "${module.vpc.key_name}"
-#   associate_public_ip_address = true
-#
-#   count = "${var.worker_count}"
-#
-#   tags {
-#     Name = "spark-worker"
-#   }
-# }
-
 resource "aws_spot_instance_request" "worker" {
   ami                         = "${var.base_ami}"
   instance_type               = "${var.worker_instance_type}"
@@ -118,9 +103,10 @@ resource "aws_spot_instance_request" "worker" {
   vpc_security_group_ids      = ["${aws_security_group.spark.id}"]
   key_name                    = "${module.vpc.key_name}"
   spot_price                  = "${var.spot_price}"
-  count                       = "${var.worker_count}"
   associate_public_ip_address = true
   wait_for_fulfillment        = true
+
+  count = "${var.worker_count}"
 }
 
 data "template_file" "inventory" {
