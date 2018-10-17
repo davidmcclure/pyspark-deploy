@@ -1,8 +1,0 @@
----
-
-- name: Deploy Spark
-  hosts: spark
-  gather_facts: no
-  become: yes
-  roles:
-    - spark-cluster

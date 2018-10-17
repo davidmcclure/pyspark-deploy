@@ -1,0 +1,9 @@
+---
+
+- name: Destroy nodes
+  hosts: localhost
+  tasks:
+
+    - terraform:
+        project_path: ../terraform/spark-cluster
+        state: absent
