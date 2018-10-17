@@ -2,8 +2,8 @@
 
 - name: Start container
   docker_container:
-    image: '{{ docker_image }}'
-    name: '{{ docker_name }}'
+    image: '{{ spark_docker_image }}'
+    name: '{{ spark_docker_name }}'
     command: '{{ command }}'
     volumes: '{{ spark_volumes }}'
     state: started

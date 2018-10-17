@@ -1,10 +1,11 @@
 ---
 
-docker_image: dclure/spark
-docker_name: spark
+spark_docker_image: dclure/spark
+spark_docker_name: spark
 
 spark_tf_dir: terraform/spark-cluster
 
+# TODO: Link with image?
 spark_version: 2.3.2
 
 spark_master_port: 7077
