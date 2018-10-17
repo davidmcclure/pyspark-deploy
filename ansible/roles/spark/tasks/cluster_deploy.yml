@@ -35,12 +35,14 @@
   include_tasks: start_container.yml
   when: '"master" in group_names'
   vars:
+    name: spark-master
     command: spark-class org.apache.spark.deploy.master.Master
 
 - name: Start workers
   include_tasks: start_container.yml
   when: '"workers" in group_names'
   vars:
+    name: spark-worker
     command: >
       spark-class org.apache.spark.deploy.worker.Worker
       {{ spark_master_url }}

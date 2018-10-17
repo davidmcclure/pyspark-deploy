@@ -1,10 +1,9 @@
 ---
 
 spark_docker_image: dclure/spark
-spark_docker_name: spark
 
-spark_ami_tf_dir: terraform/docker-ami
 spark_cluster_tf_dir: terraform/spark-cluster
+spark_ami_tf_dir: terraform/docker-ami
 
 spark_docker_ami_name: docker-{{ ansible_date_time.epoch }}
 

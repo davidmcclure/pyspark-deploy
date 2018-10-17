@@ -3,7 +3,7 @@
 - name: Start container
   docker_container:
     image: '{{ spark_docker_image }}'
-    name: '{{ spark_docker_name }}'
+    name: '{{ name }}'
     command: '{{ command }}'
     volumes: '{{ spark_volumes }}'
     state: started
