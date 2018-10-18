@@ -9,21 +9,15 @@ This project manages the full lifecycle of a Python + Spark <-> S3 project, from
 
 - [**Ansible**](https://www.ansible.com/) is used to start the cluster. Since the environment is totally wrapped up in Docker, Ansible just pulls the image on the nodes, injects production config values, and starts the Spark services.
 
-Integration with a Python codebase takes ~10 minutes:
+Integration with a Python codebase takes ~10 minutes. Then, control the cluster with the scripts under `terraform/spark-cluster`:
 
-1. Add this repo as a submodule to your project, run `make setup`.
+- **`./create.sh`** - Start a cluster. (~2 minutes)
 
-1. Extend the [base Dockerfile](docker/Dockerfile), which provides a complete Spark 2.3 + Python 3 environment. (Or write something totally custom). Push to Docker Hub.
+- **`./login.sh`** - SSH into the master node, drop into tmux session, attach to bash shell on the Spark driver container. Ready to `spark-submit`.
 
-1. Edit [`config/local.yml`](config/local.yml.changeme#L5), point to your repo on Docker Hub.
+- **`./web-admin.sh`** - Open a browser tab with the Spark web admin.
 
-Then, control the cluster with the Makefile:
-
-- **`make create`** - Start a cluster (~60s).
-
-- **`make login`** - SSH into the master node, drop into tmux session, attach to bash shell on the Spark driver container. Ready to `spark-submit`.
-
-- **`make destroy`** - Terminate cluster and all related AWS resources.
+- **`./destroy.sh`** - Terminate cluster and all related AWS resources.
 
 One big assumption - all data sits on s3. No HDFS, etc. There are some downsides to this, but it's worth it, because everything becomes way simpler.
 
