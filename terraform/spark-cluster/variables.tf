@@ -4,7 +4,8 @@ variable "name" {
 
 # TODO: Null value, in TF 0.12?
 variable "base_ami" {
-  default = "ami-0ac019f4fcb7cb7e6"
+  default     = "ami-XXX"
+  description = "AMI with Docker."
 }
 
 variable "master_instance_type" {
