@@ -43,5 +43,13 @@
         region: '{{ tf_aws_region }}'
         wait: yes
 
+    - name: Render tfvars
+      become: no
+      local_action:
+        module: lineinfile
+        path: ./docker-ami.auto.tfvars
+        line: docker_ami = "{{ ami.image_id }}"
+        create: yes
+
     - debug:
         var: ami.image_id

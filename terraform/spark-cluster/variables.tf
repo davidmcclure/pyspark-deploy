@@ -3,7 +3,7 @@ variable "name" {
 }
 
 # TODO: Null value, in TF 0.12?
-variable "base_ami" {
+variable "docker_ami" {
   default     = "ami-XXX"
   description = "AMI with Docker."
 }

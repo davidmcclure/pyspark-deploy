@@ -84,7 +84,7 @@ resource "aws_security_group" "spark" {
 }
 
 resource "aws_instance" "master" {
-  ami                         = "${var.base_ami}"
+  ami                         = "${var.docker_ami}"
   instance_type               = "${var.master_instance_type}"
   subnet_id                   = "${module.vpc.subnet_id}"
   vpc_security_group_ids      = ["${aws_security_group.spark.id}"]
@@ -98,7 +98,7 @@ resource "aws_instance" "master" {
 
 # TODO: one-time
 resource "aws_spot_instance_request" "worker" {
-  ami                         = "${var.base_ami}"
+  ami                         = "${var.docker_ami}"
   instance_type               = "${var.worker_instance_type}"
   subnet_id                   = "${module.vpc.subnet_id}"
   vpc_security_group_ids      = ["${aws_security_group.spark.id}"]
