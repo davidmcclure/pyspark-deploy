@@ -1,0 +1,48 @@
+---
+
+- name: Wait for SSH connection
+  wait_for_connection:
+
+- name: Gather facts, after SSH
+  setup:
+
+- name: Create config directory
+  file:
+    path: '{{ spark_config_dir }}'
+    state: directory
+
+- name: Render Spark config
+  template:
+    src: '{{ item }}.j2'
+    dest: '{{ spark_config_dir }}/{{ item }}'
+  with_items:
+    - spark-defaults.conf
+    - spark-env.sh
+
+- name: Render Docker bash script
+  template:
+    src: docker-bash.sh.j2
+    dest: /home/{{ ansible_user }}/docker-bash.sh
+    owner: '{{ ansible_user }}'
+    mode: u+x
+
+- name: Automatically connect to container on login
+  lineinfile:
+    path: /home/{{ ansible_user }}/.bashrc
+    line: source ./docker-bash.sh
+
+- name: Start master
+  include_tasks: start_container.yml
+  when: '"master" in group_names'
+  vars:
+    name: spark-master
+    command: spark-class org.apache.spark.deploy.master.Master
+
+- name: Start workers
+  include_tasks: start_container.yml
+  when: '"workers" in group_names'
+  vars:
+    name: spark-worker
+    command: >
+      spark-class org.apache.spark.deploy.worker.Worker
+      {{ spark_master_url }}

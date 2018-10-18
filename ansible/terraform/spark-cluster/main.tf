@@ -125,7 +125,7 @@ data "template_file" "inventory" {
 
 resource "local_file" "inventory" {
   content  = "${data.template_file.inventory.rendered}"
-  filename = "${path.module}/../../.inventory/spark-cluster"
+  filename = "${path.module}/.inventory"
 }
 
 resource "local_file" "master_ip" {

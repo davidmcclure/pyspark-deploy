@@ -1,0 +1,15 @@
+---
+
+- name: Deploy Spark
+  hosts: spark
+  gather_facts: no
+  become: yes
+  tasks:
+
+    - name: Load local vars
+      include_vars:
+        ignore_unknown_extensions: yes
+        dir: vars
+
+    - include_role:
+        name: spark
