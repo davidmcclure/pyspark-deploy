@@ -1,5 +1,15 @@
 ---
 
+- name: Start node
+  hosts: localhost
+  tasks:
+
+    - terraform:
+        project_path: ./
+        state: present
+
+    - meta: refresh_inventory
+
 - name: Configure image
   hosts: docker
   gather_facts: no
