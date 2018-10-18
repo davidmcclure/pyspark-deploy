@@ -11,13 +11,13 @@ This project manages the full lifecycle of a Python + Spark <-> S3 project, from
 
 Integration with a Python codebase takes ~10 minutes. Then, control the cluster with the top-level scripts:
 
-- **`./create.sh`** - Start a cluster. (~2 minutes)
+- **`create.sh`** - Start a cluster. (~2 minutes)
 
-- **`./login.sh`** - SSH into the master node, drop into tmux session, attach to bash shell on the Spark driver container. Ready to `spark-submit`.
+- **`login.sh`** - SSH into the master node, drop into tmux session, attach to bash shell on the Spark driver container. Ready to `spark-submit`.
 
-- **`./web-admin.sh`** - Open a browser tab with the Spark web admin.
+- **`web-admin.sh`** - Open a browser tab with the Spark web admin.
 
-- **`./destroy.sh`** - Terminate cluster and all related AWS resources.
+- **`destroy.sh`** - Terminate cluster and all related AWS resources.
 
 One big assumption - all data sits on s3. No HDFS, etc. There are some downsides to this, but it's worth it, because everything becomes way simpler.
 
