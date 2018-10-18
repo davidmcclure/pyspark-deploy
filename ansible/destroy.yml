@@ -1,8 +1,0 @@
----
-
-- name: Destroy cluster
-  hosts: localhost
-  tasks:
-    - include_role:
-        name: spark
-        tasks_from: cluster_down
