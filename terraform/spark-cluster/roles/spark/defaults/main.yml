@@ -4,8 +4,7 @@ ansible_python_interpreter: python3
 
 spark_docker_image: dclure/spark
 
-# TODO: Link with image?
-spark_version: 2.3.2
+spark_home: /opt/spark
 
 spark_master_port: 7077
 spark_master_url: spark://{{ tf_master_private_dns }}:{{ spark_master_port }}
@@ -23,7 +22,7 @@ spark_config_dir: /etc/spark
 spark_hadoop_tmp_dir: /mnt/hadoop
 
 spark_volumes:
-  - '{{ spark_config_dir }}:/opt/spark-{{ spark_version }}/conf'
+  - '{{ spark_config_dir }}:{{ spark_home }}/conf'
   - /mnt:/mnt
 
 # Use EC2 public DNS.
