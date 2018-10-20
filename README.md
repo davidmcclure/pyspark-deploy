@@ -44,7 +44,6 @@ Where `job.py` is a Spark application - here, the canonical pi-estimation exampl
 ```python
 import click
 import random
-import time
 
 from pyspark import SparkContext
 
@@ -107,7 +106,7 @@ ADD code /code
 WORKDIR /code
 ```
 
-Again, in reality, this could be arbitrarily complex. And, if you want total control over the Python or Spark installation, you can do something totally custom, instead of extending the `dclure/spark` base image. As long as Spark is installed at `/opt/spark`, the deployment harness will work. (And, even this can be changed if you like - you'd just need to override the `spark_home` variable.)
+Again, in reality, this could be arbitrarily complex. And, if you want total control over the Python or Spark installation, you can write a totally custom Dockerfile instead of extending the `dclure/spark` base image. As long as Spark is installed at `/opt/spark`, the deployment harness will work without any changes. (And, even this can be changed - you'd just need to provide an override for the `spark_home` variable, described below.)
 
 Let's also add a `docker-compose.yml` file in the top-level directory, which points to a repository on Docker Hub (doesn't need to exist yet) and mounts the `/code` directory into the container, which is essential for local development:
 
@@ -153,15 +152,23 @@ And then, run the job with:
 
 Which will estimate pi by randomly sampling a billion random points. On my 2018 Macbook Pro, this takes about 150 seconds on 4 cores, though this might vary a bit depending on how Docker is configured on your machine. In a second, we'll deploy a cluster to EC2 that can do this in ~3 seconds, on hardware that costs ~$4/hour.
 
-Since the `/code` directory is mounted as a volume, any changes we make to the source code will immediately appear in the container. Eg, if we change the default number of samples from a billion to a million:
+To speed this up during development, we can reduce the sample count by passing a value for the `n` CLI argument. Just put two dashes `--` after the regular `spark-submit` command, and then any further arguments or flags will get forwarded to the Python program. Eg, to run just 1000 samples:
+
+`spark-submit job.py -- 1000`
+
+Also, since the `/code` directory is mounted as a volume, any changes we make to the source code will immediately appear in the container. Eg, let's add a CLI flag that makes it possible to specify the number of partitions in the RDD, which will come in handy on the production cluster:
 
 ```python
 @click.command()
-@click.argument('n', type=int, default=1e6)
-def main(n):
-    ...
+@click.argument('n', type=int, default=1e9)
+@click.option('--partitions', type=int, default=10)
+def main(n, partitions):
+    """Estimate pi by sampling a billion random points.
+    """
+    sc = SparkContext.getOrCreate()
+
+    count = sc.parallelize(range(n), partitions).filter(inside).count()
+    pi = 4 * count / n
+
+    print(pi)
 ```
-
-And then run `spark-submit job.py` again, now the job will finish in ~2 seconds, though of course the result will be less accurate. Or, we could just provide this as a CLI argument, which is the point of wrapping the job as a click application. Just put two dashes `--` after the regular `spark-submit` command, and then any further arguments or flags will get forwarded to the Python program. Eg, to run just 1000 samples:
-
-`spark-submit job.py -- 1000`
