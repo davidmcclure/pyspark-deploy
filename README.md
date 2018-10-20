@@ -31,15 +31,15 @@ What you really want is just a single Docker image that can be used everywhere -
 
 ## Quickstart
 
-Say you've got a pyspark application that looks like:
+First, make sure you've got working installations of Docker, pipenv, and Terraform. Then - say you've got a pyspark application that looks like:
 
-```bash
+```text
 project
 ├── job.py
 ├── requirements.txt
 ```
 
-Where `job.py` is a Spark application - here, the canonical pi-estimation example:
+Where `job.py` is a Spark application - here, the canonical pi-estimation example, but wrapped up as a click application:
 
 ```python
 import click
@@ -65,7 +65,7 @@ def main(n):
     sc = SparkContext.getOrCreate()
 
     count = sc.parallelize(range(n)).filter(inside).count()
-    pi =  4 * count / n
+    pi = 4 * count / n
 
     print(pi)
 
@@ -74,13 +74,94 @@ if __name__ == '__main__':
     main()
 ```
 
-And `requirements.txt` installs some dependencies:
+And `requirements.txt` installs click and ipython:
 
 ```text
-ipython
 click
+ipython
 ```
 
 This is obviously a simplest possible example - the codebase could be arbitrarily large / complex, and organized in any way.
 
 ### Step 1: Create a Dockerfile
+
+First, we'll extend the base `dclure/spark` Dockerfile, which gives a complete Python + Java + Spark environment. There are various ways to structure this, but I find it nice to explicitly separate the application code from the packaging code. Let's move the application into a `/code` directory, and put the Dockerfile next to that:
+
+```text
+project
+├── Dockerfile
+├── code
+│   ├── job.py
+│   ├── requirements.txt
+```
+
+In this case, the Dockerfile can be trivial - just add the code and do the `pip install`:
+
+```docker
+FROM dclure/spark
+
+ADD code/requirements.txt /etc
+RUN pip install -r /etc/requirements.txt
+
+ADD code /code
+WORKDIR /code
+```
+
+Again, in reality, this could be arbitrarily complex. And, if you want total control over the Python or Spark installation, you can do something totally custom, instead of extending the `dclure/spark` base image. As long as Spark is installed at `/opt/spark`, the deployment harness will work. (And, even this can be changed if you like - you'd just need to override the `spark_home` variable.)
+
+Let's also add a `docker-compose.yml` file in the top-level directory, which points to a repository on Docker Hub (doesn't need to exist yet) and mounts the `/code` directory into the container, which is essential for local development:
+
+```yml
+version: '3'
+
+services:
+
+  local:
+    build: .
+    image: dclure/pyspark-pi
+    volumes:
+      - ./code:/code
+```
+
+So, now we've got:
+
+```text
+project
+├── docker-compose.yml
+├── Dockerfile
+├── code
+│   ├── job.py
+│   ├── requirements.txt
+```
+
+## Step 2: Develop locally
+
+Now, let's run the image locally and test the job. First, build the image with:
+
+`docker-compose build`
+
+Then run a container and attach to a bash shell:
+
+```bash
+docker-compose run local bash
+root@d8fd2d83eb93:/code#
+```
+
+And then, run the job with:
+
+`spark-submit job.py`
+
+Which will estimate pi by randomly sampling a billion random points. On my 2018 Macbook Pro, this takes about 150 seconds on 4 cores, though this might vary a bit depending on how Docker is configured on your machine. In a second, we'll deploy a cluster to EC2 that can do this in ~3 seconds, on hardware that costs ~$4/hour.
+
+Since the `/code` directory is mounted as a volume, any changes we make to the source code will immediately appear in the container. Eg, if we change the default number of samples from a billion to a million:
+
+```python
+@click.command()
+@click.argument('n', type=int, default=1e6)
+def main(n):
+    ...
+```
+
+And then run `spark-submit job.py` again, now the job will finish in ~2 seconds, though of course the result will be less accurate. Or, we could just provide this as a CLI argument, which is the point of wrapping the job as a click application. Just put two dashes `--` after the regular `spark-submit` command, and then any further arguments or flags will get forwarded to the Python program. Eg, to run just 1000 samples:
+
+`spark-submit job.py -- 1000`
