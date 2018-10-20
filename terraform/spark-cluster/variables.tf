@@ -20,6 +20,10 @@ variable "spot_price" {
   default = 0.6
 }
 
+variable "spot_type" {
+  default = "one-time"
+}
+
 variable "worker_count" {
   default = 2
 }

@@ -104,6 +104,7 @@ resource "aws_spot_instance_request" "worker" {
   vpc_security_group_ids      = ["${aws_security_group.spark.id}"]
   key_name                    = "${module.vpc.key_name}"
   spot_price                  = "${var.spot_price}"
+  spot_type                   = "${var.spot_type}"
   associate_public_ip_address = true
   wait_for_fulfillment        = true
 
