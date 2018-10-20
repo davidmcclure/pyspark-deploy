@@ -28,3 +28,59 @@ Deploying Python code to Spark clusters can be a hassle. At minimum, you almost 
 This can be handled in various ways - cluster bootstrap scripts, pre-baked cloud AMIs - but these configurations can be brittle and hard to reproduce elsewhere. Eg, if you're using EMR, you might write a bootstrap script that configures an EMR node; but, this won't work on a development laptop running OSX, where Spark needs to be installed from scratch, etc. It's easy to end up with multiple configurations of the project, each requiring a separate layer of devops / manual setup, which can become a headache.
 
 What you really want is just a single Docker image that can be used everywhere - on laptops during development, on CI servers, and on production clusters. But, deploying a fully Docker-ized Spark cluster also takes a bit of work. `pyspark-deploy` handles 100% of this - just extend the base Dockerfile, develop locally, and then deploy to hundreds of cores on AWS with a single command.
+
+## Quickstart
+
+Say you've got a pyspark application that looks like:
+
+```bash
+project
+├── job.py
+├── requirements.txt
+```
+
+Where `job.py` is a Spark application - here, the canonical pi-estimation example:
+
+```python
+import click
+import random
+import time
+
+from pyspark import SparkContext
+
+
+def inside(p):
+    """Randomly sample a point in the unit square, return true if the point is
+    inside a circle of r=1 centered at the origin.
+    """
+    x, y = random.random(), random.random()
+    return x*x + y*y < 1
+
+
+@click.command()
+@click.argument('n', type=int, default=1e9)
+def main(n):
+    """Estimate pi by sampling a billion random points.
+    """
+    sc = SparkContext.getOrCreate()
+
+    count = sc.parallelize(range(n)).filter(inside).count()
+    pi =  4 * count / n
+
+    print(pi)
+
+
+if __name__ == '__main__':
+    main()
+```
+
+And `requirements.txt` installs some dependencies:
+
+```text
+ipython
+click
+```
+
+This is obviously a simplest possible example - the codebase could be arbitrarily large / complex, and organized in any way.
+
+### Step 1: Create a Dockerfile
