@@ -100,7 +100,7 @@ project
 
 In this case, the Dockerfile can be trivial - just add the code and do the `pip install`:
 
-```docker
+```dockerfile
 FROM dclure/spark
 
 ADD code/requirements.txt /etc
