@@ -9,15 +9,15 @@ variable "docker_ami" {
 }
 
 variable "master_instance_type" {
-  default = "c5.2xlarge"
+  default = "c5.xlarge"
 }
 
 variable "worker_instance_type" {
-  default = "c5.9xlarge"
+  default = "c3.8xlarge"
 }
 
 variable "spot_price" {
-  default = 0.6
+  default = 0.48
 }
 
 variable "spot_type" {
@@ -29,7 +29,7 @@ variable "worker_count" {
 }
 
 variable "driver_memory" {
-  default = "10g"
+  default = "5g"
 }
 
 variable "driver_max_result_size" {
@@ -37,5 +37,5 @@ variable "driver_max_result_size" {
 }
 
 variable "executor_memory" {
-  default = "10g"
+  default = "40g"
 }
