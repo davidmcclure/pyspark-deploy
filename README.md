@@ -9,7 +9,7 @@ This project manages the full lifecycle of a Python + Spark <-> S3 project, from
 
 - [**Ansible**](https://www.ansible.com/) is used to start the cluster. Since the environment is totally wrapped up in Docker, Ansible just pulls the image on the nodes, injects production config values, and starts the Spark services.
 
-Integration with a Python codebase takes ~10 minutes. Then, control the cluster with the top-level scripts:
+Integration with a Python codebase takes ~10 minutes. Then, control the cluster with the scripts in the [spark-cluster module](terraform/spark-cluster):
 
 - **`create.sh`** - Start a cluster. (~2 minutes)
 
@@ -31,7 +31,9 @@ What you really want is just a single Docker image that can be used everywhere -
 
 ## Quickstart
 
-First, make sure you've got working installations of Docker, pipenv, and Terraform. Then - say you've got a pyspark application that looks like:
+First, make sure you've got working installations of [Docker](https://www.docker.com/), [pipenv](https://pipenv.readthedocs.io/en/latest/), and [Terraform](https://www.terraform.io/).
+
+Then - say you've got a pyspark application that looks like:
 
 ```text
 project
