@@ -88,7 +88,7 @@ This is obviously a simplest possible example - the codebase could be arbitraril
 
 ### Step 1: Create a Dockerfile
 
-First, we'll extend the base `dclure/spark` Dockerfile, which gives a complete Python + Java + Spark environment. There are various ways to structure this, but I find it nice to explicitly separate the application code from the packaging code. Let's move the application into a `/code` directory, and put the Dockerfile next to that:
+First, we'll extend the base [`dclure/spark`](docker/Dockerfile) Dockerfile, which gives a complete Python + Java + Spark environment. There are various ways to structure this, but I find it nice to explicitly separate the application code from the packaging code. Let's move the application into a `/code` directory, and put the Dockerfile next to that:
 
 ```text
 project
@@ -145,34 +145,20 @@ Now, let's run the image locally and test the job. First, build the image with:
 
 Then run a container and attach to a bash shell:
 
-```bash
-docker-compose run local bash
-root@d8fd2d83eb93:/code#
-```
+`docker-compose run local bash`
 
 And then, run the job with:
 
 `spark-submit job.py`
 
-Which will estimate pi by randomly sampling a billion random points. On my 2018 Macbook Pro, this takes about 150 seconds on 4 cores, though this might vary a bit depending on how Docker is configured on your machine. In a second, we'll deploy a cluster to EC2 that can do this in ~3 seconds, on hardware that costs ~$4/hour.
+Since the `/code` is directory is mounted as a volume, any changes we make to the source code will immediately appear in the container.
 
-To speed this up during development, we can reduce the sample count by passing a value for the `n` CLI argument. Just put two dashes `--` after the regular `spark-submit` command, and then any further arguments or flags will get forwarded to the Python program. Eg, to run just 1000 samples:
+## Step 3: Create a base Docker AMI
 
-`spark-submit job.py -- 1000`
+Add this repository as a submodule under `/deploy` (or whatever):
 
-Also, since the `/code` directory is mounted as a volume, any changes we make to the source code will immediately appear in the container. Eg, let's add a CLI flag that makes it possible to specify the number of partitions in the RDD, which will come in handy on the production cluster:
+`git submodule add https://github.com/davidmcclure/pyspark-deploy.git deploy`
 
-```python
-@click.command()
-@click.argument('n', type=int, default=1e9)
-@click.option('--partitions', type=int, default=10)
-def main(n, partitions):
-    """Estimate pi by sampling a billion random points.
-    """
-    sc = SparkContext.getOrCreate()
+Change into `/deploy` and initialize the pipenv environment:
 
-    count = sc.parallelize(range(n), partitions).filter(inside).count()
-    pi = 4 * count / n
-
-    print(pi)
-```
+`pipenv install`
