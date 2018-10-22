@@ -30,3 +30,107 @@ What you really want is just a single Docker image that can be used everywhere -
 ## Quickstart
 
 **See [pyspark-deploy-example](https://github.com/davidmcclure/pyspark-deploy-example) for a complete example**
+
+First, make sure you've got working installations of [Docker](https://www.docker.com/), [pipenv](https://pipenv.readthedocs.io/en/latest/), and [Terraform](https://www.terraform.io/).
+
+Say you've got a pyspark application that looks like:
+
+```text
+project
+├── job.py
+├── requirements.txt
+├── ...
+```
+
+### Step 1: Create a Dockerfile
+
+First, extend the base [`dclure/spark`](docker/Dockerfile) Dockerfile, which gives a complete Python + Java + Spark environment. There are various ways to structure this, but I find it nice to separate the application code from the packaging code. Let's move the application into a `/code` directory, and add a `Dockerfile` and `docker-compose.yml` next to that:
+
+```text
+project
+├── docker-compose.yml
+├── Dockerfile
+├── code
+│   ├── job.py
+│   ├── requirements.txt
+│   ├── ...
+```
+
+A trivial Dockerfile might look like this:
+
+```dockerfile
+FROM dclure/spark
+
+ADD code/requirements.txt /etc
+RUN pip install -r /etc/requirements.txt
+
+ADD code /code
+WORKDIR /code
+```
+
+And, `docker-compose.yml` points to a repository on Docker Hub (doesn't need to exist yet) and mounts the `/code` directory into the container, which is essential for local development:
+
+```yml
+version: '3'
+
+services:
+
+  local:
+    build: .
+    image: dclure/pyspark-pi
+    volumes:
+      - ./code:/code
+```
+
+### Step 2: Develop locally
+
+Now, we can run this container locally and develop in a standardized environment.
+
+First, build the image:
+
+`docker-compose build`
+
+Run a container and attach to a bash shell:
+
+```
+docker-compose run local bash
+root@9475764f5e15:/code#
+```
+
+Which then gives access to the complete Spark environment. Eg,
+
+`spark-submit job.py`
+
+Since the `/code` is directory is mounted as a volume, any changes we make to the source code will immediately appear in the container.
+
+### Step 3: Create a base Docker AMI
+
+Now, we'll deploy this to a production cluster on EC2. First, we'll create a base AMI with a Docker installation, which will then serve as the template for the cluster nodes. In theory, we could also install Docker on each node every time we put up a cluster. But, since this configuration is always the same, by pre-baking an AMI once at the start we can shave some time off of the cluster deployments, and also make them more reliable.
+
+**Important**: This step only has to be done once for each AWS account that you're deploying clusters to.
+
+1. Add this repo as a submodule in your project. Eg, under `/deploy`:
+
+    `git submodule add https://github.com/davidmcclure/pyspark-deploy.git deploy`
+
+    ```text
+    project
+    ├── docker-compose.yml
+    ├── Dockerfile
+    ├── code
+    │   ├── job.py
+    │   ├── requirements.txt
+    │   ├── ...
+    ├── deploy
+    |   ├── Pipfile
+    |   ├── Pipfile.lock
+    |   ├── README.md
+    |   ├── docker
+    |   ├── terraform
+    ```
+
+1. Change down into `/deploy` and install dependencies with `pipenv install`.
+
+1. Change into `/deploy/terraform/docker-ami` and run `./setup.sh`, which initializes the Terraform project.
+
+1. Make sure you've got correctly configured AWS credentials (eg, via `aws configure`). Then, run **`./build.sh`** which will create a sandbox instance on EC2, configure Docker, create an AMI. At the end, when prompted, type `yes` to give Terraform permission to destroy the node.
