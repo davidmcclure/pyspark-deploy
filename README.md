@@ -182,4 +182,10 @@ Now, the fun part! First, we need to make sure the Docker image for the applicat
 
     **Important**: `local.yml` is .gitignored, so even if you're working with a fork of this repository and committing changes, this file shouldn't get tracked. But, out of an abundance of caution, I use `ansible-vault` to [encrypt the values of the two AWS credential keys](https://docs.ansible.com/ansible/latest/user_guide/vault.html#encrypt-string-for-use-in-yaml). This way, even if this file gets accidentally committed and pushed to a public-facing repo, the secrets won't leak.
 
-1. Check the cluster settings in `variables.tf`. By default, `pyspark-deploy` uses `c3.8xlarge` spot instances as worker nodes
+1. Check the cluster settings in `variables.tf`. By default, `pyspark-deploy` puts up a smaller cluster - a `c5.xlarge` master node (on-demand) and 2x `c3.8xlarge` workers (spot requests, $0.48). To customize the deploy, add a file called `local.auto.tfvars` and override settings. Eg, 10x workers:
+
+    ```hcl
+    worker_count = 10
+    ```
+
+    This will give 320 cores and 580g of ram for just over $5/hour, which is great.
