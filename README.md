@@ -30,3 +30,65 @@ What you really want is just a single Docker image that can be used everywhere -
 ## Quickstart
 
 **See [pyspark-deploy-example](https://github.com/davidmcclure/pyspark-deploy-example) for a complete example**
+
+First, make sure you've got working installations of [Docker](https://www.docker.com/), [pipenv](https://pipenv.readthedocs.io/en/latest/), and [Terraform](https://www.terraform.io/).
+
+Say you've got a pyspark application that looks like:
+
+```text
+project
+├── job.py
+├── requirements.txt
+├── ...
+```
+
+### Step 1: Create a Dockerfile
+
+First, extend the base [`dclure/spark`](docker/Dockerfile) Dockerfile, which gives a complete Python + Java + Spark environment. There are various ways to structure this, but I find it nice to separate the application code from the packaging code. Let's move the application into a `/code` directory, and put the Dockerfile next to that:
+
+```text
+project
+├── Dockerfile
+├── code
+│   ├── job.py
+│   ├── requirements.txt
+│   ├── ...
+```
+
+A trivial Dockerfile might look like this:
+
+```dockerfile
+FROM dclure/spark
+
+ADD code/requirements.txt /etc
+RUN pip install -r /etc/requirements.txt
+
+ADD code /code
+WORKDIR /code
+```
+
+Let's also add a `docker-compose.yml` file in the top-level directory, which points to a repository on Docker Hub (doesn't need to exist yet) and mounts the `/code` directory into the container, which is essential for local development:
+
+```yml
+version: '3'
+
+services:
+
+  local:
+    build: .
+    image: dclure/pyspark-pi
+    volumes:
+      - ./code:/code
+```
+
+So, now we've got:
+
+```text
+project
+├── docker-compose.yml
+├── Dockerfile
+├── code
+│   ├── job.py
+│   ├── requirements.txt
+│   ├── ...
+```
