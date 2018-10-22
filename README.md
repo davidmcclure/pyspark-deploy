@@ -192,9 +192,7 @@ Now, the fun part! First, we need to make sure the Docker image for the applicat
 
 Now, control the cluster with the driver scripts:
 
-- **`create.sh`** - Start a cluster. This script can also be used to update or repair an existing cluster.
-
-Eg, if you find a bug and make a change to the local source code - just push a fresh copy of the image to Docker Hub, and re-run `create.sh` to push the change to the cluster. Or, if you lose workers to the spot market, run this script again replace them. This can be done safely even if a job is currently running;
+- **`create.sh`** - Start a cluster.
 
 - **`login.sh`** - SSH into the master node, drop into tmux session, attach to bash shell on the Spark driver container. Ready to `spark-submit`.
 
