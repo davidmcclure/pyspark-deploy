@@ -141,4 +141,8 @@ Now, we'll deploy this to a production cluster on EC2. First, we'll create a bas
     docker_ami = "ami-XXX"
     ```
 
-1. Copy this file into the `spark-cluster` directory, which sits adjacent to `docker-ami`: `cp docker-ami.auto.tfvars ../spark-cluster`. Terraform automatically loads variables from files with the `*.auto.tfvars` extension, so this file will override the `docker_ami` variable, defined in `variables.tf`.
+1. Copy this file into the `spark-cluster` directory, which sits adjacent to `docker-ami`:
+
+    `cp docker-ami.auto.tfvars ../spark-cluster`.
+
+    Terraform automatically loads variables from files with the `*.auto.tfvars` extension, so this file will override the `docker_ami` variable, defined in `variables.tf`.
