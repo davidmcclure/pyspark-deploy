@@ -189,3 +189,13 @@ Now, the fun part! First, we need to make sure the Docker image for the applicat
     ```
 
     This will give 320 cores and 580g of ram for just over $5/hour, which is great.
+
+Now, control the cluster with the driver scripts:
+
+- **`create.sh`** - Start a cluster.
+
+- **`login.sh`** - SSH into the master node, drop into tmux session, attach to bash shell on the Spark driver container. Ready to `spark-submit`.
+
+- **`web-admin.sh`** - Open a browser tab with the Spark web admin.
+
+- **`destroy.sh`** - Terminate cluster and all related AWS resources.
