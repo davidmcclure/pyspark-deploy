@@ -44,7 +44,7 @@ project
 
 ### Step 1: Create a Dockerfile
 
-First, extend the base [`dclure/spark`](docker/Dockerfile) Dockerfile, which gives a complete Python + Java + Spark environment. There are various ways to structure this, but I find it nice to separate the application code from the packaging code. Let's move the application into a `/code` directory, and put the Dockerfile next to that:
+First, extend the base [`dclure/spark`](docker/Dockerfile) Dockerfile, which gives a complete Python + Java + Spark environment. There are various ways to structure this, but I find it nice to separate the application code from the packaging code. Let's move the application into a `/code` directory, and add a `Dockerfile` and `docker-compose.yml` next to that:
 
 ```text
 project
@@ -67,7 +67,7 @@ ADD code /code
 WORKDIR /code
 ```
 
-Let's also add a `docker-compose.yml` file in the top-level directory, which points to a repository on Docker Hub (doesn't need to exist yet) and mounts the `/code` directory into the container, which is essential for local development:
+And, `docker-compose.yml` points to a repository on Docker Hub (doesn't need to exist yet) and mounts the `/code` directory into the container, which is essential for local development:
 
 ```yml
 version: '3'
@@ -81,14 +81,27 @@ services:
       - ./code:/code
 ```
 
-So, now we've got:
+### Step 2: Develop locally
 
-```text
-project
-├── docker-compose.yml
-├── Dockerfile
-├── code
-│   ├── job.py
-│   ├── requirements.txt
-│   ├── ...
+Now, we can run this container locally and develop in a standardized environment.
+
+First, build the image:
+
+`docker-compose build`
+
+Run a container and attach to a bash shell:
+
 ```
+docker-compose run local bash
+root@9475764f5e15:/code#
+```
+
+Which then gives access to the complete Spark environment. Eg,
+
+`spark-submit job.py`
+
+Since the `/code` is directory is mounted as a volume, any changes we make to the source code will immediately appear in the container.
+
+### Step 3: Create a base Docker AMI
+
+Now, we'll deploy this to a production cluster on EC2. First, we'll create a base AMI with 
