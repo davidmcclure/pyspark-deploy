@@ -133,12 +133,12 @@ Now, we'll deploy this to a production cluster on EC2. First, we'll create a bas
 
 1. Change into `/deploy/terraform/docker-ami` and run `./setup.sh`, which initializes the Terraform project.
 
-1. Make sure you've got correctly configured AWS credentials (eg, via `aws configure`). Then, run **`./build.sh`** which will create a sandbox instance on EC2, configure Docker, create an AMI. At the end, when prompted, type `yes` to confirm that Terraform should destroy the node.
+1. Make sure you've got correctly configured AWS credentials (eg, via `aws configure`).
 
-1. This script will produce a (.gitignored) file in the working directory called `docker-ami.auto.tfvars`, which contains the ID of the new AMI. Eg,
+1. Run **`./build.sh`** which will create a sandbox instance on EC2, configure Docker, create an AMI. At the end, when prompted, type `yes` to confirm that Terraform should destroy the node. This script will produce a (.gitignored) file in the working directory called `docker-ami.auto.tfvars`, which contains the ID of the new AMI. Eg,
 
     ```hcl
     docker_ami = "ami-XXX"
     ```
 
-    Copy this file into the `spark-cluster` directory, which sits adjacent to `docker-ami`: `cp docker-ami.auto.tfvars ../spark-cluster`. Terraform automatically loads variables from files with the `*.auto.tfvars` extension, so this file will override the `docker_ami` variable, defined in `variables.tf`.
+1. Copy this file into the `spark-cluster` directory, which sits adjacent to `docker-ami`: `cp docker-ami.auto.tfvars ../spark-cluster`. Terraform automatically loads variables from files with the `*.auto.tfvars` extension, so this file will override the `docker_ami` variable, defined in `variables.tf`.
