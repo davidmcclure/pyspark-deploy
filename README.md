@@ -48,6 +48,7 @@ First, extend the base [`dclure/spark`](docker/Dockerfile) Dockerfile, which giv
 
 ```text
 project
+├── docker-compose.yml
 ├── Dockerfile
 ├── code
 │   ├── job.py
@@ -104,4 +105,20 @@ Since the `/code` is directory is mounted as a volume, any changes we make to th
 
 ### Step 3: Create a base Docker AMI
 
-Now, we'll deploy this to a production cluster on EC2. First, we'll create a base AMI with 
+Now, we'll deploy this to a production cluster on EC2. First, we'll create a base AMI with a Docker installation, which will then serve as the template for the cluster nodes. This step only has to be done once for each AWS account that you're deploying clusters to.
+
+1. Add this repo as a submodule in your project. Eg, under `/deploy`:
+
+    `git submodule add https://github.com/davidmcclure/pyspark-deploy.git deploy`
+
+    ```text
+    project
+    ├── docker-compose.yml
+    ├── Dockerfile
+    ├── code
+    │   ├── job.py
+    │   ├── requirements.txt
+    │   ├── ...
+    ├── deploy
+    │   ├── ...
+    ```
