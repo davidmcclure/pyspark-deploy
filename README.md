@@ -77,7 +77,7 @@ services:
 
   local:
     build: .
-    image: dclure/pyspark-pi
+    image: dclure/pyspark-example
     volumes:
       - ./code:/code
 ```
@@ -145,4 +145,41 @@ Now, we'll deploy this to a production cluster on EC2. First, we'll create a bas
 
     `cp docker-ami.auto.tfvars ../spark-cluster`
 
-    Terraform automatically loads variables from files with the `*.auto.tfvars` extension, so this file will override the `docker_ami` variable, defined in `variables.tf`.
+    Terraform automatically loads variables from files with the `*.auto.tfvars` extension, so this file will override the `docker_ami` variable, defined in `spark-cluster/variables.tf`.
+
+### Step 4: Deploy a cluster
+
+Now, the fun part! First, we need to make sure the Docker image for the application is available in a web-facing Docker Hub repository, so that it can be pulled onto the cluster nodes.
+
+1. In `docker-compose.yml`, we reference a Hub repository in the `image` key.
+
+    ```yml
+    version: '3'
+
+    services:
+
+      local:
+        build: .
+        image: dclure/pyspark-example <---
+        volumes:
+          - ./code:/code
+    ```
+
+    Create this repository, if it doesn't already exist.
+
+1. Push the image with `docker-compose push`.
+
+1. Change into `/deploy/terraform/spark-cluster` and run `./setup.sh`.
+
+1. Copy `local.yml.changeme` -> `local.yml` and fill in the image name and AWS credentials. Eg:
+
+    ```yml
+    ---
+    spark_docker_image: dclure/pyspark-example
+    aws_access_key_id: XXX
+    aws_secret_access_key: XXX
+    ```
+
+    **Important**: `local.yml` is .gitignored, so even if you're working with a fork of this repository and committing changes, this file shouldn't get tracked. But, out of an abundance of caution, I use `ansible-vault` to [encrypt the values of the two AWS credential keys](https://docs.ansible.com/ansible/latest/user_guide/vault.html#encrypt-string-for-use-in-yaml). This way, even if this file gets accidentally committed and pushed to a public-facing repo, the secrets won't leak.
+
+1. Check the cluster settings in `variables.tf`. By default, `pyspark-deploy` uses `c3.8xlarge` spot instances as worker nodes
