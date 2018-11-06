@@ -96,7 +96,6 @@ resource "aws_instance" "master" {
   }
 }
 
-# TODO: one-time
 resource "aws_spot_instance_request" "worker" {
   ami                         = "${var.docker_ami}"
   instance_type               = "${var.worker_instance_type}"
