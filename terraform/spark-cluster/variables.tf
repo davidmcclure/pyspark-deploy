@@ -28,6 +28,14 @@ variable "worker_count" {
   default = 2
 }
 
+variable "master_root_vol_size" {
+  default = 10
+}
+
+variable "worker_root_vol_size" {
+  default = 10
+}
+
 variable "driver_memory" {
   default = "5g"
 }
