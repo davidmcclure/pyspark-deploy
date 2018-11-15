@@ -19,7 +19,7 @@ spark_data_root: /mnt
 
 spark_local_dir: '{{ spark_data_root }}/spark'
 spark_warehouse_dir: '{{ spark_data_root }}/spark-warehouse'
-spark_derby_dir: ''{{ spark_data_root }}/derby'
+spark_derby_dir: '{{ spark_data_root }}/derby'
 spark_hadoop_tmp_dir: '{{ spark_data_root }}/hadoop'
 spark_worker_dir: '{{ spark_data_root }}/work'
 spark_config_dir: /etc/spark
