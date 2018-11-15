@@ -15,11 +15,14 @@ spark_packages:
 spark_task_max_failures: 20
 spark_s3a_connection_maximum: 2000
 
-spark_local_dir: /mnt/spark
-spark_derby_dir: /mnt/derby
-spark_warehouse_dir: /mnt/spark-warehouse
+spark_data_root: /mnt
+
+spark_local_dir: '{{ spark_data_root }}/spark'
+spark_warehouse_dir: '{{ spark_data_root }}/spark-warehouse'
+spark_derby_dir: ''{{ spark_data_root }}/derby'
+spark_hadoop_tmp_dir: '{{ spark_data_root }}/hadoop'
+spark_worker_dir: '{{ spark_data_root }}/work'
 spark_config_dir: /etc/spark
-spark_hadoop_tmp_dir: /mnt/hadoop
 
 spark_volumes:
   - '{{ spark_config_dir }}:{{ spark_home }}/conf'
