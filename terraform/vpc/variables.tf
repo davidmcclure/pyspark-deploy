@@ -7,5 +7,5 @@ variable "aws_region" {
 }
 
 variable "aws_availability_zone" {
-  default = "us-east-1d"
+  default = "us-east-1a"
 }
