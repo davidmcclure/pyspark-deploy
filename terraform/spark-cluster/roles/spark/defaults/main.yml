@@ -7,7 +7,7 @@ spark_docker_image: dclure/spark
 spark_home: /opt/spark
 
 spark_master_port: 7077
-spark_master_url: spark://{{ tf_master_private_dns }}:{{ spark_master_port }}
+spark_master_url: spark://{{ tf_master_private_ip }}:{{ spark_master_port }}
 
 spark_packages:
   - org.apache.hadoop:hadoop-aws:2.7.3

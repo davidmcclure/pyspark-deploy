@@ -116,7 +116,7 @@ data "template_file" "inventory" {
   vars {
     master_ip              = "${aws_instance.master.public_ip}"
     worker_ips             = "${join("\n", aws_spot_instance_request.worker.*.public_ip)}"
-    master_private_dns     = "${aws_instance.master.private_dns}"
+    master_private_ip      = "${aws_instance.master.private_ip}"
     driver_memory          = "${var.driver_memory}"
     driver_max_result_size = "${var.driver_max_result_size}"
     executor_memory        = "${var.executor_memory}"
