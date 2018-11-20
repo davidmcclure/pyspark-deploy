@@ -91,6 +91,10 @@ resource "aws_instance" "master" {
   key_name                    = "${module.vpc.key_name}"
   associate_public_ip_address = true
 
+  root_block_device = {
+    volume_size = "${var.master_root_vol_size}"
+  }
+
   tags {
     Name = "spark-master"
   }
@@ -106,6 +110,10 @@ resource "aws_spot_instance_request" "worker" {
   spot_type                   = "${var.spot_type}"
   associate_public_ip_address = true
   wait_for_fulfillment        = true
+
+  root_block_device = {
+    volume_size = "${var.worker_root_vol_size}"
+  }
 
   count = "${var.worker_count}"
 }
