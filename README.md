@@ -109,6 +109,8 @@ Now, we'll deploy this to a production cluster on EC2. First, we'll create a bas
 
 **Important**: This step only has to be done once for each AWS account that you're deploying clusters to.
 
+0. create a ssh key and add it to your keychain. `ssh-keygen ~/.ssh/spark && ssh-add ~/.ssh/spark`
+
 1. Add this repo as a submodule in your project. Eg, under `/deploy`:
 
     `git submodule add https://github.com/davidmcclure/pyspark-deploy.git deploy`
