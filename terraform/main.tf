@@ -1,6 +1,8 @@
 module "vpc" {
-  source = "../vpc"
-  name   = "${var.name}"
+  source                = "github.com/davidmcclure/tf-aws-vpc"
+  name                  = "${var.name}"
+  aws_region            = "${var.aws_region}"
+  aws_availability_zone = "${var.aws_availability_zone}"
 }
 
 provider "aws" {
@@ -83,12 +85,17 @@ resource "aws_security_group" "spark" {
   }
 }
 
+resource "aws_key_pair" "spark" {
+  key_name   = "${var.name}"
+  public_key = "${file("./key.pub")}"
+}
+
 resource "aws_instance" "master" {
   ami                         = "${var.docker_ami}"
   instance_type               = "${var.master_instance_type}"
   subnet_id                   = "${module.vpc.subnet_id}"
   vpc_security_group_ids      = ["${aws_security_group.spark.id}"]
-  key_name                    = "${module.vpc.key_name}"
+  key_name                    = "${aws_key_pair.spark.key_name}"
   associate_public_ip_address = true
 
   root_block_device = {
@@ -105,7 +112,7 @@ resource "aws_spot_instance_request" "worker" {
   instance_type               = "${var.worker_instance_type}"
   subnet_id                   = "${module.vpc.subnet_id}"
   vpc_security_group_ids      = ["${aws_security_group.spark.id}"]
-  key_name                    = "${module.vpc.key_name}"
+  key_name                    = "${aws_key_pair.spark.key_name}"
   spot_price                  = "${var.spot_price}"
   spot_type                   = "${var.spot_type}"
   associate_public_ip_address = true

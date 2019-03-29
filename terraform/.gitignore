@@ -5,3 +5,5 @@
 *.tfvars
 .inventory
 .master-ip
+*.pub
+local.yml
