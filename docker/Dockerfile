@@ -21,12 +21,12 @@ RUN apt-get update && apt-get install -y \
   libxslt1-dev \
   libffi-dev \
   libxml2-dev \
-  redis-tools
+  liblzma-dev
 
 # Python 3
 
-ARG PYTHON_VERSION=3.7.0
-ARG PYENV_ROOT=/opt/pyenv
+ARG PYTHON_VERSION=3.7.2
+ENV PYENV_ROOT=/opt/pyenv
 RUN git clone https://github.com/pyenv/pyenv.git $PYENV_ROOT
 ENV PATH $PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
 RUN pyenv install $PYTHON_VERSION
