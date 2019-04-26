@@ -18,6 +18,7 @@
   with_items:
     - spark-defaults.conf
     - spark-env.sh
+    - log4j.properties
 
 - name: Render Docker bash script
   template:
