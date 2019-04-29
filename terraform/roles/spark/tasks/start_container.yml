@@ -6,7 +6,8 @@
     name: '{{ name }}'
     command: '{{ command }}'
     volumes: '{{ spark_volumes }}'
+    env: '{{ spark_docker_env }}'
     state: started
     network_mode: host
     pull: true
-    env: '{{ spark_docker_env }}'
+    timeout: 300
