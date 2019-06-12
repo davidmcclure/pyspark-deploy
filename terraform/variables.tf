@@ -55,3 +55,4 @@ variable "driver_max_result_size" {
 variable "executor_memory" {
   default = "40g"
 }
+
