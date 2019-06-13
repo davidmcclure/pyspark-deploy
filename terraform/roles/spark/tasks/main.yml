@@ -20,17 +20,37 @@
     - spark-env.sh
     - log4j.properties
 
-- name: Render Docker bash script
+- name: Render scripts
   template:
-    src: docker-bash.sh.j2
-    dest: /home/{{ ansible_user }}/docker-bash.sh
+    src: '{{ item }}.j2'
+    dest: '/home/{{ ansible_user }}/{{ item }}'
     owner: '{{ ansible_user }}'
     mode: u+x
+  with_items:
+    - docker-bash.sh
+    - docker-login.sh
 
 - name: Automatically connect to container on login
   lineinfile:
     path: /home/{{ ansible_user }}/.bashrc
     line: source ./docker-bash.sh
+
+# Super annoying issue regarding 'unattended-upgrades' on the AMI.  See
+# https://github.com/ansible/ansible/issues/25414.  This can and does slow down
+# deployment, unfortunately.  A more appropriate solution, given the simple use
+# case of just needing awscli, would probably be to either run awscli locally
+# and find a good way to pass the docker login token to Ansible, find another
+# way to install awscli (that doesn't take even longer), or create an AMI with
+# awscli already installed (and possibly with 'unattended-upgrades' disabled).
+- name: Wait for any possibly running unattended upgrade to finish
+  raw: systemd-run --property="After=apt-daily.service apt-daily-upgrade.service" --wait /bin/true
+
+- name: Install awscli
+  apt:
+    name: awscli
+
+- name: Login to AWS ECR
+  command: sh /home/{{ ansible_user }}/docker-login.sh
 
 - name: Start master
   include_tasks: start_container.yml
