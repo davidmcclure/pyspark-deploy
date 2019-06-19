@@ -38,9 +38,11 @@
 
 # TODO: Check for ecr_login boolean flag. Break into separate file.
 
-# TODO: Provide login command directly, set ENV via Ansible?
 - name: Login to AWS ECR
-  command: sh /home/{{ ansible_user }}/docker-login.sh
+  shell: $(aws ecr get-login --no-include-email --region us-east-1)
+  environment:
+    AWS_ACCESS_KEY_ID: '{{ aws_access_key_id }}'
+    AWS_SECRET_ACCESS_KEY: '{{ aws_secret_access_key }}'
 
 - name: Start master
   include_tasks: start_container.yml
