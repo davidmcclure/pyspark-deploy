@@ -20,16 +20,12 @@
     - spark-env.sh
     - log4j.properties
 
-# TODO: No need for docker-login, if we use `command` directly.
-- name: Render scripts
+- name: Render Docker bash script
   template:
-    src: '{{ item }}.j2'
-    dest: '/home/{{ ansible_user }}/{{ item }}'
+    src: docker-bash.sh.j2
+    dest: /home/{{ ansible_user }}/docker-bash.sh
     owner: '{{ ansible_user }}'
     mode: u+x
-  with_items:
-    - docker-bash.sh
-    - docker-login.sh
 
 - name: Automatically connect to container on login
   lineinfile:
@@ -39,6 +35,7 @@
 # TODO: Check for ecr_login boolean flag. Break into separate file.
 
 - name: Login to AWS ECR
+  # TODO: ecr_region variable
   shell: $(aws ecr get-login --no-include-email --region us-east-1)
   environment:
     AWS_ACCESS_KEY_ID: '{{ aws_access_key_id }}'
