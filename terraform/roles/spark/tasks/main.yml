@@ -20,6 +20,7 @@
     - spark-env.sh
     - log4j.properties
 
+# TODO: No need for docker-login, if we use `command` directly.
 - name: Render scripts
   template:
     src: '{{ item }}.j2'
@@ -27,6 +28,7 @@
     owner: '{{ ansible_user }}'
     mode: u+x
   with_items:
+    # TODO: Something broken with docker-bash.sh
     - docker-bash.sh
     - docker-login.sh
 
@@ -35,6 +37,8 @@
     path: /home/{{ ansible_user }}/.bashrc
     line: source ./docker-bash.sh
 
+# TODO: Fix in Docker AMI build.
+
 # Super annoying issue regarding 'unattended-upgrades' on the AMI.  See
 # https://github.com/ansible/ansible/issues/25414.  This can and does slow down
 # deployment, unfortunately.  A more appropriate solution, given the simple use
@@ -42,13 +46,16 @@
 # and find a good way to pass the docker login token to Ansible, find another
 # way to install awscli (that doesn't take even longer), or create an AMI with
 # awscli already installed (and possibly with 'unattended-upgrades' disabled).
-- name: Wait for any possibly running unattended upgrade to finish
-  raw: systemd-run --property="After=apt-daily.service apt-daily-upgrade.service" --wait /bin/true
+# - name: Wait for any possibly running unattended upgrade to finish
+#   raw: systemd-run --property="After=apt-daily.service apt-daily-upgrade.service" --wait /bin/true
+
+# TODO: Check for ecr_login boolean flag. Break into separate file.
 
 - name: Install awscli
   apt:
     name: awscli
 
+# TODO: Provide login command directly, set ENV via Ansible?
 - name: Login to AWS ECR
   command: sh /home/{{ ansible_user }}/docker-login.sh
 
