@@ -1,18 +1,11 @@
-module "vpc" {
-  source                = "github.com/davidmcclure/tf-aws-vpc"
-  name                  = var.name
-  aws_region            = var.aws_region
-  aws_availability_zone = var.aws_availability_zone
-}
-
 provider "aws" {
-  region = module.vpc.aws_region
+  region = var.aws_region
 }
 
 resource "aws_security_group" "spark" {
   name        = var.name
   description = "Standalone Spark cluster"
-  vpc_id      = module.vpc.vpc_id
+  vpc_id      = var.vpc_id
 
   ingress {
     from_port   = 22
@@ -93,7 +86,7 @@ resource "aws_key_pair" "spark" {
 resource "aws_instance" "master" {
   ami                         = var.docker_ami
   instance_type               = var.master_instance_type
-  subnet_id                   = module.vpc.subnet_id
+  subnet_id                   = var.subnet_id
   vpc_security_group_ids      = [aws_security_group.spark.id]
   key_name                    = aws_key_pair.spark.key_name
   associate_public_ip_address = true
@@ -110,7 +103,7 @@ resource "aws_instance" "master" {
 resource "aws_spot_instance_request" "worker" {
   ami                         = var.docker_ami
   instance_type               = var.worker_instance_type
-  subnet_id                   = module.vpc.subnet_id
+  subnet_id                   = var.subnet_id
   vpc_security_group_ids      = [aws_security_group.spark.id]
   key_name                    = aws_key_pair.spark.key_name
   spot_price                  = var.spot_price
@@ -147,4 +140,3 @@ resource "local_file" "master_ip" {
   content  = aws_instance.master.public_ip
   filename = "${path.module}/.master-ip"
 }
-
