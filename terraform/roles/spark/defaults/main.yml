@@ -41,6 +41,9 @@ spark_docker_env:
 
 spark_openblas_num_threads: 1
 
+spark_ecr_login: false
+spark_ecr_region: us-east-1
+
 # Provide locally.
 aws_access_key_id: null
 aws_secret_access_key: null

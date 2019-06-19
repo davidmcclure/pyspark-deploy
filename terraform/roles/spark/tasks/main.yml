@@ -35,8 +35,10 @@
 # TODO: Check for ecr_login boolean flag. Break into separate file.
 
 - name: Login to AWS ECR
-  # TODO: ecr_region variable
-  shell: $(aws ecr get-login --no-include-email --region us-east-1)
+  shell: >
+    $(aws ecr get-login --no-include-email
+    --region {{ spark_ecr_region }})
+  when: spark_ecr_login
   environment:
     AWS_ACCESS_KEY_ID: '{{ aws_access_key_id }}'
     AWS_SECRET_ACCESS_KEY: '{{ aws_secret_access_key }}'
