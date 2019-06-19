@@ -37,8 +37,6 @@
     path: /home/{{ ansible_user }}/.bashrc
     line: source ./docker-bash.sh
 
-# TODO: Fix in Docker AMI build.
-
 # Super annoying issue regarding 'unattended-upgrades' on the AMI.  See
 # https://github.com/ansible/ansible/issues/25414.  This can and does slow down
 # deployment, unfortunately.  A more appropriate solution, given the simple use
@@ -51,6 +49,7 @@
 
 # TODO: Check for ecr_login boolean flag. Break into separate file.
 
+# TODO: Do in Docker AMI build.
 - name: Install awscli
   apt:
     name: awscli
