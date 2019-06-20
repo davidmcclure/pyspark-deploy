@@ -10,9 +10,16 @@ variable "aws_availability_zone" {
   default = "us-east-1a"
 }
 
-# TODO: Null value, in TF 0.12?
+variable "vpc_id" {
+  type = "string"
+}
+
+variable "subnet_id" {
+  type = "string"
+}
+
 variable "docker_ami" {
-  default     = "ami-XXX"
+  type = "string"
   description = "AMI with Docker."
 }
 

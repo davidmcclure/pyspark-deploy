@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CONTAINER_ID=$(sudo docker ps -f "name=spark" | sed -n 2p | grep -o '[0-9a-z]\{12\}')
+CONTAINER_ID=$(sudo docker ps -aqf "name=spark-master")
 
 DOCKER_CMD="sudo docker exec -it ${CONTAINER_ID} bash"
 

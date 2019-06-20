@@ -1,4 +1,10 @@
 
+## OSP-specific changes
+
+- The version of terraform must be >= 0.12.
+- There are Ansible steps for logging into AWS ECR, allowing Docker images to
+  be pulled from there.
+
 # pyspark-deploy
 
 This project manages the full lifecycle of a Python + Spark <-> S3 project, from local development to full-size cluster deployments on AWS. The goal is to make this totally trivial, like pushing to Heroku.

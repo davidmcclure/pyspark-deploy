@@ -39,7 +39,10 @@ spark_max_files: 100000
 spark_docker_env:
   SPARK_ENV: prod
 
-openblas_num_threads: 1
+spark_openblas_num_threads: 1
+
+spark_ecr_login: false
+spark_ecr_region: us-east-1
 
 # Provide locally.
 aws_access_key_id: null
