@@ -19,7 +19,7 @@ variable "subnet_id" {
 }
 
 variable "docker_ami" {
-  type = "string"
+  type        = "string"
   description = "AMI with Docker."
 }
 
@@ -43,22 +43,18 @@ variable "worker_count" {
   default = 2
 }
 
-variable "master_root_vol_size" {
-  default = 10
-}
-
-variable "worker_root_vol_size" {
-  default = 10
-}
-
 variable "driver_memory" {
   default = "5g"
 }
 
 variable "driver_max_result_size" {
-  default = "5g"
+  default = "10g"
 }
 
 variable "executor_memory" {
   default = "40g"
+}
+
+variable "worker_docker_runtime" {
+  default = ""
 }

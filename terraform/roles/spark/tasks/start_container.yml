@@ -7,6 +7,7 @@
     command: '{{ command }}'
     volumes: '{{ spark_volumes }}'
     env: '{{ spark_docker_env }}'
+    runtime: '{{ runtime|default("") }}'
     state: started
     network_mode: host
     pull: true
