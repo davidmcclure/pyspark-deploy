@@ -91,10 +91,6 @@ resource "aws_instance" "master" {
   key_name                    = aws_key_pair.spark.key_name
   associate_public_ip_address = true
 
-  root_block_device {
-    volume_size = var.master_root_vol_size
-  }
-
   tags = {
     Name = "spark-master"
   }
@@ -111,10 +107,6 @@ resource "aws_spot_instance_request" "worker" {
   associate_public_ip_address = true
   wait_for_fulfillment        = true
 
-  root_block_device {
-    volume_size = var.worker_root_vol_size
-  }
-
   count = var.worker_count
 }
 
@@ -128,6 +120,7 @@ data "template_file" "inventory" {
     driver_memory          = var.driver_memory
     driver_max_result_size = var.driver_max_result_size
     executor_memory        = var.executor_memory
+    worker_docker_runtime  = var.worker_docker_runtime
   }
 }
 

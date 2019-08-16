@@ -32,13 +32,11 @@
     path: /home/{{ ansible_user }}/.bashrc
     line: source ./docker-bash.sh
 
-# TODO: Check for ecr_login boolean flag. Break into separate file.
-
 - name: Login to AWS ECR
   shell: >
     $(aws ecr get-login --no-include-email
     --region {{ spark_ecr_region }})
-  when: spark_ecr_login
+  when: spark_ecr_login|bool
   environment:
     AWS_ACCESS_KEY_ID: '{{ aws_access_key_id }}'
     AWS_SECRET_ACCESS_KEY: '{{ aws_secret_access_key }}'
@@ -55,6 +53,7 @@
   when: '"workers" in group_names'
   vars:
     name: spark-worker
+    runtime: '{{ tf_worker_docker_runtime }}'
     command: >
       spark-class org.apache.spark.deploy.worker.Worker
       {{ spark_master_url }}
