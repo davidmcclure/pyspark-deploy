@@ -19,8 +19,7 @@ variable "subnet_id" {
 }
 
 variable "docker_ami" {
-  type        = "string"
-  description = "AMI with Docker."
+  type = "string"
 }
 
 variable "master_instance_type" {
@@ -37,6 +36,10 @@ variable "spot_price" {
 
 variable "spot_type" {
   default = "one-time"
+}
+
+variable "public_key_path" {
+  type = "string"
 }
 
 variable "worker_count" {
