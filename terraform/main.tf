@@ -80,7 +80,7 @@ resource "aws_security_group" "spark" {
 
 resource "aws_key_pair" "spark" {
   key_name   = var.name
-  public_key = file("./key.pub")
+  public_key = file(var.public_key_path)
 }
 
 resource "aws_instance" "master" {

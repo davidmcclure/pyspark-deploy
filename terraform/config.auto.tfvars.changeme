@@ -1,0 +1,5 @@
+
+docker_ami = "ami-XXX"
+vpc_id = "vpc-XXX"
+subnet_id = "subnet-XXX"
+public_key_path = "~/.ssh/xxx"
