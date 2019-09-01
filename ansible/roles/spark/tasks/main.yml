@@ -6,10 +6,13 @@
 - name: Gather facts, after SSH
   setup:
 
-- name: Create config directory
+- name: Create directories
   file:
-    path: '{{ spark_config_dir }}'
+    path: '{{ item }}'
     state: directory
+  with_items:
+    - '{{ spark_config_dir }}'
+    - '{{ spark_data_dir }}'
 
 - name: Render Spark config
   template:

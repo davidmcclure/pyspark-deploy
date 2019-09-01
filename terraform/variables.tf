@@ -61,3 +61,11 @@ variable "executor_memory" {
 variable "worker_docker_runtime" {
   default = ""
 }
+
+variable "master_root_vol_size" {
+  default = 10
+}
+
+variable "worker_root_vol_size" {
+  default = 10
+}

@@ -94,6 +94,10 @@ resource "aws_instance" "master" {
   tags = {
     Name = "spark-master"
   }
+
+  root_block_device {
+    volume_size = var.master_root_vol_size
+  }
 }
 
 resource "aws_spot_instance_request" "worker" {
@@ -106,8 +110,11 @@ resource "aws_spot_instance_request" "worker" {
   spot_type                   = var.spot_type
   associate_public_ip_address = true
   wait_for_fulfillment        = true
+  count                       = var.worker_count
 
-  count = var.worker_count
+  root_block_device {
+    volume_size = var.worker_root_vol_size
+  }
 }
 
 data "template_file" "inventory" {
