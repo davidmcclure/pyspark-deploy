@@ -8,11 +8,8 @@
 
 - name: Create directories
   file:
-    path: '{{ item }}'
+    path: '{{ spark_config_dir }}'
     state: directory
-  with_items:
-    - '{{ spark_config_dir }}'
-    - '{{ spark_data_dir }}'
 
 - name: Render Spark config
   template:

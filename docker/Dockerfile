@@ -59,3 +59,5 @@ RUN curl -sL --retry 3 \
 
 COPY spark-env.sh $SPARK_HOME/conf
 COPY spark-defaults.conf $SPARK_HOME/conf
+
+RUN mkdir /data
