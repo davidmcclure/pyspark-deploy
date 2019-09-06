@@ -16,16 +16,17 @@ spark_packages:
 spark_task_max_failures: 20
 spark_s3a_connection_maximum: 2000
 
-spark_scratch_root: /data
-spark_local_dir: '{{ spark_scratch_root }}/spark'
-spark_warehouse_dir: '{{ spark_scratch_root }}/spark-warehouse'
-spark_derby_dir: '{{ spark_scratch_root }}/derby'
-spark_hadoop_tmp_dir: '{{ spark_scratch_root }}/hadoop'
-spark_worker_dir: '{{ spark_scratch_root }}/work'
+spark_data_root: /data
+spark_local_dir: '{{ spark_data_root }}/spark'
+spark_warehouse_dir: '{{ spark_data_root }}/spark-warehouse'
+spark_derby_dir: '{{ spark_data_root }}/derby'
+spark_hadoop_tmp_dir: '{{ spark_data_root }}/hadoop'
+spark_worker_dir: '{{ spark_data_root }}/work'
 spark_config_dir: /etc/spark
 
 spark_volumes:
   - '{{ spark_config_dir }}:{{ spark_home }}/conf'
+  - '{{ spark_data_root }}:{{ spark_data_root }}'
 
 # Use EC2 public DNS.
 spark_public_dns: >
