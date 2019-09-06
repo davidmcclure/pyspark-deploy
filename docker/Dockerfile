@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
   curl \
   wget \
   tmux \
+  parallel \
   build-essential \
   libssl-dev \
   zlib1g-dev \
@@ -41,7 +42,7 @@ ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 
 # Spark
 
-ARG SPARK_VERSION=2.4.3
+ARG SPARK_VERSION=2.4.4
 ARG SPARK_DIRNAME=spark-${SPARK_VERSION}
 ARG SPARK_PACKAGE=${SPARK_DIRNAME}-bin-hadoop2.7
 ARG SPARK_MIRROR=http://apache.cs.utah.edu/spark
@@ -59,5 +60,3 @@ RUN curl -sL --retry 3 \
 
 COPY spark-env.sh $SPARK_HOME/conf
 COPY spark-defaults.conf $SPARK_HOME/conf
-
-# RUN mkdir /data
