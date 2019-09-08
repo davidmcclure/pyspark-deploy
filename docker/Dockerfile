@@ -1,5 +1,5 @@
 
-FROM ubuntu:xenial
+FROM ubuntu:bionic
 
 ENV LC_ALL C.UTF-8
 ENV LANG C.UTF-8
@@ -25,8 +25,7 @@ RUN apt-get update && apt-get install -y \
   liblzma-dev
 
 # Python 3
-
-ARG PYTHON_VERSION=3.7.2
+ARG PYTHON_VERSION=3.7.4
 ENV PYENV_ROOT=/opt/pyenv
 RUN git clone https://github.com/pyenv/pyenv.git $PYENV_ROOT
 ENV PATH $PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
@@ -35,7 +34,6 @@ RUN pyenv global $PYTHON_VERSION
 RUN pip install --upgrade pip
 
 # Java
-
 RUN apt-get update && apt-get install -y openjdk-8-jdk
 RUN update-ca-certificates -f
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
