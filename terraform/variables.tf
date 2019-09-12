@@ -67,5 +67,5 @@ variable "master_root_vol_size" {
 }
 
 variable "worker_root_vol_size" {
-  default = 10
+  default = 100
 }
