@@ -117,12 +117,20 @@ resource "aws_spot_instance_request" "worker" {
   }
 }
 
+locals {
+  # Worker IP list for template.
+  worker_ips_str = join("\n", [
+    for ip in aws_spot_instance_request.worker.*.public_ip :
+    ip if ip != null
+  ])
+}
+
 data "template_file" "inventory" {
   template = file("${path.module}/inventory.tpl")
 
   vars = {
     master_ip              = aws_instance.master.public_ip
-    worker_ips             = join("\n", aws_spot_instance_request.worker.*.public_ip)
+    worker_ips             = local.worker_ips_str
     master_private_ip      = aws_instance.master.private_ip
     driver_memory          = var.driver_memory
     driver_max_result_size = var.driver_max_result_size
