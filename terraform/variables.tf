@@ -27,11 +27,11 @@ variable "master_instance_type" {
 }
 
 variable "worker_instance_type" {
-  default = "c3.8xlarge"
+  default = "m5.8xlarge"
 }
 
 variable "spot_price" {
-  default = 0.48
+  default = 0.6
 }
 
 variable "spot_type" {
