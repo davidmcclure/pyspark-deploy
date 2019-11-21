@@ -25,10 +25,10 @@ RUN apt-get update && apt-get install -y \
   liblzma-dev
 
 # Python 3
-ARG PYTHON_VERSION=3.7.4
-ENV PYENV_ROOT=/opt/pyenv
-RUN git clone https://github.com/pyenv/pyenv.git $PYENV_ROOT
-ENV PATH $PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
+ARG PYENV_ROOT=/root/.pyenv
+ARG PYTHON_VERSION=3.7.5
+RUN curl https://pyenv.run | bash
+ENV PATH $PYENV_ROOT/bin:$PYENV_ROOT/shims:$PATH
 RUN pyenv install $PYTHON_VERSION
 RUN pyenv global $PYTHON_VERSION
 RUN pip install --upgrade pip
