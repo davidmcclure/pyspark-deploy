@@ -130,6 +130,7 @@ data "template_file" "inventory" {
     driver_memory          = var.driver_memory
     driver_max_result_size = var.driver_max_result_size
     executor_memory        = var.executor_memory
+    master_docker_runtime  = var.master_docker_runtime
     worker_docker_runtime  = var.worker_docker_runtime
   }
 }

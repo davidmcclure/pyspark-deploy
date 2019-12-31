@@ -58,6 +58,10 @@ variable "executor_memory" {
   default = "40g"
 }
 
+variable "master_docker_runtime" {
+  default = ""
+}
+
 variable "worker_docker_runtime" {
   default = ""
 }
