@@ -6,6 +6,11 @@
 - name: Gather facts, after SSH
   setup:
 
+# TODO: Move to AMI?
+- name: Install docker-py
+  pip:
+    name: docker
+
 - name: Create directories
   file:
     path: '{{ item }}'
@@ -49,6 +54,7 @@
   when: '"master" in group_names'
   vars:
     name: spark-master
+    runtime: '{{ tf_master_docker_runtime }}'
     command: spark-class org.apache.spark.deploy.master.Master
 
 - name: Start workers
