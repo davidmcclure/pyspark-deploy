@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 resource "aws_security_group" "spark" {
-  name        = var.name
+
   description = "Standalone Spark cluster"
   vpc_id      = var.vpc_id
 
@@ -72,14 +72,9 @@ resource "aws_security_group" "spark" {
     cidr_blocks = ["0.0.0.0/0"]
     protocol    = "tcp"
   }
-
-  tags = {
-    Name = var.name
-  }
 }
 
 resource "aws_key_pair" "spark" {
-  key_name   = var.name
   public_key = file(var.public_key_path)
 }
 
