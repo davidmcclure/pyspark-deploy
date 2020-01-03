@@ -1,5 +1,6 @@
 ---
 
+# TODO: Only restart if registry container has changed.
 - name: Start container
   docker_container:
     image: '{{ spark_docker_image }}'
@@ -12,5 +13,3 @@
     network_mode: host
     pull: true
     timeout: 300
-    comparisons:
-      '*': ignore
