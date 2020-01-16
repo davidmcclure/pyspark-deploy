@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y \
   wget \
   tmux \
   parallel \
+  software-properties-common \
   build-essential \
   libssl-dev \
   zlib1g-dev \
