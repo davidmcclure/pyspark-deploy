@@ -13,3 +13,5 @@
     network_mode: host
     pull: true
     timeout: 300
+    comparisons:
+      '*': ignore
