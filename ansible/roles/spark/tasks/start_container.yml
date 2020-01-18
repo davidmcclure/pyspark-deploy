@@ -12,6 +12,4 @@
     network_mode: host
     pull: true
     timeout: 300
-    # TODO: Only restart if registry container has changed.
-    comparisons:
-      '*': ignore
+    # TODO: Only restart if image has changed.
