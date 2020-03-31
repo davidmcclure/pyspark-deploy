@@ -27,7 +27,7 @@ RUN apt-get update && apt-get install -y \
 
 # Python 3
 ARG PYENV_ROOT=/root/.pyenv
-ARG PYTHON_VERSION=3.7.5
+ARG PYTHON_VERSION=3.7.7
 RUN curl https://pyenv.run | bash
 ENV PATH $PYENV_ROOT/bin:$PYENV_ROOT/shims:$PATH
 RUN pyenv install $PYTHON_VERSION
