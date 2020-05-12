@@ -11,7 +11,6 @@ spark_master_url: spark://{{ tf_master_private_ip }}:{{ spark_master_port }}
 
 spark_packages:
   - org.apache.hadoop:hadoop-aws:2.7.3
-  - org.apache.spark:spark-avro_2.11:2.4.0
 
 spark_task_max_failures: 20
 spark_s3a_connection_maximum: 2000
