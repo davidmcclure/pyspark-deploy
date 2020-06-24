@@ -1,0 +1,10 @@
+---
+
+- name: Deploy Spark
+  hosts: localhost
+  tasks:
+
+    - name: Provision cluster
+      terraform:
+        project_path: './terraform'
+        state: present
