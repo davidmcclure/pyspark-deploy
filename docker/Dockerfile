@@ -27,7 +27,7 @@ RUN apt-get update && apt-get install -y \
 
 # Python 3
 ARG PYENV_ROOT=/root/.pyenv
-ARG PYTHON_VERSION=3.7.5
+ARG PYTHON_VERSION=3.8.3
 RUN curl https://pyenv.run | bash
 ENV PATH $PYENV_ROOT/bin:$PYENV_ROOT/shims:$PATH
 RUN pyenv install $PYTHON_VERSION
@@ -41,7 +41,7 @@ ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 
 # Spark
 
-ARG SPARK_VERSION=2.4.5
+ARG SPARK_VERSION=3.0.0
 ARG SPARK_DIRNAME=spark-${SPARK_VERSION}
 ARG SPARK_PACKAGE=${SPARK_DIRNAME}-bin-hadoop2.7
 ARG SPARK_MIRROR=http://apache.cs.utah.edu/spark
