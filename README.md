@@ -38,7 +38,7 @@ Once the Docker image is pushed to ECR, deploys generally take ~2 minutes.
 
     **Note:** pyspark-deploy assumes the Docker image is pushed to an ECR repository, and that the provided AWS keypair has permissions to pull the image.
 
-    **Note:** For secret values like `aws_access_key_id`, it's recommended to use Ansible vault to encrypt the values. (See - [Single Encrypted Variable](https://docs.ansible.com/ansible/2.3/playbooks_vault.html#single-encrypted-variable)). pyspark-deploy will automatically decrypt these values at deploy time.
+    **Note:** For secret values like `aws_access_key_id`, it's recommended to use Ansible vault to encrypt the values. (See - [Single Encrypted Variable](https://docs.ansible.com/ansible/2.3/playbooks_vault.html#single-encrypted-variable)). pyspark-deploy will automatically decrypt these values at deploy time. If you do this, it generally also makes sense to put the vault password in a file (eg, `~/.vault-pw.txt`), and then set the `ANSIBLE_VAULT_PASSWORD_FILE` environment variable. This avoids having to manually enter the password each time a cluster is created.
 
 1. In `/deploy`, run `poetry shell` to activate the env.
 

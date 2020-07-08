@@ -142,7 +142,7 @@ def cli():
 
 
 @cli.command()
-@click.argument('profile', default=None)
+@click.argument('profile', required=False)
 def create(profile: Optional[str]):
     """Start a cluster.
     """
