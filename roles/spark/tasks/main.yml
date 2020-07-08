@@ -6,11 +6,6 @@
 - name: Gather facts, after SSH
   setup:
 
-# TODO: Move to AMI?
-- name: Install docker-py
-  pip:
-    name: docker
-
 - name: Create directories
   file:
     path: '{{ item }}'
@@ -44,17 +39,16 @@
   shell: >
     $(aws ecr get-login --no-include-email
     --region {{ spark_ecr_region }})
-  when: spark_ecr_login|bool
   environment:
-    AWS_ACCESS_KEY_ID: '{{ aws_access_key_id }}'
-    AWS_SECRET_ACCESS_KEY: '{{ aws_secret_access_key }}'
+    AWS_ACCESS_KEY_ID: '{{ spark_aws_access_key_id }}'
+    AWS_SECRET_ACCESS_KEY: '{{ spark_aws_secret_access_key }}'
 
 - name: Start master
   include_tasks: start_container.yml
   when: '"master" in group_names'
   vars:
     name: spark-master
-    runtime: '{{ tf_master_docker_runtime }}'
+    runtime: '{{ spark_master_docker_runtime }}'
     command: spark-class org.apache.spark.deploy.master.Master
 
 - name: Start workers
@@ -62,7 +56,7 @@
   when: '"workers" in group_names'
   vars:
     name: spark-worker
-    runtime: '{{ tf_worker_docker_runtime }}'
+    runtime: '{{ spark_worker_docker_runtime }}'
     command: >
       spark-class org.apache.spark.deploy.worker.Worker
       {{ spark_master_url }}
