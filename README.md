@@ -68,21 +68,29 @@ Generally the workflow looks like:
 
 ## Profiles
 
-It's common to need a handful of cluster "profiles" for a single project. Eg, you might have some jobs / workflows that need a small number of modest, standard worker instances; but other jobs that need a larger number of GPU workers. To support this, the `cluster.yml` file can container any number of named "profiles," which can provide override values that customize the cluster loadout. Eg:
+It's common to need a handful of cluster "profiles" for a single project. Eg, you might have some jobs / workflows that need a small number of modest worker instances; but other jobs that need a large number of big workers, and others that need GPU workers. To support this, the `cluster.yml` file can container any number of named "profiles," which can provide override values that customize the cluster loadout.
 
 ```yaml
 profiles:
 
-  spark_big:
-    worker_count: 5
+  cpu_small:
+    worker_count: 3
+    worker_instance_type: m5a.8xlarge
+    worker_spot_price: 0.8
+    executor_memory: 100g
+
+  cpu_big:
+    worker_count: 10
     worker_instance_type: r5n.16xlarge
     worker_spot_price: 1.6
     executor_memory: 480g
 
   gpu:
-    worker_count: 0
-    master_instance_type: p3.2xlarge
-    master_docker_runtime: nvidia
+    worker_count: 5
+    worker_instance_type: p3.2xlarge
+    worker_docker_runtime: nvidia
+    worker_spot_price: 1.0
+    executor_memory: 40g
 ```
 
 Then, when creating a cluster, just pass the profile name, and these values will be merged into the configuration used to deploy the cluster:
