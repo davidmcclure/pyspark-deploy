@@ -82,16 +82,22 @@ class ClusterConfig(BaseModel):
     def write_terraform_vars(self):
         """Render out TF variable file.
         """
-        with open('terraform.tfvars.json', 'w') as fh:
+        with open('.config.terraform.auto.tfvars.json', 'w') as fh:
             json.dump(self.terraform_vars(), fh, indent=2)
 
-    def ansible_vars_json(self) -> str:
+    def ansible_vars(self) -> str:
         """Build prefixed Ansible vars.
         """
-        return json.dumps({
+        return {
             f'spark_{key}': getattr(self, key)
             for key in self.Config.ansible_keys
-        })
+        }
+
+    def write_ansible_vars(self):
+        """Render out TF variable file.
+        """
+        with open('.config.ansible.json', 'w') as fh:
+            json.dump(self.ansible_vars(), fh, indent=2)
 
 
 def read_vault_yaml(path: str) -> dict:
@@ -149,16 +155,10 @@ def create(profile: Optional[str]):
     config = read_config(config_path, profile)
 
     config.write_terraform_vars()
+    config.write_ansible_vars()
 
     subprocess.run(['terraform', 'apply'])
-
-    # Pass the Ansible config as a CLI arg, to avoid writing decrypted secrets
-    # to the local filesystem.
-    subprocess.run([
-        'ansible-playbook',
-        '-e', config.ansible_vars_json(),
-        'deploy.yml',
-    ])
+    subprocess.run(['ansible-playbook', 'deploy.yml'])
 
 
 @cli.command()

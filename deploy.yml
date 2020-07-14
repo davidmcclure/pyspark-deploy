@@ -8,6 +8,9 @@
   vars:
     ansible_python_interpreter: python3
 
+  vars_files:
+    - .config.ansible.json
+
   tasks:
     - include_role:
         name: spark
