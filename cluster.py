@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-import click
-import subprocess
 import json
 
 from typing import Optional
