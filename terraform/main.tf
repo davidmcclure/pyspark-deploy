@@ -124,7 +124,7 @@ data "template_file" "inventory" {
 
 resource "local_file" "inventory" {
   content  = data.template_file.inventory.rendered
-  filename = "${path.module}/inventory"
+  filename = "${path.module}/../ansible/inventory"
 }
 
 output "master_ip" {

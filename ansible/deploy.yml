@@ -9,7 +9,7 @@
     ansible_python_interpreter: python3
 
   vars_files:
-    - .config.ansible.json
+    - config.json
 
   tasks:
     - include_role:

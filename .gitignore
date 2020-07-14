@@ -139,5 +139,5 @@ cython_debug/
 
 .terraform*
 terraform.tfstate*
-*.json
+config.*
 inventory

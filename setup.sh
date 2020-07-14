@@ -1,4 +1,4 @@
 #!/bin/sh
 
-terraform init
+cd terraform && terraform init
 poetry install

@@ -82,7 +82,7 @@ class ClusterConfig(BaseModel):
     def write_terraform_vars(self):
         """Render out TF variable file.
         """
-        with open('.config.terraform.auto.tfvars.json', 'w') as fh:
+        with open('terraform/config.auto.tfvars.json', 'w') as fh:
             json.dump(self.terraform_vars(), fh, indent=2)
 
     def ansible_vars(self) -> str:
@@ -96,7 +96,7 @@ class ClusterConfig(BaseModel):
     def write_ansible_vars(self):
         """Render out TF variable file.
         """
-        with open('.config.ansible.json', 'w') as fh:
+        with open('ansible/config.json', 'w') as fh:
             json.dump(self.ansible_vars(), fh, indent=2)
 
 
@@ -138,7 +138,7 @@ def read_config(path: str, profile: Optional[str] = None) -> ClusterConfig:
 def read_master_ip():
     """Read the master IP out of the TF state.
     """
-    with open('terraform.tfstate') as fh:
+    with open('terraform/terraform.tfstate') as fh:
         return json.load(fh)['outputs']['master_ip']['value']
 
 
@@ -157,15 +157,15 @@ def create(profile: Optional[str]):
     config.write_terraform_vars()
     config.write_ansible_vars()
 
-    subprocess.run(['terraform', 'apply'])
-    subprocess.run(['ansible-playbook', 'deploy.yml'])
+    subprocess.run(['terraform', 'apply'], cwd='terraform')
+    subprocess.run(['ansible-playbook', 'deploy.yml'], cwd='ansible')
 
 
 @cli.command()
 def destroy():
     """Destroy the cluster.
     """
-    subprocess.run(['terraform', 'destroy'])
+    subprocess.run(['terraform', 'destroy'], cwd='terraform')
 
 
 @cli.command()
