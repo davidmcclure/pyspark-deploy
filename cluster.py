@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import json
+import yaml
 
 from typing import Optional
 from pydantic import BaseModel
@@ -31,6 +32,7 @@ class ClusterConfig(BaseModel):
     public_key_path: str
 
     docker_image: str
+    vault_password_file: Optional[str]
     aws_access_key_id: str
     aws_secret_access_key: str
     master_docker_runtime = ''
@@ -101,15 +103,25 @@ class ClusterConfig(BaseModel):
 def read_vault_yaml(path: str) -> dict:
     """Read YAML with vault-encrypted values.
     """
+    # Read YAML without decrypting.
+    raw_clean = open(path).read().replace('!vault', '')
+    data = yaml.load(raw_clean, Loader=yaml.FullLoader)
+    
+    # Pop out PW file, if provided.
+    pw_file = data.get('vault_password_file')
+    pw_files = [pw_file] if pw_file else None
+
     loader = DataLoader()
 
     vault_secrets = CLI.setup_vault_secrets(
         loader=loader,
         vault_ids=C.DEFAULT_VAULT_IDENTITY_LIST,
+        vault_password_files=pw_files,
     )
 
     loader.set_vault_secrets(vault_secrets)
 
+    # Re-read with decryption.
     return loader.load_from_file(path)
 
 
