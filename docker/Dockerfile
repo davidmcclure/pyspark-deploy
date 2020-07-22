@@ -50,10 +50,7 @@ ENV SPARK_HOME=/opt/spark
 
 ENV PATH $PATH:${SPARK_HOME}/bin
 
-RUN curl -sL --retry 3 \
-  $SPARK_URL \
-  | gunzip \
-  | tar x -C /opt/ \
+RUN curl -sL --retry 3 $SPARK_URL | gunzip | tar x -C /opt/ \
  && mv /opt/$SPARK_PACKAGE $SPARK_HOME \
  && chown -R root:root $SPARK_HOME
 
