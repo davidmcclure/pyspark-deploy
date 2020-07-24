@@ -1,5 +1,7 @@
 
-FROM ubuntu:bionic
+ARG BASE_IMAGE=ubuntu:bionic
+
+FROM ${BASE_IMAGE}
 
 ENV LC_ALL C.UTF-8
 ENV LANG C.UTF-8
@@ -26,8 +28,8 @@ RUN apt-get update && apt-get install -y \
   liblzma-dev
 
 # Python 3
-ARG PYENV_ROOT=/root/.pyenv
 ARG PYTHON_VERSION=3.8.3
+ARG PYENV_ROOT=/root/.pyenv
 RUN curl https://pyenv.run | bash
 ENV PATH $PYENV_ROOT/bin:$PYENV_ROOT/shims:$PATH
 RUN pyenv install $PYTHON_VERSION
@@ -40,7 +42,6 @@ RUN update-ca-certificates -f
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 
 # Spark
-
 ARG SPARK_VERSION=3.0.0
 ARG SPARK_DIRNAME=spark-${SPARK_VERSION}
 ARG SPARK_PACKAGE=${SPARK_DIRNAME}-bin-hadoop2.7
