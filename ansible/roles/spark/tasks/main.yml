@@ -6,6 +6,10 @@
 - name: Gather facts, after SSH
   setup:
 
+- name: Install docker-py
+  pip:
+    name: docker
+
 - name: Create directories
   file:
     path: '{{ item }}'
