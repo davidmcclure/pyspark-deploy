@@ -85,7 +85,7 @@ class ClusterConfig(BaseModel):
         with open('terraform/config.auto.tfvars.json', 'w') as fh:
             json.dump(self.terraform_vars(), fh, indent=2)
 
-    def ansible_vars(self) -> str:
+    def ansible_vars(self) -> dict:
         """Build prefixed Ansible vars.
         """
         return {
