@@ -3,7 +3,7 @@
 import json
 import yaml
 
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseModel
 
 from ansible import constants as C
@@ -24,9 +24,9 @@ class ClusterConfig(BaseModel):
     aws_subnet_id: str
     aws_ami: str
     master_instance_type = 'c5.xlarge'
-    worker_instance_type = 'm5.8xlarge'
+    worker_instance_type = 'm4.4xlarge'
     worker_count = 1
-    worker_spot_price = 0.8
+    worker_spot_price = 0.4
     master_root_vol_size = 10
     worker_root_vol_size = 100
     public_key_path: str
@@ -39,7 +39,8 @@ class ClusterConfig(BaseModel):
     worker_docker_runtime = ''
     driver_memory = '5g'
     driver_max_result_size = '10g'
-    executor_memory = '100g'
+    executor_memory = '50g'
+    extra_packages: List[str]
 
     class Config:
 
@@ -69,6 +70,7 @@ class ClusterConfig(BaseModel):
             'driver_memory',
             'driver_max_result_size',
             'executor_memory',
+            'extra_packages',
         )
 
     def terraform_vars(self) -> dict:
@@ -106,7 +108,7 @@ def read_vault_yaml(path: str) -> dict:
     # Read YAML without decrypting.
     raw_clean = open(path).read().replace('!vault', '')
     data = yaml.load(raw_clean, Loader=yaml.FullLoader)
-    
+
     # Pop out PW file, if provided.
     pw_file = data.get('vault_password_file')
     pw_files = [pw_file] if pw_file else None
