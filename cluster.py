@@ -24,7 +24,7 @@ class ClusterConfig(BaseModel):
     aws_subnet_id: str
     aws_ami: str
     master_instance_type = 'c5.xlarge'
-    worker_instance_type = 'm5a.8xlarge'
+    worker_instance_type = 'm5.8xlarge'
     worker_count = 1
     worker_spot_price = 0.8
     master_root_vol_size = 10
