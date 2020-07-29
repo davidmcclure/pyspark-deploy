@@ -40,7 +40,7 @@ class ClusterConfig(BaseModel):
     driver_memory = '5g'
     driver_max_result_size = '10g'
     executor_memory = '50g'
-    extra_packages: List[str]
+    extra_packages: Optional[List[str]]
 
     class Config:
 
