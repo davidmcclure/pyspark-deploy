@@ -40,14 +40,12 @@ Once the Docker image is pushed to ECR, deploys generally take ~2 minutes.
 
     **Note:** For secret values like `aws_access_key_id`, it's recommended to use Ansible vault to encrypt the values. (See - [Single Encrypted Variable](https://docs.ansible.com/ansible/2.3/playbooks_vault.html#single-encrypted-variable)). pyspark-deploy will automatically decrypt these values at deploy time. If you do this, it generally also makes sense to put the vault password in a file (eg, `~/.vault-pw.txt`), and then set the `ANSIBLE_VAULT_PASSWORD_FILE` environment variable. This avoids having to manually enter the password each time a cluster is created.
 
-1. In `/deploy`, run `poetry shell` to activate the env.
-
 ## Usage
 
-Control the cluster with `./cluster.py`:
+Control the cluster with `./cluster.sh`:
 
 ```bash
-Usage: cluster.py [OPTIONS] COMMAND [ARGS]...
+Usage: pyspark_deploy.py [OPTIONS] COMMAND [ARGS]...
 
 Options:
   --help  Show this message and exit.
@@ -62,9 +60,9 @@ Commands:
 Generally the workflow looks like:
 
 - Develop locally in Docker. When ready to deploy, push the Docker image to the ECR repository specified in `docker_image`.
-- Run `./cluster.py create`, then `./cluster.py login` once the cluster is up.
+- Run `./cluster.sh create`, then `./cluster.sh login` once the cluster is up.
 - Run jobs.
-- Tear down with `./cluster.py destroy`.
+- Tear down with `./cluster.sh destroy`.
 
 ## Profiles
 
@@ -95,4 +93,4 @@ profiles:
 
 Then, when creating a cluster, just pass the profile name, and these values will be merged into the configuration used to deploy the cluster:
 
-`./cluster.py create gpu`
+`./cluster.sh create gpu`
