@@ -1,4 +1,4 @@
-#!/usr/bin/env poetry run python
+
 
 import click
 import subprocess
