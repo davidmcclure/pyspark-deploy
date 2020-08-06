@@ -1,16 +1,16 @@
 ---
 
-ansible_python_interpreter: python3
-
-spark_docker_image: dclure/spark
-
 spark_home: /opt/spark
 
 spark_master_port: 7077
 spark_master_url: spark://{{ tf_master_private_ip }}:{{ spark_master_port }}
 
-spark_packages:
+spark_base_packages:
   - org.apache.hadoop:hadoop-aws:2.7.3
+
+spark_extra_packages: []
+
+spark_packages: '{{ spark_base_packages + spark_extra_packages }}'
 
 spark_task_max_failures: 20
 spark_s3a_connection_maximum: 2000
@@ -35,15 +35,21 @@ spark_public_dns: >
 spark_max_files: 100000
 
 spark_docker_env:
-  AWS_ACCESS_KEY_ID: '{{ aws_access_key_id }}'
-  AWS_SECRET_ACCESS_KEY: '{{ aws_secret_access_key }}'
+  AWS_ACCESS_KEY_ID: '{{ spark_aws_access_key_id }}'
+  AWS_SECRET_ACCESS_KEY: '{{ spark_aws_secret_access_key }}'
   SPARK_ENV: prod
 
 spark_openblas_num_threads: 1
 
-spark_ecr_login: false
 spark_ecr_region: us-east-1
 
-# Provide locally.
-aws_access_key_id: null
-aws_secret_access_key: null
+# Required from config
+
+# spark_docker_image:
+# spark_aws_access_key_id:
+# spark_aws_secret_access_key:
+# spark_driver_memory:
+# spark_executor_memory:
+# spark_driver_max_result_size:
+# spark_master_docker_runtime:
+# spark_worker_docker_runtime:
