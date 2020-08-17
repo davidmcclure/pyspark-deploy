@@ -7,8 +7,8 @@ PYSPARK_DRIVER_PYTHON=ipython
 SPARK_PUBLIC_DNS={{ spark_public_dns }}
 
 # AWS credentials.
-AWS_ACCESS_KEY_ID={{ aws_access_key_id }}
-AWS_SECRET_ACCESS_KEY={{ aws_secret_access_key }}
+AWS_ACCESS_KEY_ID={{ spark_aws_access_key_id }}
+AWS_SECRET_ACCESS_KEY={{ spark_aws_secret_access_key }}
 
 # Avoid too-many-open-files errors.
 ulimit -n {{ spark_max_files - 1 }}
