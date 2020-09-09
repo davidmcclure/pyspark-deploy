@@ -121,7 +121,7 @@ data "template_file" "inventory" {
     worker_ips        = join("\n", [for ip in aws_spot_instance_request.worker.*.public_ip : ip if ip != null])
   }
 
-  # Wait for assiggned IPs to be known, before writing inventory.
+  # Wait for assigned IPs to be known, before writing inventory.
   depends_on = [
     aws_instance.master,
     aws_spot_instance_request.worker,
