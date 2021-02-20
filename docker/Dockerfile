@@ -27,8 +27,8 @@ RUN apt-get update && apt-get install -y \
   libxml2-dev \
   liblzma-dev
 
-# Python 3
-ARG PYTHON_VERSION=3.8.3
+# Python
+ARG PYTHON_VERSION=3.9.0
 ARG PYENV_ROOT=/root/.pyenv
 RUN curl https://pyenv.run | bash
 ENV PATH $PYENV_ROOT/bin:$PYENV_ROOT/shims:$PATH
@@ -41,19 +41,19 @@ RUN apt-get update && apt-get install -y openjdk-8-jdk
 RUN update-ca-certificates -f
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 
-# Spark
-ARG SPARK_VERSION=3.0.0
-ARG SPARK_DIRNAME=spark-${SPARK_VERSION}
-ARG SPARK_PACKAGE=${SPARK_DIRNAME}-bin-hadoop2.7
-ARG SPARK_MIRROR=http://apache.cs.utah.edu/spark
-ARG SPARK_URL=${SPARK_MIRROR}/${SPARK_DIRNAME}/${SPARK_PACKAGE}.tgz
-ENV SPARK_HOME=/opt/spark
+# # Spark
+# ARG SPARK_VERSION=3.0.0
+# ARG SPARK_DIRNAME=spark-${SPARK_VERSION}
+# ARG SPARK_PACKAGE=${SPARK_DIRNAME}-bin-hadoop2.7
+# ARG SPARK_MIRROR=http://apache.cs.utah.edu/spark
+# ARG SPARK_URL=${SPARK_MIRROR}/${SPARK_DIRNAME}/${SPARK_PACKAGE}.tgz
+# ENV SPARK_HOME=/opt/spark
 
-ENV PATH $PATH:${SPARK_HOME}/bin
+# ENV PATH $PATH:${SPARK_HOME}/bin
 
-RUN curl -sL --retry 3 $SPARK_URL | gunzip | tar x -C /opt/ \
- && mv /opt/$SPARK_PACKAGE $SPARK_HOME \
- && chown -R root:root $SPARK_HOME
+# RUN curl -sL --retry 3 $SPARK_URL | gunzip | tar x -C /opt/ \
+#  && mv /opt/$SPARK_PACKAGE $SPARK_HOME \
+#  && chown -R root:root $SPARK_HOME
 
-COPY spark-env.sh $SPARK_HOME/conf
-COPY spark-defaults.conf $SPARK_HOME/conf
+# COPY spark-env.sh $SPARK_HOME/conf
+# COPY spark-defaults.conf $SPARK_HOME/conf
