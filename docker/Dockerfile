@@ -42,7 +42,7 @@ RUN update-ca-certificates -f
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 
 # Spark
-ARG SPARK_VERSION=3.0.0
+ARG SPARK_VERSION=3.0.2
 ARG SPARK_DIRNAME=spark-${SPARK_VERSION}
 ARG SPARK_PACKAGE=${SPARK_DIRNAME}-bin-hadoop2.7
 ARG SPARK_MIRROR=http://apache.cs.utah.edu/spark
