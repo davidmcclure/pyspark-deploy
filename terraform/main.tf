@@ -134,10 +134,10 @@ data "template_file" "spark_env" {
   template = file("${path.module}/spark-env.sh.tpl")
 
   vars = {
-    aws_access_key_id = var.aws_access_key_id
+    aws_access_key_id     = var.aws_access_key_id
     aws_secret_access_key = var.aws_secret_access_key
-    max_files = var.max_files
-    openblas_num_threads = var.openblas_num_threads
+    max_files             = var.max_files
+    openblas_num_threads  = var.openblas_num_threads
   }
 }
 
