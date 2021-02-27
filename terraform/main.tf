@@ -112,25 +112,35 @@ resource "aws_spot_instance_request" "worker" {
   }
 }
 
-data "template_file" "inventory" {
-  template = file("${path.module}/inventory.tpl")
-
+data "template_file" "spark_defaults" {
+  template = file("${path.module}/spark-defaults.conf.tpl")
   vars = {
-    master_ip         = aws_instance.master.public_ip
-    master_private_ip = aws_instance.master.private_ip
-    worker_ips        = join("\n", [for ip in aws_spot_instance_request.worker.*.public_ip : ip if ip != null])
+    master_url = aws_instance.master.public_ip
   }
-
-  # Wait for assigned IPs to be known, before writing inventory.
   depends_on = [
     aws_instance.master,
-    aws_spot_instance_request.worker,
   ]
 }
 
+# data "template_file" "inventory" {
+#   template = file("${path.module}/inventory.tpl")
+
+#   vars = {
+#     master_ip         = aws_instance.master.public_ip
+#     master_private_ip = aws_instance.master.private_ip
+#     worker_ips        = join("\n", [for ip in aws_spot_instance_request.worker.*.public_ip : ip if ip != null])
+#   }
+
+#   # Wait for assigned IPs to be known, before writing inventory.
+#   depends_on = [
+#     aws_instance.master,
+#     aws_spot_instance_request.worker,
+#   ]
+# }
+
 resource "local_file" "inventory" {
-  content  = data.template_file.inventory.rendered
-  filename = "${path.module}/../ansible/inventory"
+  content  = data.template_file.spark_defaults.rendered
+  filename = "${path.module}/spark-defaults.conf"
 }
 
 output "master_ip" {
