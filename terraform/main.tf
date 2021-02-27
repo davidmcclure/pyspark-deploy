@@ -116,6 +116,7 @@ data "template_file" "spark_defaults" {
   template = file("${path.module}/spark-defaults.conf.tpl")
   vars = {
     master_url = aws_instance.master.public_ip
+    packages = join(",", var.spark_packages)
   }
   depends_on = [
     aws_instance.master,

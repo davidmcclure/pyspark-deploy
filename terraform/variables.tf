@@ -41,3 +41,9 @@ variable "master_root_vol_size" {
 variable "worker_root_vol_size" {
   default = 100
 }
+
+variable "spark_packages" {
+  default = [
+    "org.apache.hadoop:hadoop-aws:2.7.3",
+  ]
+}
