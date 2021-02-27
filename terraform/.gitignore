@@ -1,2 +1,3 @@
 *.tfvars
-*.conf
+spark-defaults.conf
+spark-env.sh

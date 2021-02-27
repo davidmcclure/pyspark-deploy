@@ -130,6 +130,17 @@ data "template_file" "spark_defaults" {
   ]
 }
 
+data "template_file" "spark_env" {
+  template = file("${path.module}/spark-env.sh.tpl")
+
+  vars = {
+    aws_access_key_id = var.aws_access_key_id
+    aws_secret_access_key = var.aws_secret_access_key
+    max_files = var.max_files
+    openblas_num_threads = var.openblas_num_threads
+  }
+}
+
 # data "template_file" "inventory" {
 #   template = file("${path.module}/inventory.tpl")
 
@@ -146,11 +157,12 @@ data "template_file" "spark_defaults" {
 #   ]
 # }
 
-resource "local_file" "inventory" {
+resource "local_file" "spark_defaults" {
   content  = data.template_file.spark_defaults.rendered
   filename = "${path.module}/spark-defaults.conf"
 }
 
-output "master_ip" {
-  value = aws_instance.master.public_ip
+resource "local_file" "spark_env" {
+  content  = data.template_file.spark_env.rendered
+  filename = "${path.module}/spark-env.sh"
 }

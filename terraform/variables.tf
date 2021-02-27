@@ -42,12 +42,6 @@ variable "worker_root_vol_size" {
   default = 100
 }
 
-variable "spark_packages" {
-  default = [
-    "org.apache.hadoop:hadoop-aws:2.7.3",
-  ]
-}
-
 variable "driver_memory" {
   default = "5g"
 }
@@ -66,4 +60,26 @@ variable "max_s3_connections" {
 
 variable "max_driver_result_size" {
   default = "10g"
+}
+
+variable "spark_packages" {
+  default = [
+    "org.apache.hadoop:hadoop-aws:2.7.3",
+  ]
+}
+
+variable "max_files" {
+  default = 100000
+}
+
+variable "openblas_num_threads" {
+  default = 1
+}
+
+variable "aws_access_key_id" {
+  type = string
+}
+
+variable "aws_secret_access_key" {
+  type = string
 }
