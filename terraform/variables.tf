@@ -47,3 +47,23 @@ variable "spark_packages" {
     "org.apache.hadoop:hadoop-aws:2.7.3",
   ]
 }
+
+variable "driver_memory" {
+  default = "5g"
+}
+
+variable "executor_memory" {
+  default = "20g"
+}
+
+variable "max_task_failures" {
+  default = 20
+}
+
+variable "max_s3_connections" {
+  default = 2000
+}
+
+variable "max_driver_result_size" {
+  default = "10g"
+}
