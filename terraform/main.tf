@@ -78,12 +78,15 @@ resource "aws_key_pair" "spark" {
   public_key = file(var.public_key_path)
 }
 
+resource "aws_eip" "master" {
+  vpc = true
+}
+
 data "template_file" "spark_defaults" {
   template = file("${path.module}/spark-defaults.conf.tpl")
 
   vars = {
-    # TODO: Use eip.
-    master_url             = "TODO"
+    master_url             = aws_eip.master.public_ip
     driver_memory          = var.driver_memory
     executor_memory        = var.executor_memory
     max_driver_result_size = var.max_driver_result_size
@@ -108,7 +111,7 @@ data "template_file" "user_data" {
   template = file("${path.module}/cloud-init.yml")
   vars = {
     spark_defaults = data.template_file.spark_defaults.rendered
-    spark_env = data.template_file.spark_env.rendered
+    spark_env      = data.template_file.spark_env.rendered
   }
 }
 
@@ -128,6 +131,11 @@ resource "aws_instance" "master" {
   root_block_device {
     volume_size = var.master_root_vol_size
   }
+}
+
+resource "aws_eip_association" "master" {
+  allocation_id = aws_eip.master.id
+  instance_id   = aws_instance.master.id
 }
 
 resource "aws_spot_instance_request" "worker" {
@@ -164,7 +172,7 @@ resource "aws_spot_instance_request" "worker" {
 #   ]
 # }
 
-resource "local_file" "user_data" {
-  content  = data.template_file.user_data.rendered
-  filename = "${path.module}/user-data.yml"
-}
+# resource "local_file" "user_data" {
+#   content  = data.template_file.user_data.rendered
+#   filename = "${path.module}/user-data.yml"
+# }
