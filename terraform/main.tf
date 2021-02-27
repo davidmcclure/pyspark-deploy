@@ -78,6 +78,40 @@ resource "aws_key_pair" "spark" {
   public_key = file(var.public_key_path)
 }
 
+data "template_file" "spark_defaults" {
+  template = file("${path.module}/spark-defaults.conf.tpl")
+
+  vars = {
+    # TODO: Use eip.
+    master_url             = "TODO"
+    driver_memory          = var.driver_memory
+    executor_memory        = var.executor_memory
+    max_driver_result_size = var.max_driver_result_size
+    max_task_failures      = var.max_task_failures
+    max_s3_connections     = var.max_s3_connections
+    packages               = join(",", var.spark_packages)
+  }
+}
+
+data "template_file" "spark_env" {
+  template = file("${path.module}/spark-env.sh.tpl")
+
+  vars = {
+    aws_access_key_id     = var.aws_access_key_id
+    aws_secret_access_key = var.aws_secret_access_key
+    max_files             = var.max_files
+    openblas_num_threads  = var.openblas_num_threads
+  }
+}
+
+data "template_file" "user_data" {
+  template = file("${path.module}/cloud-init.yml")
+  vars = {
+    spark_defaults = data.template_file.spark_defaults.rendered
+    spark_env = data.template_file.spark_env.rendered
+  }
+}
+
 resource "aws_instance" "master" {
   ami                         = var.aws_ami
   instance_type               = var.master_instance_type
@@ -85,6 +119,7 @@ resource "aws_instance" "master" {
   vpc_security_group_ids      = [aws_security_group.spark.id]
   key_name                    = aws_key_pair.spark.key_name
   associate_public_ip_address = true
+  user_data                   = data.template_file.user_data.rendered
 
   tags = {
     Name = "spark-master"
@@ -106,38 +141,10 @@ resource "aws_spot_instance_request" "worker" {
   associate_public_ip_address = true
   wait_for_fulfillment        = true
   count                       = var.worker_count
+  user_data                   = data.template_file.user_data.rendered
 
   root_block_device {
     volume_size = var.worker_root_vol_size
-  }
-}
-
-data "template_file" "spark_defaults" {
-  template = file("${path.module}/spark-defaults.conf.tpl")
-
-  vars = {
-    master_url             = aws_instance.master.public_ip
-    driver_memory          = var.driver_memory
-    executor_memory        = var.executor_memory
-    max_driver_result_size = var.max_driver_result_size
-    max_task_failures      = var.max_task_failures
-    max_s3_connections     = var.max_s3_connections
-    packages               = join(",", var.spark_packages)
-  }
-
-  depends_on = [
-    aws_instance.master,
-  ]
-}
-
-data "template_file" "spark_env" {
-  template = file("${path.module}/spark-env.sh.tpl")
-
-  vars = {
-    aws_access_key_id     = var.aws_access_key_id
-    aws_secret_access_key = var.aws_secret_access_key
-    max_files             = var.max_files
-    openblas_num_threads  = var.openblas_num_threads
   }
 }
 
@@ -157,12 +164,7 @@ data "template_file" "spark_env" {
 #   ]
 # }
 
-resource "local_file" "spark_defaults" {
-  content  = data.template_file.spark_defaults.rendered
-  filename = "${path.module}/spark-defaults.conf"
-}
-
-resource "local_file" "spark_env" {
-  content  = data.template_file.spark_env.rendered
-  filename = "${path.module}/spark-env.sh"
+resource "local_file" "user_data" {
+  content  = data.template_file.user_data.rendered
+  filename = "${path.module}/user-data.yml"
 }
