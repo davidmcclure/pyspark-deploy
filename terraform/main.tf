@@ -117,12 +117,12 @@ data "template_file" "spark_defaults" {
 
   vars = {
     master_url             = aws_instance.master.public_ip
-    packages               = join(",", var.spark_packages)
     driver_memory          = var.driver_memory
     executor_memory        = var.executor_memory
     max_driver_result_size = var.max_driver_result_size
     max_task_failures      = var.max_task_failures
     max_s3_connections     = var.max_s3_connections
+    packages               = join(",", var.spark_packages)
   }
 
   depends_on = [
