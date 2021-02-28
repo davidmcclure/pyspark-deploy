@@ -107,12 +107,17 @@ data "template_file" "spark_env" {
   }
 }
 
+data "local_file" "log4j" {
+  filename = "${path.module}/log4j.properties"
+}
+
 data "template_file" "cloud_config" {
   template = file("${path.module}/cloud-config.yml.tpl")
 
   vars = {
     spark_defaults = data.template_file.spark_defaults.rendered
     spark_env      = data.template_file.spark_env.rendered
+    log4j          = data.local_file.log4j.content
   }
 }
 
