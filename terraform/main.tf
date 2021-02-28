@@ -107,12 +107,32 @@ data "template_file" "spark_env" {
   }
 }
 
-data "template_file" "user_data" {
+data "template_file" "cloud_config" {
   template = file("${path.module}/cloud-config.yml.tpl")
 
   vars = {
     spark_defaults = data.template_file.spark_defaults.rendered
     spark_env      = data.template_file.spark_env.rendered
+  }
+}
+
+data "local_file" "start_master" {
+  filename = "${path.module}/start-master.sh"
+}
+
+data "template_cloudinit_config" "config" {
+  gzip          = true
+  base64_encode = true
+
+  part {
+    filename     = "init.yml"
+    content_type = "text/cloud-config"
+    content      = data.template_file.cloud_config.rendered
+  }
+
+  part {
+    content_type = "text/x-shellscript"
+    content      = data.local_file.start_master.content
   }
 }
 
@@ -123,7 +143,7 @@ resource "aws_instance" "master" {
   vpc_security_group_ids      = [aws_security_group.spark.id]
   key_name                    = aws_key_pair.spark.key_name
   associate_public_ip_address = true
-  user_data                   = data.template_file.user_data.rendered
+  user_data                   = data.template_cloudinit_config.config.rendered
 
   tags = {
     Name = "spark-master"
@@ -139,6 +159,7 @@ resource "aws_eip_association" "master" {
   instance_id   = aws_instance.master.id
 }
 
+# TODO: Name tag?
 resource "aws_spot_instance_request" "worker" {
   ami                         = var.aws_ami
   instance_type               = var.worker_instance_type
@@ -150,7 +171,7 @@ resource "aws_spot_instance_request" "worker" {
   associate_public_ip_address = true
   wait_for_fulfillment        = true
   count                       = var.worker_count
-  user_data                   = data.template_file.user_data.rendered
+  # user_data                   = data.template_cloudinit_config.config.rendered
 
   root_block_device {
     volume_size = var.worker_root_vol_size
