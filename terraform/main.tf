@@ -121,8 +121,12 @@ data "template_file" "cloud_config" {
   }
 }
 
-data "local_file" "start_master" {
-  filename = "${path.module}/start-master.sh"
+data "template_file" "start_master" {
+  template = file("${path.module}/start-master.sh.tpl")
+  vars = {
+    aws_access_key_id     = var.aws_access_key_id
+    aws_secret_access_key = var.aws_secret_access_key
+  }
 }
 
 data "template_cloudinit_config" "config" {
@@ -137,7 +141,7 @@ data "template_cloudinit_config" "config" {
 
   part {
     content_type = "text/x-shellscript"
-    content      = data.local_file.start_master.content
+    content      = data.template_file.start_master.rendered
   }
 }
 
@@ -203,3 +207,7 @@ resource "aws_spot_instance_request" "worker" {
 #   content  = data.template_file.user_data.rendered
 #   filename = "${path.module}/user-data.yml"
 # }
+
+output "master_ip" {
+  value = aws_eip.master.public_ip
+}
