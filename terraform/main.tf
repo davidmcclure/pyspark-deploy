@@ -108,7 +108,8 @@ data "template_file" "spark_env" {
 }
 
 data "template_file" "user_data" {
-  template = file("${path.module}/cloud-init.yml")
+  template = file("${path.module}/cloud-config.yml.tpl")
+
   vars = {
     spark_defaults = data.template_file.spark_defaults.rendered
     spark_env      = data.template_file.spark_env.rendered
