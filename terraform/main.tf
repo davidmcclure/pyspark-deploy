@@ -126,6 +126,7 @@ data "template_file" "start_master" {
   vars = {
     aws_access_key_id     = var.aws_access_key_id
     aws_secret_access_key = var.aws_secret_access_key
+    docker_image          = var.docker_image
   }
 }
 
