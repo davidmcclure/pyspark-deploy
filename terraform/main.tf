@@ -82,31 +82,6 @@ resource "aws_key_pair" "spark" {
 #   vpc = true
 # }
 
-# data "template_file" "spark_defaults" {
-#   template = file("${path.module}/spark-defaults.conf.tpl")
-
-#   vars = {
-#     master_url             = aws_eip.master.public_ip
-#     driver_memory          = var.driver_memory
-#     executor_memory        = var.executor_memory
-#     max_driver_result_size = var.max_driver_result_size
-#     max_task_failures      = var.max_task_failures
-#     max_s3_connections     = var.max_s3_connections
-#     packages               = join(",", var.spark_packages)
-#   }
-# }
-
-# data "template_file" "spark_env" {
-#   template = file("${path.module}/spark-env.sh.tpl")
-
-#   vars = {
-#     aws_access_key_id     = var.aws_access_key_id
-#     aws_secret_access_key = var.aws_secret_access_key
-#     max_files             = var.max_files
-#     openblas_num_threads  = var.openblas_num_threads
-#   }
-# }
-
 # data "local_file" "log4j" {
 #   filename = "${path.module}/log4j.properties"
 # }
@@ -188,6 +163,31 @@ resource "aws_spot_instance_request" "worker" {
   }
 }
 
+data "template_file" "spark_defaults" {
+  template = file("${path.module}/spark-defaults.conf.tpl")
+
+  vars = {
+    master_private_ip      = aws_instance.master.private_ip
+    driver_memory          = var.driver_memory
+    executor_memory        = var.executor_memory
+    max_driver_result_size = var.max_driver_result_size
+    max_task_failures      = var.max_task_failures
+    max_s3_connections     = var.max_s3_connections
+    packages               = join(",", var.spark_packages)
+  }
+}
+
+data "template_file" "spark_env" {
+  template = file("${path.module}/spark-env.sh.tpl")
+
+  vars = {
+    aws_access_key_id     = var.aws_access_key_id
+    aws_secret_access_key = var.aws_secret_access_key
+    max_files             = var.max_files
+    openblas_num_threads  = var.openblas_num_threads
+  }
+}
+
 data "template_file" "inventory" {
   template = file("${path.module}/inventory.tpl")
 
@@ -202,6 +202,16 @@ data "template_file" "inventory" {
     aws_instance.master,
     aws_spot_instance_request.worker,
   ]
+}
+
+resource "local_file" "spark_defaults" {
+  content  = data.template_file.spark_defaults.rendered
+  filename = "${path.module}/conf/spark-defaults.conf"
+}
+
+resource "local_file" "spark_env" {
+  content  = data.template_file.spark_env.rendered
+  filename = "${path.module}/conf/spark-env.sh"
 }
 
 resource "local_file" "inventory" {

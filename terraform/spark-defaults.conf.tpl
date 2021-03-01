@@ -1,5 +1,5 @@
 
-spark.master ${master_url}
+spark.master spark://${master_private_ip}:7077
 spark.driver.memory ${driver_memory}
 spark.executor.memory ${executor_memory}
 spark.driver.maxResultSize ${max_driver_result_size}

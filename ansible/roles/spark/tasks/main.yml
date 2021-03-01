@@ -6,10 +6,12 @@
 - name: Gather facts, after SSH
   setup:
 
+# packer
 - name: Install docker-py
   pip:
     name: docker
 
+# packer
 - name: Create directories
   file:
     path: '{{ item }}'
@@ -27,6 +29,7 @@
     - spark-env.sh
     - log4j.properties
 
+# packer
 - name: Render Docker bash script
   template:
     src: docker-bash.sh.j2
@@ -34,11 +37,13 @@
     owner: '{{ ansible_user }}'
     mode: u+x
 
+# packer
 - name: Automatically connect to container on login
   lineinfile:
     path: /home/{{ ansible_user }}/.bashrc
     line: source ./docker-bash.sh
 
+# TODO: docker_login?
 - name: Login to AWS ECR
   shell: >
     $(aws ecr get-login --no-include-email
