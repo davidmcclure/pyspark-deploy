@@ -82,10 +82,6 @@ resource "aws_key_pair" "spark" {
 #   vpc = true
 # }
 
-# data "local_file" "log4j" {
-#   filename = "${path.module}/log4j.properties"
-# }
-
 # data "template_file" "cloud_config" {
 #   template = file("${path.module}/cloud-config.yml.tpl")
 
@@ -139,11 +135,6 @@ resource "aws_instance" "master" {
   }
 }
 
-# resource "aws_eip_association" "master" {
-#   allocation_id = aws_eip.master.id
-#   instance_id   = aws_instance.master.id
-# }
-
 # TODO: Name tag?
 resource "aws_spot_instance_request" "worker" {
   ami                         = var.aws_ami
@@ -163,8 +154,24 @@ resource "aws_spot_instance_request" "worker" {
   }
 }
 
+data "template_file" "inventory" {
+  template = file("${path.module}/templates/inventory.tpl")
+
+  vars = {
+    master_ip         = aws_instance.master.public_ip
+    master_private_ip = aws_instance.master.private_ip
+    worker_ips        = join("\n", [for ip in aws_spot_instance_request.worker.*.public_ip : ip if ip != null])
+  }
+
+  # Wait for assigned IPs to be known, before writing inventory.
+  depends_on = [
+    aws_instance.master,
+    aws_spot_instance_request.worker,
+  ]
+}
+
 data "template_file" "spark_defaults" {
-  template = file("${path.module}/spark-defaults.conf.tpl")
+  template = file("${path.module}/templates/spark-defaults.conf.tpl")
 
   vars = {
     master_private_ip      = aws_instance.master.private_ip
@@ -178,7 +185,7 @@ data "template_file" "spark_defaults" {
 }
 
 data "template_file" "spark_env" {
-  template = file("${path.module}/spark-env.sh.tpl")
+  template = file("${path.module}/templates/spark-env.sh.tpl")
 
   vars = {
     aws_access_key_id     = var.aws_access_key_id
@@ -188,20 +195,8 @@ data "template_file" "spark_env" {
   }
 }
 
-data "template_file" "inventory" {
-  template = file("${path.module}/inventory.tpl")
-
-  vars = {
-    master_ip         = aws_instance.master.public_ip
-    master_private_ip = aws_instance.master.private_ip
-    worker_ips        = join("\n", [for ip in aws_spot_instance_request.worker.*.public_ip : ip if ip != null])
-  }
-
-  # Wait for assigned IPs to be known, before writing inventory.
-  depends_on = [
-    aws_instance.master,
-    aws_spot_instance_request.worker,
-  ]
+data "local_file" "log4j" {
+  filename = "${path.module}/templates/log4j.properties"
 }
 
 resource "local_file" "inventory" {
@@ -217,6 +212,11 @@ resource "local_file" "spark_defaults" {
 resource "local_file" "spark_env" {
   content  = data.template_file.spark_env.rendered
   filename = "${path.module}/.cluster/conf/spark-env.sh"
+}
+
+resource "local_file" "log4j" {
+  content  = data.local_file.log4j.content
+  filename = "${path.module}/.cluster/conf/log4j.properties"
 }
 
 output "master_ip" {
