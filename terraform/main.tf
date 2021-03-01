@@ -154,8 +154,13 @@ resource "aws_spot_instance_request" "worker" {
   }
 }
 
+locals {
+  template_dir = "${path.module}/templates"
+  ansible_dir = "${path.module}/.ansible"
+}
+
 data "template_file" "inventory" {
-  template = file("${path.module}/templates/inventory.tpl")
+  template = file("${local.template_dir}/inventory.tpl")
 
   vars = {
     master_ip         = aws_instance.master.public_ip
@@ -171,7 +176,7 @@ data "template_file" "inventory" {
 }
 
 data "template_file" "spark_defaults" {
-  template = file("${path.module}/templates/spark-defaults.conf.tpl")
+  template = file("${local.template_dir}/spark-defaults.conf.tpl")
 
   vars = {
     master_private_ip      = aws_instance.master.private_ip
@@ -185,7 +190,7 @@ data "template_file" "spark_defaults" {
 }
 
 data "template_file" "spark_env" {
-  template = file("${path.module}/templates/spark-env.sh.tpl")
+  template = file("${local.template_dir}/spark-env.sh.tpl")
 
   vars = {
     aws_access_key_id     = var.aws_access_key_id
@@ -196,27 +201,27 @@ data "template_file" "spark_env" {
 }
 
 data "local_file" "log4j" {
-  filename = "${path.module}/templates/log4j.properties"
+  filename = "${local.template_dir}/log4j.properties"
 }
 
 resource "local_file" "inventory" {
   content  = data.template_file.inventory.rendered
-  filename = "${path.module}/.cluster/inventory"
+  filename = "${local.ansible_dir}/inventory"
 }
 
 resource "local_file" "spark_defaults" {
   content  = data.template_file.spark_defaults.rendered
-  filename = "${path.module}/.cluster/conf/spark-defaults.conf"
+  filename = "${local.ansible_dir}/conf/spark-defaults.conf"
 }
 
 resource "local_file" "spark_env" {
   content  = data.template_file.spark_env.rendered
-  filename = "${path.module}/.cluster/conf/spark-env.sh"
+  filename = "${local.ansible_dir}/conf/spark-env.sh"
 }
 
 resource "local_file" "log4j" {
   content  = data.local_file.log4j.content
-  filename = "${path.module}/.cluster/conf/log4j.properties"
+  filename = "${local.ansible_dir}/conf/log4j.properties"
 }
 
 output "master_ip" {
