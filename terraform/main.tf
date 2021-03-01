@@ -204,19 +204,19 @@ data "template_file" "inventory" {
   ]
 }
 
+resource "local_file" "inventory" {
+  content  = data.template_file.inventory.rendered
+  filename = "${path.module}/.cluster/inventory"
+}
+
 resource "local_file" "spark_defaults" {
   content  = data.template_file.spark_defaults.rendered
-  filename = "${path.module}/conf/spark-defaults.conf"
+  filename = "${path.module}/.cluster/conf/spark-defaults.conf"
 }
 
 resource "local_file" "spark_env" {
   content  = data.template_file.spark_env.rendered
-  filename = "${path.module}/conf/spark-env.sh"
-}
-
-resource "local_file" "inventory" {
-  content  = data.template_file.inventory.rendered
-  filename = "${path.module}/inventory"
+  filename = "${path.module}/.cluster/conf/spark-env.sh"
 }
 
 output "master_ip" {

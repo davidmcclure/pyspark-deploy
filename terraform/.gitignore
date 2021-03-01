@@ -4,4 +4,4 @@ spark-defaults.conf
 spark-env.sh
 user-data.yml
 
-conf/
+.cluster/
