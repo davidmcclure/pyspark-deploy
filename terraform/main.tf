@@ -155,8 +155,8 @@ resource "aws_spot_instance_request" "worker" {
 }
 
 locals {
-  template_dir = "${path.module}/templates"
-  ansible_dir = "${path.module}/.ansible"
+  template_dir   = "${path.module}/templates"
+  ansible_dir    = "${path.module}/.ansible"
   spark_conf_dir = "${local.ansible_dir}/conf"
 }
 
@@ -164,9 +164,12 @@ data "template_file" "inventory" {
   template = file("${local.template_dir}/inventory.tpl")
 
   vars = {
-    master_ip         = aws_instance.master.public_ip
-    master_private_ip = aws_instance.master.private_ip
-    worker_ips        = join("\n", [for ip in aws_spot_instance_request.worker.*.public_ip : ip if ip != null])
+    master_ip             = aws_instance.master.public_ip
+    master_private_ip     = aws_instance.master.private_ip
+    worker_ips            = join("\n", [for ip in aws_spot_instance_request.worker.*.public_ip : ip if ip != null])
+    aws_access_key_id     = var.aws_access_key_id
+    aws_secret_access_key = var.aws_secret_access_key
+    docker_image           = var.docker_image
   }
 
   # Wait for assigned IPs to be known, before writing inventory.
@@ -205,6 +208,10 @@ data "local_file" "log4j" {
   filename = "${local.template_dir}/log4j.properties"
 }
 
+data "local_file" "docker_bash" {
+  filename = "${local.template_dir}/docker-bash.sh"
+}
+
 resource "local_file" "inventory" {
   content  = data.template_file.inventory.rendered
   filename = "${local.ansible_dir}/inventory"
@@ -223,6 +230,11 @@ resource "local_file" "spark_env" {
 resource "local_file" "log4j" {
   content  = data.local_file.log4j.content
   filename = "${local.spark_conf_dir}/log4j.properties"
+}
+
+resource "local_file" "docker_bash" {
+  content  = data.local_file.docker_bash.content
+  filename = "${local.ansible_dir}/docker-bash.sh"
 }
 
 output "master_ip" {

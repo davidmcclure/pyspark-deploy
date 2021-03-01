@@ -1,0 +1,78 @@
+---
+
+- name: Start the cluster
+  hosts: spark
+  gather_facts: no
+  become: yes
+
+  vars:
+    ansible_python_interpreter: python3
+    spark_home: /opt/spark
+    data_dir: /data
+    config_dir: /etc/spark
+    ecr_region: us-east-1
+
+  tasks:
+    - name: Wait for SSH connection
+      wait_for_connection:
+
+    - name: Gather facts, after SSH
+      setup:
+
+    # packer
+    - name: Install docker-py
+      pip:
+        name: docker
+
+    # packer
+    - name: Create directories
+      file:
+        path: '{{ item }}'
+        state: directory
+      with_items:
+        - '{{ data_dir }}'
+        - '{{ config_dir }}'
+
+    - name: Copy Spark config
+      copy:
+        src: .ansible/conf
+        dest: '{{ config_dir }}'
+
+    # packer
+    - name: Render Docker bash script
+      copy:
+        src: .ansible/docker-bash.sh
+        dest: /home/{{ ansible_user }}/docker-bash.sh
+        owner: '{{ ansible_user }}'
+        mode: u+x
+
+    # packer
+    - name: Automatically connect to container on login
+      lineinfile:
+        path: /home/{{ ansible_user }}/.bashrc
+        line: source ./docker-bash.sh
+
+    # TODO: docker_login?
+    - name: Login to AWS ECR
+      shell: $(aws ecr get-login --no-include-email --region {{ ecr_region }})
+      environment:
+        AWS_ACCESS_KEY_ID: '{{ aws_access_key_id }}'
+        AWS_SECRET_ACCESS_KEY: '{{ aws_secret_access_key }}'
+
+    - name: Start master
+      include_tasks: start_container.yml
+      when: '"master" in group_names'
+      vars:
+        name: spark-master
+        # runtime: '{{ spark_master_docker_runtime }}'
+        command: spark-class org.apache.spark.deploy.master.Master
+
+    - name: Start workers
+      include_tasks: start_container.yml
+      when: '"workers" in group_names'
+      vars:
+        name: spark-worker
+        # runtime: '{{ spark_worker_docker_runtime }}'
+        command: >
+          spark-class org.apache.spark.deploy.worker.Worker
+          spark://{{ master_private_ip }}:7077
