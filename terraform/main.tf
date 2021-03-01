@@ -157,6 +157,7 @@ resource "aws_spot_instance_request" "worker" {
 locals {
   template_dir = "${path.module}/templates"
   ansible_dir = "${path.module}/.ansible"
+  spark_conf_dir = "${local.ansible_dir}/conf"
 }
 
 data "template_file" "inventory" {
@@ -211,17 +212,17 @@ resource "local_file" "inventory" {
 
 resource "local_file" "spark_defaults" {
   content  = data.template_file.spark_defaults.rendered
-  filename = "${local.ansible_dir}/conf/spark-defaults.conf"
+  filename = "${local.spark_conf_dir}/spark-defaults.conf"
 }
 
 resource "local_file" "spark_env" {
   content  = data.template_file.spark_env.rendered
-  filename = "${local.ansible_dir}/conf/spark-env.sh"
+  filename = "${local.spark_conf_dir}/spark-env.sh"
 }
 
 resource "local_file" "log4j" {
   content  = data.local_file.log4j.content
-  filename = "${local.ansible_dir}/conf/log4j.properties"
+  filename = "${local.spark_conf_dir}/log4j.properties"
 }
 
 output "master_ip" {
