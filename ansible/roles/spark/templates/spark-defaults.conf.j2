@@ -38,8 +38,3 @@ spark.hadoop.parquet.enable.summary-metadata false
 spark.sql.parquet.mergeSchema false
 spark.sql.parquet.filterPushdown true
 spark.sql.hive.metastorePartitionPruning true
-
-# S3 committer tuning.
-spark.hadoop.fs.s3a.committer.name directory
-spark.sql.sources.commitProtocolClass org.apache.spark.internal.io.cloud.PathOutputCommitProtocol
-spark.sql.parquet.output.committer.class org.apache.spark.internal.io.cloud.BindingParquetOutputCommitter
