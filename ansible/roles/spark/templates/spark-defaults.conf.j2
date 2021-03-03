@@ -10,7 +10,7 @@ spark.executor.memory {{ spark_executor_memory }}
 spark.task.maxFailures {{ spark_task_max_failures }}
 
 # Don't write data to _temporary.
-spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version 2
+#spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version 2
 
 # Avoid memory errors when reading large dfs.
 spark.sql.parquet.enableVectorizedReader false
@@ -31,10 +31,19 @@ spark.driver.maxResultSize {{ spark_driver_max_result_size }}
 spark.hadoop.fs.s3a.connection.maximum {{ spark_s3a_connection_maximum }}
 
 
+# Parquet optimizations.
 # https://spark.apache.org/docs/3.0.2/cloud-integration.html
 
-# Parquet optimizations.
 spark.hadoop.parquet.enable.summary-metadata false
 spark.sql.parquet.mergeSchema false
 spark.sql.parquet.filterPushdown true
 spark.sql.hive.metastorePartitionPruning true
+
+# "Magic" s3 commiter.
+# https://hadoop.apache.org/docs/r3.1.1/hadoop-aws/tools/hadoop-aws/committer_architecture.html
+
+spark.sql.sources.commitProtocolClass org.apache.spark.internal.io.cloud.PathOutputCommitProtocol
+spark.sql.parquet.output.committer.class org.apache.spark.internal.io.cloud.BindingParquetOutputCommitter
+spark.hadoop.mapreduce.outputcommitter.factory.scheme.s3a org.apache.hadoop.fs.s3a.commit.S3ACommitterFactory
+spark.hadoop.fs.s3a.committer.name magic
+spark.hadoop.fs.s3a.committer.magic.enabled true
