@@ -62,21 +62,34 @@
         AWS_ACCESS_KEY_ID: '{{ aws_access_key_id }}'
         AWS_SECRET_ACCESS_KEY: '{{ aws_secret_access_key }}'
 
-    # TODO: Single play?
-    - name: Start master
-      include_tasks: start_container.yml
-      when: '"master" in group_names'
-      vars:
-        name: spark-master
-        runtime: '{{ master_docker_runtime }}'
+    - name: Set master facts
+      set_fact:
+        container_name: spark-master
         command: spark-class org.apache.spark.deploy.master.Master
+        runtime: '{{ master_docker_runtime }}'
+      when: '"master" in group_names'
 
-    - name: Start workers
-      include_tasks: start_container.yml
-      when: '"workers" in group_names'
-      vars:
-        name: spark-worker
+    - name: Set worker facts
+      set_fact:
+        container_name: spark-worker
+        command: spark-class org.apache.spark.deploy.worker.Worker spark://{{ master_private_ip }}:7077
         runtime: '{{ worker_docker_runtime }}'
-        command: >
-          spark-class org.apache.spark.deploy.worker.Worker
-          spark://{{ master_private_ip }}:7077
+      when: '"workers" in group_names'
+
+    - name: Start containers
+      docker_container:
+        image: '{{ docker_image }}'
+        name: '{{ container_name }}'
+        command: '{{ command }}'
+        runtime: '{{ runtime }}'
+        state: started
+        network_mode: host
+        pull: true
+        timeout: 300
+        volumes:
+          - '{{ config_dir }}:{{ spark_home }}/conf'
+          - '{{ data_dir }}:{{ data_dir }}'
+        env:
+          AWS_ACCESS_KEY_ID: '{{ aws_access_key_id }}'
+          AWS_SECRET_ACCESS_KEY: '{{ aws_secret_access_key }}'
+          SPARK_ENV: prod
