@@ -3,7 +3,7 @@
 ${master_ip}
 
 [workers]
-${worker_ips}
+${join("\n", [for ip in worker_ips : ip if ip != null])}
 
 [spark:children]
 master
@@ -15,3 +15,7 @@ master_private_ip=${master_private_ip}
 aws_access_key_id=${aws_access_key_id}
 aws_secret_access_key=${aws_secret_access_key}
 aws_region=${aws_region}
+driver_memory=${driver_memory}
+executor_memory=${executor_memory}
+max_driver_result_size=${max_driver_result_size}
+spark_packages=${join(",", spark_packages)}

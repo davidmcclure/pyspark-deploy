@@ -7,14 +7,14 @@ PYSPARK_DRIVER_PYTHON=ipython
 SPARK_PUBLIC_DNS=`wget -q -O - http://169.254.169.254/latest/meta-data/public-hostname || wget -q -O - http://169.254.169.254/latest/meta-data/local-ipv4`
 
 # AWS credentials.
-AWS_ACCESS_KEY_ID=${aws_access_key_id}
-AWS_SECRET_ACCESS_KEY=${aws_secret_access_key}
+AWS_ACCESS_KEY_ID={{aws_access_key_id}}
+AWS_SECRET_ACCESS_KEY={{aws_secret_access_key}}
 
 # Avoid too-many-open-files errors.
-ulimit -n ${max_files}
+ulimit -n 100000
 
 # Prevent SpaCy from spawning threads.
-OPENBLAS_NUM_THREADS=${openblas_num_threads}
+OPENBLAS_NUM_THREADS=1
 
 # Use common hash seed across nodes (needed for reduceByKey).
 PYTHONHASHSEED=1

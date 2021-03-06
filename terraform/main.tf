@@ -85,7 +85,6 @@ resource "aws_instance" "master" {
   vpc_security_group_ids      = [aws_security_group.spark.id]
   key_name                    = aws_key_pair.spark.key_name
   associate_public_ip_address = true
-  # user_data                   = data.template_cloudinit_config.config.rendered
 
   tags = {
     Name = "spark-master"
@@ -108,7 +107,6 @@ resource "aws_spot_instance_request" "worker" {
   associate_public_ip_address = true
   wait_for_fulfillment        = true
   count                       = var.worker_count
-  # user_data                   = data.template_cloudinit_config.config.rendered
 
   root_block_device {
     volume_size = var.worker_root_vol_size
@@ -124,14 +122,18 @@ locals {
 resource "local_file" "inventory" {
   filename = "${local.ansible_dir}/inventory"
 
-  content  = templatefile("${local.template_dir}/inventory", {
+  content = templatefile("${local.template_dir}/inventory", {
     docker_image          = var.docker_image
     master_ip             = aws_instance.master.public_ip
     master_private_ip     = aws_instance.master.private_ip
-    worker_ips            = join("\n", [for ip in aws_spot_instance_request.worker.*.public_ip : ip if ip != null])
+    worker_ips            = aws_spot_instance_request.worker.*.public_ip
     aws_access_key_id     = var.aws_access_key_id
     aws_secret_access_key = var.aws_secret_access_key
-    aws_region = var.aws_region
+    aws_region            = var.aws_region
+    driver_memory         = var.driver_memory
+    executor_memory       = var.executor_memory
+    max_driver_result_size = var.max_driver_result_size
+    spark_packages        = var.spark_packages
   })
 
   # Wait for assigned IPs to be known, before writing inventory.
@@ -141,40 +143,40 @@ resource "local_file" "inventory" {
   ]
 }
 
-resource "local_file" "spark_defaults" {
-  filename = "${local.spark_conf_dir}/spark-defaults.conf"
+# resource "local_file" "spark_defaults" {
+#   filename = "${local.spark_conf_dir}/spark-defaults.conf"
 
-  content  = templatefile("${local.template_dir}/spark-defaults.conf", {
-    master_private_ip      = aws_instance.master.private_ip
-    driver_memory          = var.driver_memory
-    executor_memory        = var.executor_memory
-    max_driver_result_size = var.max_driver_result_size
-    max_task_failures      = var.max_task_failures
-    max_s3_connections     = var.max_s3_connections
-    packages               = join(",", var.spark_packages)
-  })
-}
+#   content = templatefile("${local.template_dir}/spark-defaults.conf", {
+#     master_private_ip      = aws_instance.master.private_ip
+#     driver_memory          = var.driver_memory
+#     executor_memory        = var.executor_memory
+#     max_driver_result_size = var.max_driver_result_size
+#     max_task_failures      = var.max_task_failures
+#     max_s3_connections     = var.max_s3_connections
+#     packages               = join(",", var.spark_packages)
+#   })
+# }
 
-resource "local_file" "spark_env" {
-  filename = "${local.spark_conf_dir}/spark-env.sh"
+# resource "local_file" "spark_env" {
+#   filename = "${local.spark_conf_dir}/spark-env.sh"
 
-  content  = templatefile("${local.template_dir}/spark-env.sh", {
-    aws_access_key_id     = var.aws_access_key_id
-    aws_secret_access_key = var.aws_secret_access_key
-    max_files             = var.max_files
-    openblas_num_threads  = var.openblas_num_threads
-  })
-}
+#   content = templatefile("${local.template_dir}/spark-env.sh", {
+#     aws_access_key_id     = var.aws_access_key_id
+#     aws_secret_access_key = var.aws_secret_access_key
+#     max_files             = var.max_files
+#     openblas_num_threads  = var.openblas_num_threads
+#   })
+# }
 
-resource "local_file" "log4j" {
-  filename = "${local.spark_conf_dir}/log4j.properties"
-  content  = file("${local.template_dir}/log4j.properties")
-}
+# resource "local_file" "log4j" {
+#   filename = "${local.spark_conf_dir}/log4j.properties"
+#   content  = file("${local.template_dir}/log4j.properties")
+# }
 
-resource "local_file" "docker_bash" {
-  filename = "${local.ansible_dir}/docker-bash.sh"
-  content  = file("${local.template_dir}/docker-bash.sh")
-}
+# resource "local_file" "docker_bash" {
+#   filename = "${local.ansible_dir}/docker-bash.sh"
+#   content  = file("${local.template_dir}/docker-bash.sh")
+# }
 
 output "master_ip" {
   value = aws_instance.master.public_ip

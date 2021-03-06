@@ -23,7 +23,7 @@
       pip:
         name: docker
 
-    # packer
+    # packer?
     - name: Create directories
       file:
         path: '{{ item }}'
@@ -32,15 +32,19 @@
         - '{{ data_dir }}'
         - '{{ config_dir }}'
 
-    - name: Copy Spark config
-      copy:
-        src: .ansible/conf
-        dest: '{{ config_dir }}'
+    - name: Render Spark config
+      template:
+        src: 'templates/{{ item }}'
+        dest: '{{ config_dir }}/{{ item }}'
+      with_items:
+        - spark-defaults.conf
+        - spark-env.sh
+        - log4j.properties
 
     # packer
     - name: Render Docker bash script
       copy:
-        src: .ansible/docker-bash.sh
+        src: templates/docker-bash.sh
         dest: /home/{{ ansible_user }}/docker-bash.sh
         owner: '{{ ansible_user }}'
         mode: u+x
