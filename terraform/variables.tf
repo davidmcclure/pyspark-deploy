@@ -10,8 +10,9 @@ variable "aws_subnet_id" {
   type = string
 }
 
+# Deep Learning Base AMI (Ubuntu 18.04) Version 34.1
 variable "aws_ami" {
-  type = string
+  default = "ami-04eb5b2f5ef92e8b8"
 }
 
 variable "master_instance_type" {
@@ -35,7 +36,7 @@ variable "public_key_path" {
 }
 
 variable "master_root_vol_size" {
-  default = 10
+  default = 100
 }
 
 variable "worker_root_vol_size" {

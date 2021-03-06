@@ -54,7 +54,6 @@
         - spark-env.sh
         - log4j.properties
 
-    # TODO: docker_login?
     - name: Log in to ECR
       shell: $(aws ecr get-login --no-include-email --region {{ aws_region }})
       environment:
@@ -64,15 +63,17 @@
     - name: Set master facts
       set_fact:
         container_name: spark-master
-        command: spark-class org.apache.spark.deploy.master.Master
         runtime: '{{ master_docker_runtime }}'
+        command: spark-class org.apache.spark.deploy.master.Master
       when: '"master" in group_names'
 
     - name: Set worker facts
       set_fact:
         container_name: spark-worker
-        command: spark-class org.apache.spark.deploy.worker.Worker spark://{{ master_private_ip }}:7077
         runtime: '{{ worker_docker_runtime }}'
+        command: >
+          spark-class org.apache.spark.deploy.worker.Worker
+          spark://{{ master_private_ip }}:7077
       when: '"workers" in group_names'
 
     - name: Start containers
