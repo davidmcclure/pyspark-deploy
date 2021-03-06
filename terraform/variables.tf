@@ -89,3 +89,11 @@ variable "aws_secret_access_key" {
 variable "docker_image" {
   type = string
 }
+
+variable "master_docker_runtime" {
+  default = ""
+}
+
+variable "worker_docker_runtime" {
+  default = ""
+}

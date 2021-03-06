@@ -68,7 +68,7 @@
       when: '"master" in group_names'
       vars:
         name: spark-master
-        # runtime: '{{ spark_master_docker_runtime }}'
+        runtime: '{{ master_docker_runtime }}'
         command: spark-class org.apache.spark.deploy.master.Master
 
     - name: Start workers
@@ -76,7 +76,7 @@
       when: '"workers" in group_names'
       vars:
         name: spark-worker
-        # runtime: '{{ spark_worker_docker_runtime }}'
+        runtime: '{{ worker_docker_runtime }}'
         command: >
           spark-class org.apache.spark.deploy.worker.Worker
           spark://{{ master_private_ip }}:7077
