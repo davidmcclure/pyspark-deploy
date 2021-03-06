@@ -124,7 +124,7 @@ locals {
 resource "local_file" "inventory" {
   filename = "${local.ansible_dir}/inventory"
 
-  content  = templatefile("${local.template_dir}/inventory.tpl", {
+  content  = templatefile("${local.template_dir}/inventory", {
     master_ip             = aws_instance.master.public_ip
     master_private_ip     = aws_instance.master.private_ip
     worker_ips            = join("\n", [for ip in aws_spot_instance_request.worker.*.public_ip : ip if ip != null])
@@ -143,7 +143,7 @@ resource "local_file" "inventory" {
 resource "local_file" "spark_defaults" {
   filename = "${local.spark_conf_dir}/spark-defaults.conf"
 
-  content  = templatefile("${local.template_dir}/spark-defaults.conf.tpl", {
+  content  = templatefile("${local.template_dir}/spark-defaults.conf", {
     master_private_ip      = aws_instance.master.private_ip
     driver_memory          = var.driver_memory
     executor_memory        = var.executor_memory
@@ -157,7 +157,7 @@ resource "local_file" "spark_defaults" {
 resource "local_file" "spark_env" {
   filename = "${local.spark_conf_dir}/spark-env.sh"
 
-  content  = templatefile("${local.template_dir}/spark-env.sh.tpl", {
+  content  = templatefile("${local.template_dir}/spark-env.sh", {
     aws_access_key_id     = var.aws_access_key_id
     aws_secret_access_key = var.aws_secret_access_key
     max_files             = var.max_files
@@ -166,13 +166,13 @@ resource "local_file" "spark_env" {
 }
 
 resource "local_file" "log4j" {
-  content  = file("${local.template_dir}/log4j.properties")
   filename = "${local.spark_conf_dir}/log4j.properties"
+  content  = file("${local.template_dir}/log4j.properties")
 }
 
 resource "local_file" "docker_bash" {
-  content  = file("${local.template_dir}/docker-bash.sh")
   filename = "${local.ansible_dir}/docker-bash.sh"
+  content  = file("${local.template_dir}/docker-bash.sh")
 }
 
 output "master_ip" {
