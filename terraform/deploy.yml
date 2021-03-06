@@ -58,6 +58,7 @@
         AWS_ACCESS_KEY_ID: '{{ aws_access_key_id }}'
         AWS_SECRET_ACCESS_KEY: '{{ aws_secret_access_key }}'
 
+    # TODO: Single play?
     - name: Start master
       include_tasks: start_container.yml
       when: '"master" in group_names'
