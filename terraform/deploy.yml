@@ -23,7 +23,20 @@
       pip:
         name: docker
 
-    # packer?
+    # packer
+    - name: Render Docker bash script
+      copy:
+        src: templates/docker-bash.sh
+        dest: /home/{{ ansible_user }}/docker-bash.sh
+        owner: '{{ ansible_user }}'
+        mode: u+x
+
+    # packer
+    - name: Automatically connect to container on login
+      lineinfile:
+        path: /home/{{ ansible_user }}/.bashrc
+        line: source ./docker-bash.sh
+
     - name: Create directories
       file:
         path: '{{ item }}'
@@ -40,20 +53,6 @@
         - spark-defaults.conf
         - spark-env.sh
         - log4j.properties
-
-    # packer
-    - name: Render Docker bash script
-      copy:
-        src: templates/docker-bash.sh
-        dest: /home/{{ ansible_user }}/docker-bash.sh
-        owner: '{{ ansible_user }}'
-        mode: u+x
-
-    # packer
-    - name: Automatically connect to container on login
-      lineinfile:
-        path: /home/{{ ansible_user }}/.bashrc
-        line: source ./docker-bash.sh
 
     # TODO: docker_login?
     - name: Log in to ECR
