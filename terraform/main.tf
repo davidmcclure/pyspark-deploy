@@ -96,6 +96,7 @@ resource "aws_instance" "master" {
 }
 
 # TODO: Name tag?
+# TODO: Also support on-demand workers.
 resource "aws_spot_instance_request" "worker" {
   ami                         = var.aws_ami
   instance_type               = var.worker_instance_type
@@ -120,7 +121,7 @@ locals {
 }
 
 resource "local_file" "inventory" {
-  filename = "${local.ansible_dir}/inventory"
+  filename = "${path.module}/inventory"
 
   content = templatefile("${local.template_dir}/inventory", {
     docker_image           = var.docker_image
