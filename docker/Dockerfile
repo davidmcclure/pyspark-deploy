@@ -28,7 +28,7 @@ RUN apt-get update && apt-get install -y \
   liblzma-dev
 
 # Python 3
-ARG PYTHON_VERSION=3.8.3
+ARG PYTHON_VERSION=3.9.0
 ARG PYENV_ROOT=/root/.pyenv
 RUN curl https://pyenv.run | bash
 ENV PATH $PYENV_ROOT/bin:$PYENV_ROOT/shims:$PATH
