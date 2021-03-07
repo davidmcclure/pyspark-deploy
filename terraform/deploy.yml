@@ -85,7 +85,6 @@
         command: '{{ command }}'
         runtime: '{{ runtime }}'
         container_default_behavior: no_defaults
-        state: started
         network_mode: host
         pull: true
         timeout: 300
