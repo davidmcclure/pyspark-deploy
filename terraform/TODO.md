@@ -5,3 +5,4 @@
 - [ ] create/destroy/login/web-admin
 - [ ] var files in parent project
 - [ ] where to write state / inventory?
+- [ ] update to ansible3
