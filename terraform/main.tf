@@ -114,16 +114,10 @@ resource "aws_spot_instance_request" "worker" {
   }
 }
 
-locals {
-  template_dir   = "${path.module}/templates"
-  ansible_dir    = "${path.module}/.ansible"
-  spark_conf_dir = "${local.ansible_dir}/conf"
-}
-
 resource "local_file" "inventory" {
   filename = "${path.module}/inventory"
 
-  content = templatefile("${local.template_dir}/inventory", {
+  content = templatefile("templates/inventory", {
     docker_image           = var.docker_image
     master_ip              = aws_instance.master.public_ip
     master_private_ip      = aws_instance.master.private_ip

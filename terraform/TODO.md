@@ -4,6 +4,6 @@
 - [ ] move as much as possible from ansible -> packer (?)
 - [x] create/destroy/login/web-admin
 - [ ] var files in parent project
-- [ ] where to write state / inventory?
 - [x] update to ansible3
-- [ ] move in Docker image
+- [ ] move in Docker image, update
+- [ ] where to write state / inventory?
