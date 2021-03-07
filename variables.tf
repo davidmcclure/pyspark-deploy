@@ -65,7 +65,7 @@ variable "max_driver_result_size" {
 
 variable "spark_packages" {
   default = [
-    "org.apache.hadoop:hadoop-aws:2.7.3",
+    "org.apache.hadoop:hadoop-aws:3.2.0",
   ]
 }
 
