@@ -54,6 +54,7 @@
         - spark-env.sh
         - log4j.properties
 
+    # TODO: Need to update this to new-style login, at some point?
     - name: Log in to ECR
       shell: $(aws ecr get-login --no-include-email --region {{ aws_region }})
       environment:
@@ -76,6 +77,7 @@
           spark://{{ master_private_ip }}:7077
       when: '"workers" in group_names'
 
+    # TODO: Don't restart if image is unchanged.
     - name: Start containers
       docker_container:
         image: '{{ docker_image }}'
