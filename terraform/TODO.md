@@ -2,7 +2,7 @@
 - [x] no variables in ansible
 - [x] single play for container start
 - [ ] move as much as possible from ansible -> packer
-- [ ] create/destroy/login/web-admin
+- [x] create/destroy/login/web-admin
 - [ ] var files in parent project
 - [ ] where to write state / inventory?
 - [ ] update to ansible3

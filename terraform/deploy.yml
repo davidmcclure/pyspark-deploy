@@ -84,6 +84,7 @@
         name: '{{ container_name }}'
         command: '{{ command }}'
         runtime: '{{ runtime }}'
+        container_default_behavior: no_defaults
         state: started
         network_mode: host
         pull: true
