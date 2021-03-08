@@ -6,7 +6,7 @@ spark_master_port: 7077
 spark_master_url: spark://{{ tf_master_private_ip }}:{{ spark_master_port }}
 
 spark_base_packages:
-  - org.apache.hadoop:hadoop-aws:3.2.0
+  - org.apache.hadoop:hadoop-aws:2.7.3
 
 spark_extra_packages: []
 
