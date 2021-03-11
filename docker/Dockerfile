@@ -42,7 +42,7 @@ RUN update-ca-certificates -f
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 
 # Spark
-ARG SPARK_URL=http://apache.cs.utah.edu/spark/spark-3.0.2/spark-3.0.2-bin-hadoop3.2.tgz
+ARG SPARK_URL=http://apache.cs.utah.edu/spark/spark-3.1.1/spark-3.1.1-bin-hadoop3.2.tgz
 ENV SPARK_HOME=/opt/spark
 ENV PATH $PATH:${SPARK_HOME}/bin
 
