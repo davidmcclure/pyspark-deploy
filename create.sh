@@ -1,4 +1,4 @@
 #!/bin/sh
 
 terraform apply
-ansible-playbook deploy.yml
+poetry run ansible-playbook deploy.yml
