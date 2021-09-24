@@ -98,3 +98,8 @@ variable "master_docker_runtime" {
 variable "worker_docker_runtime" {
   default = ""
 }
+
+variable "wandb_api_key" {
+  default   = ""
+  sensitive = true
+}

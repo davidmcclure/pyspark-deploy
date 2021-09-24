@@ -20,3 +20,6 @@ OPENBLAS_NUM_THREADS=1
 PYTHONHASHSEED=1
 
 SPARK_WORKER_DIR=/data/work
+
+# W&B key.
+WANDB_API_KEY={{wandb_api_key}}
