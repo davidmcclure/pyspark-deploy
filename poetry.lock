@@ -294,8 +294,8 @@ python-versions = "*"
 
 [metadata]
 lock-version = "1.1"
-python-versions = "^3.8"
-content-hash = "57f8996f52dffee4ad04a76ec9511b31b95a77761c01cbe2d6cd7fc773e0de48"
+python-versions = "^3.9"
+content-hash = "ea5885a5035e805f13a3718151b72063f7b815a532df083d416dfc1027f4cba3"
 
 [metadata.files]
 ansible = [
