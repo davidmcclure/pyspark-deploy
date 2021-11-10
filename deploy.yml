@@ -10,6 +10,7 @@
     spark_home: /opt/spark
     data_dir: /data
     config_dir: /etc/spark
+    gpu_workers: True
 
   tasks:
     - name: Wait for SSH connection
@@ -61,27 +62,36 @@
         AWS_ACCESS_KEY_ID: '{{ aws_access_key_id }}'
         AWS_SECRET_ACCESS_KEY: '{{ aws_secret_access_key }}'
 
+    - name: Set shared facts
+      set_fact:
+        runtime: ''
+        device_requests: []
+
     - name: Set master facts
       set_fact:
         container_name: spark-master
-        runtime: '{{ master_docker_runtime }}'
-        device_requests: []
         command: spark-class org.apache.spark.deploy.master.Master
       when: '"master" in group_names'
 
     - name: Set worker facts
       set_fact:
         container_name: spark-worker
-        runtime: '{{ worker_docker_runtime }}'
+        command: >
+          spark-class org.apache.spark.deploy.worker.Worker
+          spark://{{ master_private_ip }}:7077
+      when: '"workers" in group_names'
+
+    - name: Set GPU worker facts
+      set_fact:
+        runtime: 'nvidia'
         device_requests:
           - driver: nvidia
             count: -1
             capabilities:
               - ['gpu']
-        command: >
-          spark-class org.apache.spark.deploy.worker.Worker
-          spark://{{ master_private_ip }}:7077
-      when: '"workers" in group_names'
+      when:
+        - '"worker" in group_names'
+        - gpu_workers == True
 
     # TODO: Don't restart if image is unchanged.
     - name: Start containers
