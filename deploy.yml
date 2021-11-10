@@ -83,7 +83,7 @@
         image: '{{ docker_image }}'
         name: '{{ container_name }}'
         command: '{{ command }}'
-        runtime: '{{ runtime }}'
+        # runtime: '{{ runtime }}'
         container_default_behavior: no_defaults
         network_mode: host
         pull: true
@@ -95,3 +95,6 @@
           AWS_ACCESS_KEY_ID: '{{ aws_access_key_id }}'
           AWS_SECRET_ACCESS_KEY: '{{ aws_secret_access_key }}'
           SPARK_ENV: prod
+        device_requests:
+          - driver: nvidia
+            count: -1
