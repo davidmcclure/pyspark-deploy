@@ -31,6 +31,10 @@ variable "worker_count" {
   default = 1
 }
 
+variable "gpu_workers" {
+  default = false
+}
+
 variable "public_key_path" {
   default = "~/.ssh/spark.pub"
 }
@@ -89,12 +93,4 @@ variable "aws_secret_access_key" {
 
 variable "docker_image" {
   type = string
-}
-
-variable "master_docker_runtime" {
-  default = ""
-}
-
-variable "worker_docker_runtime" {
-  default = ""
 }

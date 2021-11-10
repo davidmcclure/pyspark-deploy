@@ -10,7 +10,8 @@
     spark_home: /opt/spark
     data_dir: /data
     config_dir: /etc/spark
-    gpu_workers: True
+    runtime: ''
+    device_requests: []
 
   tasks:
     - name: Wait for SSH connection
@@ -62,11 +63,6 @@
         AWS_ACCESS_KEY_ID: '{{ aws_access_key_id }}'
         AWS_SECRET_ACCESS_KEY: '{{ aws_secret_access_key }}'
 
-    - name: Set shared facts
-      set_fact:
-        runtime: ''
-        device_requests: []
-
     - name: Set master facts
       set_fact:
         container_name: spark-master
@@ -90,8 +86,8 @@
             capabilities:
               - ['gpu']
       when:
-        - '"worker" in group_names'
-        - gpu_workers == True
+        - '"workers" in group_names'
+        - gpu_workers | bool
 
     # TODO: Don't restart if image is unchanged.
     - name: Start containers

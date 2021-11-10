@@ -145,8 +145,7 @@ resource "local_file" "inventory" {
     executor_memory        = var.executor_memory
     max_driver_result_size = var.max_driver_result_size
     spark_packages         = var.spark_packages
-    master_docker_runtime  = var.master_docker_runtime
-    worker_docker_runtime  = var.worker_docker_runtime
+    gpu_workers            = var.gpu_workers
   })
 
   # Wait for assigned IPs to be known, before writing inventory.

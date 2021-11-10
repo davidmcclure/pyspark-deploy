@@ -19,5 +19,4 @@ driver_memory=${driver_memory}
 executor_memory=${executor_memory}
 max_driver_result_size=${max_driver_result_size}
 spark_packages=${join(",", spark_packages)}
-master_docker_runtime=${master_docker_runtime}
-worker_docker_runtime=${worker_docker_runtime}
+gpu_workers=${gpu_workers}
