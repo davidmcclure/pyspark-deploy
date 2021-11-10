@@ -23,12 +23,16 @@ variable "worker_instance_type" {
   default = "c3.4xlarge"
 }
 
-variable "worker_spot_price" {
-  default = 0.4
+variable "on_demand_worker_count" {
+  default = 0
 }
 
-variable "worker_count" {
-  default = 1
+variable "spot_worker_count" {
+  default = 0
+}
+
+variable "spot_worker_price" {
+  default = 0.4
 }
 
 variable "gpu_workers" {

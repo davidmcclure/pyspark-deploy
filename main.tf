@@ -95,14 +95,15 @@ resource "aws_instance" "master" {
   }
 }
 
-resource "aws_instance" "worker" {
+# TODO: Name tag?
+resource "aws_instance" "workers" {
   ami                         = var.aws_ami
   instance_type               = var.worker_instance_type
   subnet_id                   = var.aws_subnet_id
   vpc_security_group_ids      = [aws_security_group.spark.id]
   key_name                    = aws_key_pair.spark.key_name
   associate_public_ip_address = true
-  count                       = var.worker_count
+  count                       = var.on_demand_worker_count
 
   root_block_device {
     volume_size = var.worker_root_vol_size
@@ -110,23 +111,22 @@ resource "aws_instance" "worker" {
 }
 
 # TODO: Name tag?
-# TODO: Also support on-demand workers.
-// resource "aws_spot_instance_request" "worker" {
-//   ami                         = var.aws_ami
-//   instance_type               = var.worker_instance_type
-//   subnet_id                   = var.aws_subnet_id
-//   vpc_security_group_ids      = [aws_security_group.spark.id]
-//   key_name                    = aws_key_pair.spark.key_name
-//   spot_price                  = var.worker_spot_price
-//   spot_type                   = "one-time"
-//   associate_public_ip_address = true
-//   wait_for_fulfillment        = true
-//   count                       = var.worker_count
+resource "aws_spot_instance_request" "workers" {
+  ami                         = var.aws_ami
+  instance_type               = var.worker_instance_type
+  subnet_id                   = var.aws_subnet_id
+  vpc_security_group_ids      = [aws_security_group.spark.id]
+  key_name                    = aws_key_pair.spark.key_name
+  spot_price                  = var.spot_worker_price
+  spot_type                   = "one-time"
+  associate_public_ip_address = true
+  wait_for_fulfillment        = true
+  count                       = var.spot_worker_count
 
-//   root_block_device {
-//     volume_size = var.worker_root_vol_size
-//   }
-// }
+  root_block_device {
+    volume_size = var.worker_root_vol_size
+  }
+}
 
 resource "local_file" "inventory" {
   filename = "${path.module}/inventory"
@@ -137,7 +137,8 @@ resource "local_file" "inventory" {
     docker_image           = var.docker_image
     master_ip              = aws_instance.master.public_ip
     master_private_ip      = aws_instance.master.private_ip
-    worker_ips             = aws_instance.worker.*.public_ip
+    on_demand_worker_ips   = aws_instance.workers.*.public_ip
+    spot_worker_ips        = aws_spot_instance_request.workers.*.public_ip
     aws_access_key_id      = var.aws_access_key_id
     aws_secret_access_key  = var.aws_secret_access_key
     aws_region             = var.aws_region
@@ -151,7 +152,8 @@ resource "local_file" "inventory" {
   # Wait for assigned IPs to be known, before writing inventory.
   depends_on = [
     aws_instance.master,
-    aws_instance.worker,
+    aws_instance.workers,
+    aws_spot_instance_request.workers,
   ]
 }
 

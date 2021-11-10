@@ -3,7 +3,8 @@
 ${master_ip}
 
 [workers]
-${join("\n", [for ip in worker_ips : ip if ip != null])}
+${join("\n", [for ip in on_demand_worker_ips : ip if ip != null])}
+${join("\n", [for ip in spot_worker_ips : ip if ip != null])}
 
 [spark:children]
 master
