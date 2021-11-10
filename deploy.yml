@@ -89,7 +89,6 @@
         - '"workers" in group_names'
         - gpu_workers | bool
 
-    # TODO: Don't restart if image is unchanged.
     - name: Start containers
       docker_container:
         image: '{{ docker_image }}'
