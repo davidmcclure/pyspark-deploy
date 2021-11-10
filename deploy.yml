@@ -65,6 +65,7 @@
       set_fact:
         container_name: spark-master
         runtime: '{{ master_docker_runtime }}'
+        device_requests: []
         command: spark-class org.apache.spark.deploy.master.Master
       when: '"master" in group_names'
 
@@ -72,6 +73,11 @@
       set_fact:
         container_name: spark-worker
         runtime: '{{ worker_docker_runtime }}'
+        device_requests:
+          - driver: nvidia
+            count: -1
+            capabilities:
+              - ['gpu']
         command: >
           spark-class org.apache.spark.deploy.worker.Worker
           spark://{{ master_private_ip }}:7077
@@ -82,8 +88,9 @@
       docker_container:
         image: '{{ docker_image }}'
         name: '{{ container_name }}'
+        runtime: '{{ runtime }}'
+        device_requests: '{{ device_requests }}'
         command: '{{ command }}'
-        # runtime: '{{ runtime }}'
         container_default_behavior: no_defaults
         network_mode: host
         pull: true
@@ -95,6 +102,3 @@
           AWS_ACCESS_KEY_ID: '{{ aws_access_key_id }}'
           AWS_SECRET_ACCESS_KEY: '{{ aws_secret_access_key }}'
           SPARK_ENV: prod
-        device_requests:
-          - driver: nvidia
-            count: -1
