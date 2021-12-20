@@ -3,7 +3,8 @@
 ${master_ip}
 
 [workers]
-${worker_ips}
+${on_demand_worker_ips}
+${spot_worker_ips}
 
 [spark:children]
 master
