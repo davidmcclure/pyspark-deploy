@@ -27,7 +27,8 @@ class ClusterConfig(BaseModel):
     aws_ami: str
     master_instance_type = 'c5.xlarge'
     worker_instance_type = 'm4.4xlarge'
-    worker_count = 1
+    on_demand_worker_count = 0
+    spot_worker_count = 0
     worker_spot_price = 0.4
     master_root_vol_size = 10
     worker_root_vol_size = 100
@@ -56,7 +57,8 @@ class ClusterConfig(BaseModel):
             'aws_ami',
             'master_instance_type',
             'worker_instance_type',
-            'worker_count',
+            'on_demand_worker_count',
+            'spot_worker_count',
             'worker_spot_price',
             'master_root_vol_size',
             'worker_root_vol_size',

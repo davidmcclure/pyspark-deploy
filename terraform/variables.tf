@@ -34,7 +34,11 @@ variable "public_key_path" {
   type = string
 }
 
-variable "worker_count" {
+variable "on_demand_worker_count" {
+  type = number
+}
+
+variable "spot_worker_count" {
   type = number
 }
 
