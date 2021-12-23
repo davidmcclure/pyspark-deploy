@@ -163,6 +163,7 @@ def cli():
     pass
 
 
+# TODO: Set the profile separately - config file, or via CLI?
 @cli.command()
 @click.argument('profile', required=False)
 def create(profile: Optional[str]):
