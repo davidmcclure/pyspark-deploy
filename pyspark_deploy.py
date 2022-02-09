@@ -44,6 +44,7 @@ class ClusterConfig(BaseModel):
     driver_max_result_size = '10g'
     executor_memory = '50g'
     extra_packages: List[str] = []
+    spark_env: List[str] = []
 
     class Config:
 
@@ -75,6 +76,7 @@ class ClusterConfig(BaseModel):
             'driver_max_result_size',
             'executor_memory',
             'extra_packages',
+            'spark_env',
         )
 
     def terraform_vars(self) -> dict:
