@@ -5,7 +5,7 @@ import yaml
 import subprocess
 import click
 
-from typing import Optional, List, Dict
+from typing import Optional, List
 from pydantic import BaseModel
 
 from ansible import constants as C
