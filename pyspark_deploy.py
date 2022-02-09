@@ -5,7 +5,7 @@ import yaml
 import subprocess
 import click
 
-from typing import Optional, List
+from typing import Optional, List, Dict
 from pydantic import BaseModel
 
 from ansible import constants as C
@@ -44,7 +44,7 @@ class ClusterConfig(BaseModel):
     driver_max_result_size = '10g'
     executor_memory = '50g'
     extra_packages: List[str] = []
-    spark_env: List[str] = []
+    wandb_api_key: Optional[str]
 
     class Config:
 
@@ -76,7 +76,7 @@ class ClusterConfig(BaseModel):
             'driver_max_result_size',
             'executor_memory',
             'extra_packages',
-            'spark_env',
+            'wandb_api_key',
         )
 
     def terraform_vars(self) -> dict:
@@ -149,7 +149,6 @@ def read_config(path: str, profile: Optional[str] = None) -> ClusterConfig:
         key: str(val) if type(val) is AnsibleVaultEncryptedUnicode else val
         for key, val in config.items()
     }
-
     return ClusterConfig(**config)
 
 

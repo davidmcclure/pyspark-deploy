@@ -38,6 +38,7 @@ spark_docker_env:
   AWS_ACCESS_KEY_ID: '{{ spark_aws_access_key_id }}'
   AWS_SECRET_ACCESS_KEY: '{{ spark_aws_secret_access_key }}'
   SPARK_ENV: prod
+  WANDB_API_KEY: '{{ spark_wandb_api_key }}'
 
 spark_openblas_num_threads: 1
 
