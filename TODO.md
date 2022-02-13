@@ -4,6 +4,6 @@
 - [x] create/destroy/login/web-admin
 - [x] update to ansible3
 - [x] move in Docker image, update
-- [ ] ~~move as much as possible from ansible -> packer~~ (?)
-- [ ] how to handle vars / profiles
-- [ ] where to write state / inventory? (s3)
+- [ ] start cluster with cloud-init, remove ansible
+- [ ] inventory on s3?
+- [ ] python wrapper?
