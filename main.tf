@@ -85,6 +85,10 @@ resource "aws_instance" "master" {
   vpc_security_group_ids      = [aws_security_group.spark.id]
   key_name                    = aws_key_pair.spark.key_name
   associate_public_ip_address = true
+  user_data                   = <<EOF
+#!/bin/bash
+echo "test" > /home/ubuntu/user-data.txt
+  EOF
 
   tags = {
     Name = "spark-master"
