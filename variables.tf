@@ -23,12 +23,20 @@ variable "worker_instance_type" {
   default = "c3.4xlarge"
 }
 
-variable "worker_spot_price" {
+variable "on_demand_worker_count" {
+  default = 0
+}
+
+variable "spot_worker_count" {
+  default = 0
+}
+
+variable "spot_worker_price" {
   default = 0.4
 }
 
-variable "worker_count" {
-  default = 1
+variable "gpu_workers" {
+  default = false
 }
 
 variable "public_key_path" {
@@ -89,14 +97,6 @@ variable "aws_secret_access_key" {
 
 variable "docker_image" {
   type = string
-}
-
-variable "master_docker_runtime" {
-  default = ""
-}
-
-variable "worker_docker_runtime" {
-  default = ""
 }
 
 variable "wandb_api_key" {

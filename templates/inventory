@@ -3,7 +3,8 @@
 ${master_ip}
 
 [workers]
-${join("\n", [for ip in worker_ips : ip if ip != null])}
+${join("\n", [for ip in on_demand_worker_ips : ip if ip != null])}
+${join("\n", [for ip in spot_worker_ips : ip if ip != null])}
 
 [spark:children]
 master
@@ -19,6 +20,5 @@ driver_memory=${driver_memory}
 executor_memory=${executor_memory}
 max_driver_result_size=${max_driver_result_size}
 spark_packages=${join(",", spark_packages)}
-master_docker_runtime=${master_docker_runtime}
-worker_docker_runtime=${worker_docker_runtime}
 wandb_api_key=${wandb_api_key}
+gpu_workers=${gpu_workers}

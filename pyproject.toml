@@ -5,9 +5,9 @@ description = ""
 authors = ["David McClure <davidwilliammcclure@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
-ipython = "^7.16.1"
-ansible = "^3.0.0"
+python = "^3.9"
+ipython = "^7.29.0"
+ansible = "^4.8.0"
 
 [tool.poetry.dev-dependencies]
 
