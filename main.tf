@@ -78,26 +78,43 @@ resource "aws_key_pair" "spark" {
   public_key = file(var.public_key_path)
 }
 
+resource "aws_network_interface" "master" {
+  subnet_id = var.aws_subnet_id
+  security_groups = [aws_security_group.spark.id]
+}
+
+resource "aws_eip" "master" {
+  network_interface = aws_network_interface.master.id
+  vpc = true
+}
+
 resource "aws_instance" "master" {
   ami                         = var.aws_ami
   instance_type               = var.master_instance_type
-  subnet_id                   = var.aws_subnet_id
-  vpc_security_group_ids      = [aws_security_group.spark.id]
   key_name                    = aws_key_pair.spark.key_name
-  associate_public_ip_address = true
-  user_data                   = templatefile("templates/cloud-config.yaml", {
-    spark_defaults = "spark-defaults2"
-    spark_env = "spark-env2"
-  })
-
-  tags = {
-    Name = "spark-master"
-  }
+  // user_data                   = templatefile("templates/cloud-config.yaml", {
+  //   spark_defaults = "spark-defaults2"
+  //   spark_env = "spark-env2"
+  // })
 
   root_block_device {
     volume_size = var.master_root_vol_size
   }
+
+  network_interface {
+    network_interface_id = aws_network_interface.master.id
+    device_index = 0
+  }
+
+  tags = {
+    Name = "spark-master"
+  }
 }
+
+// resource "aws_eip_association" "master" {
+//   instance_id = aws_instance.master.id
+//   allocation_id = aws_eip.master.id
+// }
 
 # TODO: Name tag?
 resource "aws_instance" "workers" {
@@ -163,5 +180,9 @@ resource "local_file" "inventory" {
 }
 
 output "master_ip" {
-  value = aws_instance.master.public_ip
+  value = aws_eip.master.public_ip
+}
+
+output "master_private_dns" {
+  value = aws_network_interface.master.private_dns_name
 }
