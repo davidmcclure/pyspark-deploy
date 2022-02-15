@@ -44,6 +44,7 @@ class ClusterConfig(BaseModel):
     driver_max_result_size = '10g'
     executor_memory = '50g'
     extra_packages: List[str] = []
+    wandb_api_key: Optional[str]
 
     class Config:
 
@@ -75,6 +76,7 @@ class ClusterConfig(BaseModel):
             'driver_max_result_size',
             'executor_memory',
             'extra_packages',
+            'wandb_api_key',
         )
 
     def terraform_vars(self) -> dict:
@@ -147,7 +149,6 @@ def read_config(path: str, profile: Optional[str] = None) -> ClusterConfig:
         key: str(val) if type(val) is AnsibleVaultEncryptedUnicode else val
         for key, val in config.items()
     }
-
     return ClusterConfig(**config)
 
 
