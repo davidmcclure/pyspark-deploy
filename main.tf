@@ -85,10 +85,10 @@ resource "aws_instance" "master" {
   vpc_security_group_ids      = [aws_security_group.spark.id]
   key_name                    = aws_key_pair.spark.key_name
   associate_public_ip_address = true
-  user_data                   = <<EOF
-#!/bin/bash
-echo "test" > /home/ubuntu/user-data.txt
-  EOF
+  user_data                   = templatefile("templates/cloud-config.yaml", {
+    spark_defaults = "spark-defaults2"
+    spark_env = "spark-env2"
+  })
 
   tags = {
     Name = "spark-master"

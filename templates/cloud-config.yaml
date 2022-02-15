@@ -1,0 +1,13 @@
+#cloud-config
+
+# render spark-defaults.conf and spark-env.sh
+# run docker cmd
+
+write_files:
+  - path: /etc/spark/spark-defaults.conf
+    content: ${spark_defaults}
+  - path: /etc/spark/spark-env.sh
+    content: ${spark_env}
+
+runcmd:
+  - echo "runcmd from yaml" > /home/ubuntu/test.txt
