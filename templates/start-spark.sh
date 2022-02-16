@@ -8,8 +8,13 @@ aws ecr get-login-password --region us-east-1 | \
 
 docker run -d \
   --name spark \
+  --network host \
   -v /data:/data \
   -v /etc/spark/conf:/opt/spark/conf \
   -p 8080:8080 \
   ${ecr_server}/${ecr_repo} \
-  spark-class org.apache.spark.deploy.master.Master
+  ${
+    master_private_ip != null ?
+    "spark-class org.apache.spark.deploy.worker.Worker spark://${master_private_ip}:7077" :
+    "spark-class org.apache.spark.deploy.master.Master"
+  }
