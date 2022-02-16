@@ -86,6 +86,7 @@ locals {
     spark_packages         = var.spark_packages
     data_dir               = var.data_dir
     max_task_failures      = var.max_task_failures
+    master_private_ip      = null
   }
 }
 
@@ -103,10 +104,7 @@ locals {
 
   spark_defaults_master_b64 = base64encode(templatefile(
     "templates/spark-defaults.conf",
-    merge(local.spark_defaults_vars_common, {
-      # TODO: Pass null here, define default in the template.
-      master_private_ip = "0.0.0.0"
-    })
+    local.spark_defaults_vars_common
   ))
 
   start_spark_master_b64 = base64encode(templatefile("templates/start-spark.sh", {
