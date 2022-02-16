@@ -78,6 +78,39 @@ resource "aws_key_pair" "spark" {
   public_key = file(var.public_key_path)
 }
 
+locals {
+
+  spark_defaults_vars_common = {
+    driver_memory          = var.driver_memory
+    executor_memory        = var.executor_memory
+    max_driver_result_size = var.max_driver_result_size
+    spark_packages         = var.spark_packages
+    data_dir               = var.data_dir
+    max_task_failures      = var.max_task_failures
+  }
+
+}
+
+locals {
+
+  log4j_properties_b64 = base64encode(file("templates/log4j.properties"))
+
+  spark_env_b64 = base64encode(templatefile("templates/spark-env.sh", {
+    data_dir              = var.data_dir
+    aws_access_key_id     = var.aws_access_key_id
+    aws_secret_access_key = var.aws_secret_access_key
+    wandb_api_key         = var.wandb_api_key
+  }))
+
+  spark_defaults_master_b64 = base64encode(templatefile(
+    "templates/spark-defaults.conf",
+    merge(local.spark_defaults_vars_common, {
+      master_private_ip = "0.0.0.0"
+    }
+  )))
+
+}
+
 resource "aws_instance" "master" {
   ami                         = var.aws_ami
   instance_type               = var.master_instance_type
@@ -87,26 +120,9 @@ resource "aws_instance" "master" {
   associate_public_ip_address = true
 
   user_data = templatefile("templates/cloud-config.yaml", {
-
-    spark_defaults = base64encode(templatefile("templates/spark-defaults.conf", {
-      master_private_ip      = "0.0.0.0"
-      driver_memory          = var.driver_memory
-      executor_memory        = var.executor_memory
-      max_driver_result_size = var.max_driver_result_size
-      spark_packages         = var.spark_packages
-      data_dir               = var.data_dir
-      max_task_failures      = var.max_task_failures
-    }))
-
-    spark_env = base64encode(templatefile("templates/spark-env.sh", {
-      data_dir              = var.data_dir
-      aws_access_key_id     = var.aws_access_key_id
-      aws_secret_access_key = var.aws_secret_access_key
-      wandb_api_key         = var.wandb_api_key
-    }))
-
-    log4j = base64encode(file("templates/log4j.properties"))
-
+    log4j_properties_b64 = local.log4j_properties_b64
+    spark_env_b64        = local.spark_env_b64
+    spark_defaults_b64   = local.spark_defaults_master_b64
   })
 
   tags = {

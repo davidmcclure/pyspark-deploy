@@ -5,17 +5,17 @@
 
 write_files:
 
-  - path: /etc/spark/spark-defaults.conf
+  - path: /etc/spark/log4j.properties
     encoding: base64
-    content: ${spark_defaults}
+    content: ${log4j_properties_b64}
 
   - path: /etc/spark/spark-env.sh
     encoding: base64
-    content: ${spark_env}
+    content: ${spark_env_b64}
 
-  - path: /etc/spark/log4j.properties
+  - path: /etc/spark/spark-defaults.conf
     encoding: base64
-    content: ${log4j}
+    content: ${spark_defaults_b64}
 
 runcmd:
   - echo "runcmd from yaml" > /home/ubuntu/test.txt
