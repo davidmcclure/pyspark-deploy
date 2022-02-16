@@ -105,6 +105,8 @@ resource "aws_instance" "master" {
       wandb_api_key         = var.wandb_api_key
     }))
 
+    log4j = base64encode(file("templates/log4j.properties"))
+
   })
 
   tags = {

@@ -4,12 +4,18 @@
 # run docker cmd
 
 write_files:
+
   - path: /etc/spark/spark-defaults.conf
     encoding: base64
     content: ${spark_defaults}
+
   - path: /etc/spark/spark-env.sh
     encoding: base64
     content: ${spark_env}
+
+  - path: /etc/spark/log4j.properties
+    encoding: base64
+    content: ${log4j}
 
 runcmd:
   - echo "runcmd from yaml" > /home/ubuntu/test.txt
