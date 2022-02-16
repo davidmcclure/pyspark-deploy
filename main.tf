@@ -93,6 +93,8 @@ locals {
 
 locals {
 
+  spark_bash_b64 = base64encode(file("templates/spark-bash.sh"))
+
   log4j_properties_b64 = base64encode(file("templates/log4j.properties"))
 
   spark_env_b64 = base64encode(templatefile("templates/spark-env.sh", {
@@ -128,6 +130,7 @@ resource "aws_instance" "master" {
 
   user_data = templatefile("templates/cloud-config.yaml", {
     log4j_properties_b64 = local.log4j_properties_b64
+    spark_bash_b64 = local.spark_bash_b64
     spark_env_b64        = local.spark_env_b64
     spark_defaults_b64   = local.spark_defaults_master_b64
     start_spark_b64      = local.start_spark_b64

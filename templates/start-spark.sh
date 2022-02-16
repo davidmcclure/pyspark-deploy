@@ -7,6 +7,7 @@ aws ecr get-login-password --region us-east-1 | \
   docker login --username AWS --password-stdin ${ecr_server}
 
 docker run -d \
+  --name spark \
   -v /etc/spark:/opt/spark/conf \
   -v /data:/data \
   -p 8080:8080 \

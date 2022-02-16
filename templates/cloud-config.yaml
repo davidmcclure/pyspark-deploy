@@ -17,6 +17,11 @@ write_files:
     encoding: base64
     content: ${spark_defaults_b64}
 
+  - path: /home/ubuntu/spark-bash.sh
+    encoding: base64
+    permissions: 0755
+    content: ${spark_bash_b64}
+
   - path: /home/ubuntu/start-spark.sh
     encoding: base64
     permissions: 0755
