@@ -8,6 +8,7 @@ write_files:
     encoding: base64
     content: ${spark_defaults}
   - path: /etc/spark/spark-env.sh
+    encoding: base64
     content: ${spark_env}
 
 runcmd:

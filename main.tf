@@ -85,7 +85,9 @@ resource "aws_instance" "master" {
   vpc_security_group_ids      = [aws_security_group.spark.id]
   key_name                    = aws_key_pair.spark.key_name
   associate_public_ip_address = true
+
   user_data = templatefile("templates/cloud-config.yaml", {
+
     spark_defaults = base64encode(templatefile("templates/spark-defaults.conf", {
       master_private_ip      = "0.0.0.0"
       driver_memory          = var.driver_memory
@@ -94,7 +96,13 @@ resource "aws_instance" "master" {
       spark_packages         = var.spark_packages
       data_dir               = "/data"
     }))
-    spark_env = "spark-env2"
+
+    spark_env = base64encode(templatefile("templates/spark-env.sh", {
+      aws_access_key_id = var.aws_access_key_id
+      aws_secret_access_key = var.aws_secret_access_key
+      wandb_api_key = var.wandb_api_key
+    }))
+
   })
 
   tags = {
