@@ -78,7 +78,13 @@ resource "aws_key_pair" "spark" {
   public_key = file(var.public_key_path)
 }
 
-module "master_user_data" {
+# TODO: Provision the subnet directly?
+resource "aws_network_interface" "master" {
+  subnet_id       = var.aws_subnet_id
+  security_groups = [aws_security_group.spark.id]
+}
+
+module "user_data" {
   source                 = "./modules/spark-user-data"
   ecr_server             = var.ecr_server
   ecr_repo               = var.ecr_repo
@@ -91,40 +97,27 @@ module "master_user_data" {
   spark_packages         = var.spark_packages
   data_dir               = var.data_dir
   max_task_failures      = var.max_task_failures
+  master_private_ip      = aws_network_interface.master.private_ip
 }
 
 resource "aws_instance" "master" {
-  ami                         = var.aws_ami
-  instance_type               = var.master_instance_type
-  subnet_id                   = var.aws_subnet_id
-  vpc_security_group_ids      = [aws_security_group.spark.id]
-  key_name                    = aws_key_pair.spark.key_name
-  associate_public_ip_address = true
-  user_data                   = module.master_user_data.rendered
+  ami           = var.aws_ami
+  instance_type = var.master_instance_type
+  key_name      = aws_key_pair.spark.key_name
+  user_data     = module.user_data.rendered
 
-  tags = {
-    Name = "spark-master"
+  network_interface {
+    network_interface_id = aws_network_interface.master.id
+    device_index         = 0
   }
 
   root_block_device {
     volume_size = var.master_root_vol_size
   }
-}
 
-module "worker_user_data" {
-  source                 = "./modules/spark-user-data"
-  ecr_server             = var.ecr_server
-  ecr_repo               = var.ecr_repo
-  aws_access_key_id      = var.aws_access_key_id
-  aws_secret_access_key  = var.aws_secret_access_key
-  wandb_api_key          = var.wandb_api_key
-  driver_memory          = var.driver_memory
-  executor_memory        = var.executor_memory
-  max_driver_result_size = var.max_driver_result_size
-  spark_packages         = var.spark_packages
-  data_dir               = var.data_dir
-  max_task_failures      = var.max_task_failures
-  master_private_ip      = aws_instance.master.private_ip
+  tags = {
+    Name = "spark-master"
+  }
 }
 
 # TODO: Name tag?
@@ -135,7 +128,7 @@ resource "aws_instance" "workers" {
   vpc_security_group_ids      = [aws_security_group.spark.id]
   key_name                    = aws_key_pair.spark.key_name
   associate_public_ip_address = true
-  user_data                   = module.worker_user_data.rendered
+  user_data                   = module.user_data.rendered
   count                       = var.on_demand_worker_count
 
   root_block_device {

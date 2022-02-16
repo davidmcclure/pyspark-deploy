@@ -33,7 +33,6 @@ variable "max_task_failures" {
 
 variable "master_private_ip" {
   type = string
-  default = null
 }
 
 variable "aws_access_key_id" {
