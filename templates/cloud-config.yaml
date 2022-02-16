@@ -1,31 +1,29 @@
 #cloud-config
 
-# render spark-defaults.conf and spark-env.sh
-# run docker cmd
-
 write_files:
 
-  - path: /etc/spark/log4j.properties
+  - path: /etc/spark/conf/log4j.properties
     encoding: base64
     content: ${log4j_properties_b64}
 
-  - path: /etc/spark/spark-env.sh
+  - path: /etc/spark/conf/spark-env.sh
     encoding: base64
     content: ${spark_env_b64}
 
-  - path: /etc/spark/spark-defaults.conf
+  - path: /etc/spark/conf/spark-defaults.conf
     encoding: base64
     content: ${spark_defaults_b64}
+
+  - path: /etc/spark/start.sh
+    encoding: base64
+    permissions: 0755
+    content: ${start_spark_b64}
 
   - path: /home/ubuntu/spark-bash.sh
     encoding: base64
     permissions: 0755
     content: ${spark_bash_b64}
 
-  - path: /home/ubuntu/start-spark.sh
-    encoding: base64
-    permissions: 0755
-    content: ${start_spark_b64}
-
 runcmd:
-  - echo "runcmd from yaml" > /home/ubuntu/test.txt
+  - sh /etc/spark/start.sh
+  - echo "done" > /home/ubuntu/test.txt

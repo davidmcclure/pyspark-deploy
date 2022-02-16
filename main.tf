@@ -108,8 +108,8 @@ locals {
     "templates/spark-defaults.conf",
     merge(local.spark_defaults_vars_common, {
       master_private_ip = "0.0.0.0"
-      }
-  )))
+    })
+  ))
 
   start_spark_b64 = base64encode(templatefile("templates/start-spark.sh", {
     aws_access_key_id     = var.aws_access_key_id
@@ -130,7 +130,7 @@ resource "aws_instance" "master" {
 
   user_data = templatefile("templates/cloud-config.yaml", {
     log4j_properties_b64 = local.log4j_properties_b64
-    spark_bash_b64 = local.spark_bash_b64
+    spark_bash_b64       = local.spark_bash_b64
     spark_env_b64        = local.spark_env_b64
     spark_defaults_b64   = local.spark_defaults_master_b64
     start_spark_b64      = local.start_spark_b64

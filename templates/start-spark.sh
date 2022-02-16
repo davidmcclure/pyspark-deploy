@@ -8,8 +8,8 @@ aws ecr get-login-password --region us-east-1 | \
 
 docker run -d \
   --name spark \
-  -v /etc/spark:/opt/spark/conf \
   -v /data:/data \
+  -v /etc/spark/conf:/opt/spark/conf \
   -p 8080:8080 \
   ${ecr_server}/${ecr_repo} \
   spark-class org.apache.spark.deploy.master.Master
