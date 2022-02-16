@@ -106,8 +106,15 @@ locals {
     "templates/spark-defaults.conf",
     merge(local.spark_defaults_vars_common, {
       master_private_ip = "0.0.0.0"
-    }
+      }
   )))
+
+  start_spark_b64 = base64encode(templatefile("templates/start-spark.sh", {
+    aws_access_key_id     = var.aws_access_key_id
+    aws_secret_access_key = var.aws_secret_access_key
+    ecr_server            = var.ecr_server
+    ecr_repo              = var.ecr_repo
+  }))
 
 }
 
@@ -123,6 +130,7 @@ resource "aws_instance" "master" {
     log4j_properties_b64 = local.log4j_properties_b64
     spark_env_b64        = local.spark_env_b64
     spark_defaults_b64   = local.spark_defaults_master_b64
+    start_spark_b64      = local.start_spark_b64
   })
 
   tags = {
@@ -167,35 +175,35 @@ resource "aws_spot_instance_request" "workers" {
   }
 }
 
-resource "local_file" "inventory" {
-  filename = "${path.module}/inventory"
+// resource "local_file" "inventory" {
+//   filename = "${path.module}/inventory"
 
-  # TODO: Can we pass these as a map, and then iterate over the KV pairs in the
-  # template, instead of repeating everything?
-  content = templatefile("templates/inventory", {
-    docker_image           = var.docker_image
-    master_ip              = aws_instance.master.public_ip
-    master_private_ip      = aws_instance.master.private_ip
-    on_demand_worker_ips   = aws_instance.workers.*.public_ip
-    spot_worker_ips        = aws_spot_instance_request.workers.*.public_ip
-    aws_access_key_id      = var.aws_access_key_id
-    aws_secret_access_key  = var.aws_secret_access_key
-    aws_region             = var.aws_region
-    driver_memory          = var.driver_memory
-    executor_memory        = var.executor_memory
-    max_driver_result_size = var.max_driver_result_size
-    spark_packages         = var.spark_packages
-    wandb_api_key          = var.wandb_api_key
-    gpu_workers            = var.gpu_workers
-  })
+//   # TODO: Can we pass these as a map, and then iterate over the KV pairs in the
+//   # template, instead of repeating everything?
+//   content = templatefile("templates/inventory", {
+//     docker_image           = var.docker_image
+//     master_ip              = aws_instance.master.public_ip
+//     master_private_ip      = aws_instance.master.private_ip
+//     on_demand_worker_ips   = aws_instance.workers.*.public_ip
+//     spot_worker_ips        = aws_spot_instance_request.workers.*.public_ip
+//     aws_access_key_id      = var.aws_access_key_id
+//     aws_secret_access_key  = var.aws_secret_access_key
+//     aws_region             = var.aws_region
+//     driver_memory          = var.driver_memory
+//     executor_memory        = var.executor_memory
+//     max_driver_result_size = var.max_driver_result_size
+//     spark_packages         = var.spark_packages
+//     wandb_api_key          = var.wandb_api_key
+//     gpu_workers            = var.gpu_workers
+//   })
 
-  # Wait for assigned IPs to be known, before writing inventory.
-  depends_on = [
-    aws_instance.master,
-    aws_instance.workers,
-    aws_spot_instance_request.workers,
-  ]
-}
+//   # Wait for assigned IPs to be known, before writing inventory.
+//   depends_on = [
+//     aws_instance.master,
+//     aws_instance.workers,
+//     aws_spot_instance_request.workers,
+//   ]
+// }
 
 output "master_ip" {
   value = aws_instance.master.public_ip

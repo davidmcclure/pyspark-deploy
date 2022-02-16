@@ -83,10 +83,6 @@ variable "aws_secret_access_key" {
   sensitive = true
 }
 
-variable "docker_image" {
-  type = string
-}
-
 variable "wandb_api_key" {
   default   = ""
   sensitive = true
@@ -94,4 +90,12 @@ variable "wandb_api_key" {
 
 variable "data_dir" {
   default = "/data"
+}
+
+variable "ecr_server" {
+  type = string
+}
+
+variable "ecr_repo" {
+  type = string
 }

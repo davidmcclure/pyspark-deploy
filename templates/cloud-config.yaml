@@ -17,5 +17,10 @@ write_files:
     encoding: base64
     content: ${spark_defaults_b64}
 
+  - path: /home/ubuntu/start-spark.sh
+    encoding: base64
+    permissions: 0755
+    content: ${start_spark_b64}
+
 runcmd:
   - echo "runcmd from yaml" > /home/ubuntu/test.txt
