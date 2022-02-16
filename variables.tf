@@ -63,10 +63,6 @@ variable "max_task_failures" {
   default = 20
 }
 
-variable "max_s3_connections" {
-  default = 2000
-}
-
 variable "max_driver_result_size" {
   default = "10g"
 }
@@ -75,14 +71,6 @@ variable "spark_packages" {
   default = [
     "org.apache.hadoop:hadoop-aws:3.2.0",
   ]
-}
-
-variable "max_files" {
-  default = 100000
-}
-
-variable "openblas_num_threads" {
-  default = 1
 }
 
 variable "aws_access_key_id" {
@@ -102,4 +90,8 @@ variable "docker_image" {
 variable "wandb_api_key" {
   default   = ""
   sensitive = true
+}
+
+variable "data_dir" {
+  default = "/data"
 }

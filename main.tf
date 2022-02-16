@@ -94,13 +94,15 @@ resource "aws_instance" "master" {
       executor_memory        = var.executor_memory
       max_driver_result_size = var.max_driver_result_size
       spark_packages         = var.spark_packages
-      data_dir               = "/data"
+      data_dir               = var.data_dir
+      max_task_failures      = var.max_task_failures
     }))
 
     spark_env = base64encode(templatefile("templates/spark-env.sh", {
-      aws_access_key_id = var.aws_access_key_id
+      data_dir              = var.data_dir
+      aws_access_key_id     = var.aws_access_key_id
       aws_secret_access_key = var.aws_secret_access_key
-      wandb_api_key = var.wandb_api_key
+      wandb_api_key         = var.wandb_api_key
     }))
 
   })
