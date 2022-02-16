@@ -78,52 +78,19 @@ resource "aws_key_pair" "spark" {
   public_key = file(var.public_key_path)
 }
 
-locals {
-  spark_defaults_vars_common = {
-    driver_memory          = var.driver_memory
-    executor_memory        = var.executor_memory
-    max_driver_result_size = var.max_driver_result_size
-    spark_packages         = var.spark_packages
-    data_dir               = var.data_dir
-    max_task_failures      = var.max_task_failures
-    master_private_ip      = null
-  }
-}
-
-locals {
-  spark_bash_b64 = base64encode(file("templates/spark-bash.sh"))
-
-  log4j_properties_b64 = base64encode(file("templates/log4j.properties"))
-
-  spark_env_b64 = base64encode(templatefile("templates/spark-env.sh", {
-    data_dir              = var.data_dir
-    aws_access_key_id     = var.aws_access_key_id
-    aws_secret_access_key = var.aws_secret_access_key
-    wandb_api_key         = var.wandb_api_key
-  }))
-
-  spark_defaults_master_b64 = base64encode(templatefile(
-    "templates/spark-defaults.conf",
-    local.spark_defaults_vars_common
-  ))
-
-  start_spark_master_b64 = base64encode(templatefile("templates/start-spark.sh", {
-    ecr_server            = var.ecr_server
-    ecr_repo              = var.ecr_repo
-    aws_access_key_id     = var.aws_access_key_id
-    aws_secret_access_key = var.aws_secret_access_key
-    master_private_ip     = null
-  }))
-}
-
-locals {
-  user_data_master = templatefile("templates/cloud-config.yaml", {
-    log4j_properties_b64 = local.log4j_properties_b64
-    spark_bash_b64       = local.spark_bash_b64
-    spark_env_b64        = local.spark_env_b64
-    spark_defaults_b64   = local.spark_defaults_master_b64
-    start_spark_b64      = local.start_spark_master_b64
-  })
+module "master_user_data" {
+  source                 = "./modules/spark-user-data"
+  ecr_server             = var.ecr_server
+  ecr_repo               = var.ecr_repo
+  aws_access_key_id      = var.aws_access_key_id
+  aws_secret_access_key  = var.aws_secret_access_key
+  wandb_api_key          = var.wandb_api_key
+  driver_memory          = var.driver_memory
+  executor_memory        = var.executor_memory
+  max_driver_result_size = var.max_driver_result_size
+  spark_packages         = var.spark_packages
+  data_dir               = var.data_dir
+  max_task_failures      = var.max_task_failures
 }
 
 resource "aws_instance" "master" {
@@ -133,7 +100,7 @@ resource "aws_instance" "master" {
   vpc_security_group_ids      = [aws_security_group.spark.id]
   key_name                    = aws_key_pair.spark.key_name
   associate_public_ip_address = true
-  user_data                   = local.user_data_master
+  user_data                   = module.master_user_data.rendered
 
   tags = {
     Name = "spark-master"
@@ -144,32 +111,20 @@ resource "aws_instance" "master" {
   }
 }
 
-locals {
-  spark_defaults_worker_b64 = base64encode(templatefile(
-    "templates/spark-defaults.conf",
-    merge(local.spark_defaults_vars_common, {
-      master_private_ip = aws_instance.master.private_ip
-    })
-  ))
-
-  start_spark_worker_b64 = base64encode(templatefile("templates/start-spark.sh", {
-    ecr_server            = var.ecr_server
-    ecr_repo              = var.ecr_repo
-    aws_access_key_id     = var.aws_access_key_id
-    aws_secret_access_key = var.aws_secret_access_key
-    master_private_ip     = aws_instance.master.private_ip
-  }))
-}
-
-# TODO: Separate module?
-locals {
-  user_data_worker = templatefile("templates/cloud-config.yaml", {
-    log4j_properties_b64 = local.log4j_properties_b64
-    spark_bash_b64       = local.spark_bash_b64
-    spark_env_b64        = local.spark_env_b64
-    spark_defaults_b64   = local.spark_defaults_worker_b64
-    start_spark_b64      = local.start_spark_worker_b64
-  })
+module "worker_user_data" {
+  source                 = "./modules/spark-user-data"
+  ecr_server             = var.ecr_server
+  ecr_repo               = var.ecr_repo
+  aws_access_key_id      = var.aws_access_key_id
+  aws_secret_access_key  = var.aws_secret_access_key
+  wandb_api_key          = var.wandb_api_key
+  driver_memory          = var.driver_memory
+  executor_memory        = var.executor_memory
+  max_driver_result_size = var.max_driver_result_size
+  spark_packages         = var.spark_packages
+  data_dir               = var.data_dir
+  max_task_failures      = var.max_task_failures
+  master_private_ip      = aws_instance.master.private_ip
 }
 
 # TODO: Name tag?
@@ -180,7 +135,7 @@ resource "aws_instance" "workers" {
   vpc_security_group_ids      = [aws_security_group.spark.id]
   key_name                    = aws_key_pair.spark.key_name
   associate_public_ip_address = true
-  user_data                   = local.user_data_worker
+  user_data                   = module.worker_user_data.rendered
   count                       = var.on_demand_worker_count
 
   root_block_device {
@@ -188,23 +143,23 @@ resource "aws_instance" "workers" {
   }
 }
 
-# TODO: Name tag?
-resource "aws_spot_instance_request" "workers" {
-  ami                         = var.aws_ami
-  instance_type               = var.worker_instance_type
-  subnet_id                   = var.aws_subnet_id
-  vpc_security_group_ids      = [aws_security_group.spark.id]
-  key_name                    = aws_key_pair.spark.key_name
-  spot_price                  = var.spot_worker_price
-  spot_type                   = "one-time"
-  associate_public_ip_address = true
-  wait_for_fulfillment        = true
-  count                       = var.spot_worker_count
+// # TODO: Name tag?
+// resource "aws_spot_instance_request" "workers" {
+//   ami                         = var.aws_ami
+//   instance_type               = var.worker_instance_type
+//   subnet_id                   = var.aws_subnet_id
+//   vpc_security_group_ids      = [aws_security_group.spark.id]
+//   key_name                    = aws_key_pair.spark.key_name
+//   spot_price                  = var.spot_worker_price
+//   spot_type                   = "one-time"
+//   associate_public_ip_address = true
+//   wait_for_fulfillment        = true
+//   count                       = var.spot_worker_count
 
-  root_block_device {
-    volume_size = var.worker_root_vol_size
-  }
-}
+//   root_block_device {
+//     volume_size = var.worker_root_vol_size
+//   }
+// }
 
 // resource "local_file" "inventory" {
 //   filename = "${path.module}/inventory"

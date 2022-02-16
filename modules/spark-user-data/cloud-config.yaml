@@ -1,0 +1,29 @@
+#cloud-config
+
+write_files:
+
+  - path: /etc/spark/conf/log4j.properties
+    encoding: base64
+    content: ${log4j_properties_b64}
+
+  - path: /etc/spark/conf/spark-env.sh
+    encoding: base64
+    content: ${spark_env_b64}
+
+  - path: /etc/spark/conf/spark-defaults.conf
+    encoding: base64
+    content: ${spark_defaults_b64}
+
+  - path: /etc/spark/start.sh
+    encoding: base64
+    permissions: 0755
+    content: ${start_spark_b64}
+
+  - path: /home/ubuntu/spark-bash.sh
+    encoding: base64
+    permissions: 0755
+    content: ${spark_bash_b64}
+
+runcmd:
+  - sh /etc/spark/start.sh
+  - echo "done" > /home/ubuntu/test.txt

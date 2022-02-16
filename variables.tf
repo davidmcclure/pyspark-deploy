@@ -1,3 +1,4 @@
+
 variable "aws_region" {
   default = "us-east-1"
 }
@@ -52,11 +53,11 @@ variable "worker_root_vol_size" {
 }
 
 variable "driver_memory" {
-  default = "5g"
+  default = "4g"
 }
 
 variable "executor_memory" {
-  default = "20g"
+  default = "4g"
 }
 
 variable "max_task_failures" {
