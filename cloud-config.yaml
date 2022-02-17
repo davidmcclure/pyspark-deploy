@@ -132,4 +132,3 @@ write_files:
 
 runcmd:
   - sh /etc/spark/start.sh
-  - echo "done" > /home/ubuntu/test.txt
