@@ -4,6 +4,9 @@
 - [x] create/destroy/login/web-admin
 - [x] update to ansible3
 - [x] move in Docker image, update
-- [ ] start cluster with cloud-init, remove ansible
+- [x] start cluster with cloud-init, remove ansible
+- [ ] pass arbitrary config to spark-defaults.conf + spark-env.sh
+- [ ] how to structure on-demand / worker vars
+- [ ] where to inject ENV vars
 - [ ] inventory on s3?
 - [ ] python wrapper?
