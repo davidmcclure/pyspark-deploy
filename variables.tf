@@ -1,4 +1,14 @@
 
+variable "ecr_server" {
+  type = string
+}
+
+variable "ecr_repo" {
+  type = string
+}
+
+# AWS
+
 variable "aws_region" {
   default = "us-east-1"
 }
@@ -16,12 +26,26 @@ variable "aws_ami" {
   default = "ami-04eb5b2f5ef92e8b8"
 }
 
-variable "gpu_workers" {
-  default = false
-}
-
 variable "public_key_path" {
   default = "~/.ssh/spark.pub"
+}
+
+# Instances
+
+variable "master_instance_type" {
+  default = "c5.xlarge"
+}
+
+variable "worker_instance_type" {
+  default = "c5.xlarge"
+}
+
+variable "driver_memory" {
+  default = "4g"
+}
+
+variable "executor_memory" {
+  default = "4g"
 }
 
 variable "master_root_vol_size" {
@@ -32,16 +56,34 @@ variable "worker_root_vol_size" {
   default = 100
 }
 
-variable "driver_memory" {
-  default = "4g"
+variable "spot_price" {
+  default = 0.1
 }
 
-variable "max_task_failures" {
-  default = 20
+variable "on_demand_worker_count" {
+  default = 0
+}
+
+variable "spot_worker_count" {
+  default = 0
+}
+
+variable "gpu_workers" {
+  default = false
+}
+
+# Config
+
+variable "data_dir" {
+  default = "/data"
 }
 
 variable "max_driver_result_size" {
   default = "10g"
+}
+
+variable "max_task_failures" {
+  default = 20
 }
 
 variable "spark_packages" {
@@ -49,6 +91,8 @@ variable "spark_packages" {
     "org.apache.hadoop:hadoop-aws:3.2.0",
   ]
 }
+
+# Secrets
 
 variable "aws_access_key_id" {
   type      = string
@@ -63,42 +107,4 @@ variable "aws_secret_access_key" {
 variable "wandb_api_key" {
   default   = ""
   sensitive = true
-}
-
-variable "data_dir" {
-  default = "/data"
-}
-
-variable "ecr_server" {
-  type = string
-}
-
-variable "ecr_repo" {
-  type = string
-}
-
-# TODO: object-type vars for on_demand_workers + spot_workers.
-
-variable "master_instance_type" {
-  default = "c5.xlarge"
-}
-
-variable "worker_instance_type" {
-  default = "c5.xlarge"
-}
-
-variable "executor_memory" {
-  default = "4g"
-}
-
-variable "spot_price" {
-  default = 0.1
-}
-
-variable "on_demand_worker_count" {
-  default = 0
-}
-
-variable "spot_worker_count" {
-  default = 0
 }

@@ -5,6 +5,9 @@
 - [x] update to ansible3
 - [x] move in Docker image, update
 - [x] start cluster with cloud-init, remove ansible
+- [ ] Name tags on workers
+- [ ] use var.data_dir
+- [ ] gpu_workers
 - [ ] pass arbitrary config to spark-defaults.conf + spark-env.sh
 - [ ] how to structure on-demand / worker vars
 - [ ] where to inject ENV vars
