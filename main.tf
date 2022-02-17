@@ -196,6 +196,6 @@ resource "aws_instance" "workers" {
 //   ]
 // }
 
-output "master_ip" {
-  value = aws_instance.master.public_ip
+output "master_dns" {
+  value = aws_instance.master.public_dns
 }

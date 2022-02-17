@@ -1,3 +1,5 @@
 #!/bin/sh
 
-ssh -o StrictHostKeyChecking=no ubuntu@`terraform output -raw master_ip`
+ssh -o StrictHostKeyChecking=no -t \
+  ubuntu@`terraform output -raw master_dns` \
+  sh spark-bash.sh
