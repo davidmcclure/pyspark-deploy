@@ -100,3 +100,20 @@ variable "ecr_server" {
 variable "ecr_repo" {
   type = string
 }
+
+variable "on_demand_workers" {
+  default = {
+    count           = 0
+    instance_type   = "c5.xlarge"
+    executor_memory = "4g"
+  }
+}
+
+variable "spot_workers" {
+  default = {
+    count           = 0
+    instance_type   = "c5.xlarge"
+    executor_memory = "4g"
+    price           = 0.1
+  }
+}

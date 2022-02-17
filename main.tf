@@ -134,12 +134,12 @@ resource "aws_instance" "master" {
 
 resource "aws_instance" "workers" {
   ami                         = var.aws_ami
-  instance_type               = var.worker_instance_type
+  instance_type               = var.on_demand_workers.instance_type
   subnet_id                   = var.aws_subnet_id
   vpc_security_group_ids      = [aws_security_group.spark.id]
   key_name                    = aws_key_pair.spark.key_name
   associate_public_ip_address = true
-  count                       = var.on_demand_worker_count
+  count                       = var.on_demand_workers.count
   user_data                   = local.worker_user_data
 
   root_block_device {
@@ -153,14 +153,14 @@ resource "aws_instance" "workers" {
 
 resource "aws_spot_instance_request" "workers" {
   ami                         = var.aws_ami
-  instance_type               = var.worker_instance_type
+  instance_type               = var.spot_workers.instance_type
   subnet_id                   = var.aws_subnet_id
   vpc_security_group_ids      = [aws_security_group.spark.id]
   key_name                    = aws_key_pair.spark.key_name
-  spot_price                  = var.spot_worker_price
+  spot_price                  = var.spot_workers.price
   associate_public_ip_address = true
   wait_for_fulfillment        = true
-  count                       = var.spot_worker_count
+  count                       = var.spot_workers.count
   user_data                   = local.worker_user_data
 
   root_block_device {
