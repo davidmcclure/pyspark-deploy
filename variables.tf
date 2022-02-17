@@ -16,26 +16,6 @@ variable "aws_ami" {
   default = "ami-04eb5b2f5ef92e8b8"
 }
 
-variable "master_instance_type" {
-  default = "c5.xlarge"
-}
-
-variable "worker_instance_type" {
-  default = "c3.4xlarge"
-}
-
-variable "on_demand_worker_count" {
-  default = 0
-}
-
-variable "spot_worker_count" {
-  default = 0
-}
-
-variable "spot_worker_price" {
-  default = 0.4
-}
-
 variable "gpu_workers" {
   default = false
 }
@@ -53,10 +33,6 @@ variable "worker_root_vol_size" {
 }
 
 variable "driver_memory" {
-  default = "4g"
-}
-
-variable "executor_memory" {
   default = "4g"
 }
 
@@ -101,19 +77,28 @@ variable "ecr_repo" {
   type = string
 }
 
-variable "on_demand_workers" {
-  default = {
-    count           = 0
-    instance_type   = "c5.xlarge"
-    executor_memory = "4g"
-  }
+# TODO: object-type vars for on_demand_workers + spot_workers.
+
+variable "master_instance_type" {
+  default = "c5.xlarge"
 }
 
-variable "spot_workers" {
-  default = {
-    count           = 0
-    instance_type   = "c5.xlarge"
-    executor_memory = "4g"
-    price           = 0.1
-  }
+variable "worker_instance_type" {
+  default = "c5.xlarge"
+}
+
+variable "executor_memory" {
+  default = "4g"
+}
+
+variable "spot_price" {
+  default = 0.1
+}
+
+variable "on_demand_worker_count" {
+  default = 0
+}
+
+variable "spot_worker_count" {
+  default = 0
 }

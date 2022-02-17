@@ -132,35 +132,33 @@ resource "aws_instance" "master" {
   }
 }
 
+# TODO: Name tags on the workers.
+
 resource "aws_instance" "workers" {
   ami                         = var.aws_ami
-  instance_type               = var.on_demand_workers.instance_type
+  instance_type               = var.worker_instance_type
   subnet_id                   = var.aws_subnet_id
   vpc_security_group_ids      = [aws_security_group.spark.id]
   key_name                    = aws_key_pair.spark.key_name
   associate_public_ip_address = true
-  count                       = var.on_demand_workers.count
+  count                       = var.on_demand_worker_count
   user_data                   = local.worker_user_data
 
   root_block_device {
     volume_size = var.worker_root_vol_size
   }
-
-  tags = {
-    Name = "spark-on-demand-worker-${count.index}"
-  }
 }
 
 resource "aws_spot_instance_request" "workers" {
   ami                         = var.aws_ami
-  instance_type               = var.spot_workers.instance_type
+  instance_type               = var.worker_instance_type
   subnet_id                   = var.aws_subnet_id
   vpc_security_group_ids      = [aws_security_group.spark.id]
   key_name                    = aws_key_pair.spark.key_name
-  spot_price                  = var.spot_workers.price
+  spot_price                  = var.spot_price
   associate_public_ip_address = true
   wait_for_fulfillment        = true
-  count                       = var.spot_workers.count
+  count                       = var.spot_worker_count
   user_data                   = local.worker_user_data
 
   root_block_device {
