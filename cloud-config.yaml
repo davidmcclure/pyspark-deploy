@@ -1,0 +1,135 @@
+#cloud-config
+
+write_files:
+
+  - path: /etc/spark/conf/log4j.properties
+    content: |
+      #
+      # Licensed to the Apache Software Foundation (ASF) under one or more
+      # contributor license agreements.  See the NOTICE file distributed with
+      # this work for additional information regarding copyright ownership.
+      # The ASF licenses this file to You under the Apache License, Version 2.0
+      # (the "License"); you may not use this file except in compliance with
+      # the License.  You may obtain a copy of the License at
+      #
+      #    http://www.apache.org/licenses/LICENSE-2.0
+      #
+      # Unless required by applicable law or agreed to in writing, software
+      # distributed under the License is distributed on an "AS IS" BASIS,
+      # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      # See the License for the specific language governing permissions and
+      # limitations under the License.
+      #
+
+      # Set everything to be logged to the console
+      log4j.rootCategory=INFO, console
+      log4j.appender.console=org.apache.log4j.ConsoleAppender
+      log4j.appender.console.target=System.err
+      log4j.appender.console.layout=org.apache.log4j.PatternLayout
+      log4j.appender.console.layout.ConversionPattern=%d{yy/MM/dd HH:mm:ss} %p %c{1}: %m%n
+
+      # Set the default spark-shell log level to WARN. When running the spark-shell, the
+      # log level for this class is used to overwrite the root logger's log level, so that
+      # the user can have different defaults for the shell and regular Spark apps.
+      log4j.logger.org.apache.spark.repl.Main=WARN
+
+      # Settings to quiet third party logs that are too verbose
+      log4j.logger.org.spark_project.jetty=WARN
+      log4j.logger.org.spark_project.jetty.util.component.AbstractLifeCycle=ERROR
+      log4j.logger.org.apache.spark.repl.SparkIMain$exprTyper=INFO
+      log4j.logger.org.apache.spark.repl.SparkILoop$SparkILoopInterpreter=INFO
+      log4j.logger.org.apache.parquet=ERROR
+      log4j.logger.parquet=ERROR
+
+      # SPARK-9183: Settings to avoid annoying messages when looking up nonexistent UDFs in SparkSQL with Hive support
+      log4j.logger.org.apache.hadoop.hive.metastore.RetryingHMSHandler=FATAL
+      log4j.logger.org.apache.hadoop.hive.ql.exec.FunctionRegistry=ERROR
+
+      # Suppress Parquet logging.
+      log4j.logger.org.apache.spark.sql.execution.datasources.parquet=ERROR
+      log4j.logger.org.apache.spark.sql.execution.datasources.FileScanRDD=ERROR
+      log4j.logger.org.apache.hadoop.io.compress.CodecPool=ERROR
+
+  - path: /etc/spark/conf/spark-env.sh
+    content: |
+      #!/usr/bin/env bash
+
+      # Use ipython for driver.
+      PYSPARK_DRIVER_PYTHON=ipython
+
+      # So that links work properly in Spark admin.
+      SPARK_PUBLIC_DNS=`wget -q -O - http://169.254.169.254/latest/meta-data/public-hostname`
+
+      # Avoid too-many-open-files errors.
+      ulimit -n 100000
+
+      # Disable parallelism for sklearn / spacy.
+      OPENBLAS_NUM_THREADS=1
+
+      # Use common hash seed across nodes (needed for reduceByKey).
+      PYTHONHASHSEED=1
+
+      SPARK_WORKER_DIR=${data_dir}/work
+
+      # AWS credentials.
+      AWS_ACCESS_KEY_ID=${aws_access_key_id}
+      AWS_SECRET_ACCESS_KEY=${aws_secret_access_key}
+
+      # W&B key.
+      WANDB_API_KEY=${wandb_api_key}
+
+  - path: /etc/spark/conf/spark-defaults.conf
+    content: |
+      spark.master spark://${master_private_ip}:7077
+      spark.driver.memory ${driver_memory}
+      spark.executor.memory ${executor_memory}
+      spark.driver.maxResultSize ${max_driver_result_size}
+      spark.jars.packages ${join(",", spark_packages)}
+
+      spark.local.dir ${data_dir}/spark
+      spark.driver.extraJavaOptions -Dderby.system.home=${data_dir}/derby
+      spark.sql.warehouse.dir ${data_dir}/spark-warehouse
+      spark.hadoop.hadoop.tmp.dir ${data_dir}/hadoop
+
+      spark.task.maxFailures ${max_task_failures}
+      spark.hadoop.fs.s3a.connection.maximum 1000
+      spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version 2
+      spark.sql.parquet.enableVectorizedReader false
+
+  - path: /etc/spark/start.sh
+    permissions: 0755
+    content: |
+      #!/bin/sh
+
+      export AWS_ACCESS_KEY_ID=${aws_access_key_id}
+      export AWS_SECRET_ACCESS_KEY=${aws_secret_access_key}
+
+      aws ecr get-login-password --region us-east-1 | \
+        docker login --username AWS --password-stdin ${ecr_server}
+
+      docker run -d \
+        --name spark \
+        --network host \
+        -v /data:/data \
+        -v /etc/spark/conf:/opt/spark/conf \
+        -p 8080:8080 \
+        ${ecr_server}/${ecr_repo} \
+        ${
+          master ?
+          "spark-class org.apache.spark.deploy.master.Master" :
+          "spark-class org.apache.spark.deploy.worker.Worker spark://${master_private_ip}:7077"
+        }
+
+  - path: /home/ubuntu/spark-bash.sh
+    permissions: 0755
+    content: |
+      #!/bin/bash
+
+      CONTAINER_ID=$(sudo docker ps -q --filter "name=spark")
+      DOCKER_CMD="sudo docker exec -it $${CONTAINER_ID} bash"
+
+      tmux attach -t spark || tmux new -s spark "$DOCKER_CMD"
+
+runcmd:
+  - sh /etc/spark/start.sh
+  - echo "done" > /home/ubuntu/test.txt
