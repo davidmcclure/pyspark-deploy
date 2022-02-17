@@ -110,6 +110,7 @@ write_files:
       docker run -d \
         --name spark \
         --network host \
+        --env SPARK_ENV=prod \
         -v /data:/data \
         -v /etc/spark/conf:/opt/spark/conf \
         -p 8080:8080 \
