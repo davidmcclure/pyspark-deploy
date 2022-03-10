@@ -30,13 +30,9 @@ variable "public_key_path" {
   default = "~/.ssh/spark.pub"
 }
 
-# Instances
+# Master instance
 
 variable "master_instance_type" {
-  default = "c5.xlarge"
-}
-
-variable "worker_instance_type" {
   default = "c5.xlarge"
 }
 
@@ -44,12 +40,18 @@ variable "driver_memory" {
   default = "4g"
 }
 
-variable "executor_memory" {
-  default = "4g"
-}
-
 variable "master_root_vol_size" {
   default = 100
+}
+
+# Worker instances
+
+variable "worker_instance_type" {
+  default = "c5.xlarge"
+}
+
+variable "executor_memory" {
+  default = "4g"
 }
 
 variable "worker_root_vol_size" {
