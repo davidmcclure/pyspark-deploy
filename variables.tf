@@ -30,48 +30,37 @@ variable "public_key_path" {
   default = "~/.ssh/spark.pub"
 }
 
-# Master instance
+# Instances
+
+variable "root_vol_size" {
+  default = 100
+}
 
 variable "master_instance_type" {
   default = "c5.xlarge"
 }
 
+# TODO: Possible to automatically use, eg, 0.8 * instance ram?
 variable "driver_memory" {
   default = "4g"
 }
 
-variable "master_root_vol_size" {
-  default = 100
+# TODO: Should these be grouped like this? Better way?
+variable "on_demand_workers" {
+  default = {
+    count = 0
+    instance_type = "c5.xlarge"
+    executor_memory = "4g"
+  }
 }
 
-# Worker instances
-
-variable "worker_instance_type" {
-  default = "c5.xlarge"
-}
-
-variable "executor_memory" {
-  default = "4g"
-}
-
-variable "worker_root_vol_size" {
-  default = 100
-}
-
-variable "on_demand_worker_count" {
-  default = 0
-}
-
-variable "spot_worker_count" {
-  default = 0
-}
-
-variable "spot_price" {
-  default = 0.1
-}
-
-variable "gpu_workers" {
-  default = false
+variable "spot_workers" {
+  default = {
+    count = 0
+    instance_type = "c5.xlarge"
+    executor_memory = "4g"
+    price = 0.1
+  }
 }
 
 # Config
