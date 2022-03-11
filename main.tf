@@ -105,6 +105,8 @@ locals {
     "cloud-config.yaml",
     merge(local.user_data_vars, {
       master          = true
+      # TODO: I think this is causing the `(XX GiB Used)` info for the workers
+      # in the web UI to be incorrect. Any way to avoid this?
       executor_memory = var.driver_memory
     })
   )
