@@ -48,18 +48,18 @@ variable "driver_memory" {
 # TODO: Should these be grouped like this? Better way?
 variable "on_demand_workers" {
   default = {
-    count = 0
-    instance_type = "c5.xlarge"
+    count           = 0
+    instance_type   = "c5.xlarge"
     executor_memory = "4g"
   }
 }
 
 variable "spot_workers" {
   default = {
-    count = 0
-    instance_type = "c5.xlarge"
+    count           = 0
+    instance_type   = "c5.xlarge"
     executor_memory = "4g"
-    price = 0.1
+    price           = 0.1
   }
 }
 

@@ -104,21 +104,21 @@ locals {
   master_user_data = templatefile(
     "cloud-config.yaml",
     merge(local.user_data_vars, {
-      master = true
+      master          = true
       executor_memory = var.driver_memory
     })
   )
   on_demand_worker_user_data = templatefile(
     "cloud-config.yaml",
     merge(local.user_data_vars, {
-      master = false
+      master          = false
       executor_memory = var.on_demand_workers.executor_memory
     })
   )
   spot_worker_user_data = templatefile(
     "cloud-config.yaml",
     merge(local.user_data_vars, {
-      master = false
+      master          = false
       executor_memory = var.spot_workers.executor_memory
     })
   )
