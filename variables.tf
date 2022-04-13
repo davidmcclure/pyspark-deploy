@@ -77,9 +77,11 @@ variable "max_task_failures" {
   default = 20
 }
 
+# AWS / S3 packages for Spark 3.2.1.
 variable "spark_packages" {
   default = [
-    "org.apache.hadoop:hadoop-aws:3.2.0",
+    "org.apache.hadoop:hadoop-aws:3.3.1",
+    "com.amazonaws:aws-java-sdk-bundle:1.11.901",
   ]
 }
 
