@@ -92,6 +92,7 @@ locals {
     aws_secret_access_key  = var.aws_secret_access_key
     wandb_api_key          = var.wandb_api_key
     driver_memory          = var.driver_memory
+    executor_memory        = var.executor_memory
     max_driver_result_size = var.max_driver_result_size
     spark_packages         = var.spark_packages
     data_dir               = var.data_dir
@@ -104,24 +105,13 @@ locals {
   master_user_data = templatefile(
     "cloud-config.yaml",
     merge(local.user_data_vars, {
-      master          = true
-      # TODO: I think this is causing the `(XX GiB Used)` info for the workers
-      # in the web UI to be incorrect. Any way to avoid this?
-      executor_memory = var.driver_memory
+      master = true
     })
   )
-  on_demand_worker_user_data = templatefile(
+  worker_user_data = templatefile(
     "cloud-config.yaml",
     merge(local.user_data_vars, {
-      master          = false
-      executor_memory = var.on_demand_workers.executor_memory
-    })
-  )
-  spot_worker_user_data = templatefile(
-    "cloud-config.yaml",
-    merge(local.user_data_vars, {
-      master          = false
-      executor_memory = var.spot_workers.executor_memory
+      master = false
     })
   )
 }
@@ -150,13 +140,13 @@ resource "aws_instance" "master" {
 
 resource "aws_instance" "workers" {
   ami                         = var.aws_ami
-  instance_type               = var.on_demand_workers.instance_type
+  instance_type               = var.worker_instance_type
   subnet_id                   = var.aws_subnet_id
   vpc_security_group_ids      = [aws_security_group.spark.id]
   key_name                    = aws_key_pair.spark.key_name
   associate_public_ip_address = true
-  count                       = var.on_demand_workers.count
-  user_data                   = local.on_demand_worker_user_data
+  count                       = var.on_demand_worker_count
+  user_data                   = local.worker_user_data
 
   root_block_device {
     volume_size = var.root_vol_size
@@ -165,15 +155,15 @@ resource "aws_instance" "workers" {
 
 resource "aws_spot_instance_request" "workers" {
   ami                         = var.aws_ami
-  instance_type               = var.spot_workers.instance_type
+  instance_type               = var.worker_instance_type
   subnet_id                   = var.aws_subnet_id
   vpc_security_group_ids      = [aws_security_group.spark.id]
   key_name                    = aws_key_pair.spark.key_name
-  spot_price                  = var.spot_workers.price
+  spot_price                  = var.spot_price
   associate_public_ip_address = true
   wait_for_fulfillment        = true
-  count                       = var.spot_workers.count
-  user_data                   = local.spot_worker_user_data
+  count                       = var.spot_worker_count
+  user_data                   = local.worker_user_data
 
   root_block_device {
     volume_size = var.root_vol_size
