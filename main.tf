@@ -93,6 +93,7 @@ locals {
     wandb_api_key          = var.wandb_api_key
     driver_memory          = var.driver_memory
     executor_memory        = var.executor_memory
+    gpu_workers            = var.gpu_workers
     max_driver_result_size = var.max_driver_result_size
     spark_packages         = var.spark_packages
     data_dir               = var.data_dir

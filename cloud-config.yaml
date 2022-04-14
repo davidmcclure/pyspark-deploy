@@ -114,6 +114,7 @@ write_files:
         -v /data:/data \
         -v /etc/spark/conf:/opt/spark/conf \
         -p 8080:8080 \
+        ${!master && gpu_workers ? "--gpus all" : ""} \
         ${ecr_server}/${ecr_repo} \
         ${
           master ?
