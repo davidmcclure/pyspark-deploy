@@ -94,20 +94,7 @@ write_files:
       spark.task.maxFailures ${max_task_failures}
       spark.hadoop.fs.s3a.connection.maximum 1000
 
-      spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version 2
-
-      # Use the "zero rename" committers, faster on s3.
-      # https://spark.apache.org/docs/latest/cloud-integration.html#committing-work-into-cloud-storage-safely-and-fast
-      spark.hadoop.fs.s3a.committer.name directory
-      spark.sql.sources.commitProtocolClass org.apache.spark.internal.io.cloud.PathOutputCommitProtocol
-      spark.sql.parquet.output.committer.class org.apache.spark.internal.io.cloud.BindingParquetOutputCommitter
-
-      # Recommended settings for Parquet performance.
-      # https://spark.apache.org/docs/latest/cloud-integration.html#parquet-io-settings
-      spark.hadoop.parquet.enable.summary-metadata false
-      spark.sql.parquet.mergeSchema false
-      spark.sql.parquet.filterPushdown true
-      spark.sql.hive.metastorePartitionPruning true
+      spark.hadoop.fs.s3a.bucket.all.committer.magic.enabled=true
 
   - path: /etc/spark/start.sh
     permissions: 0755
