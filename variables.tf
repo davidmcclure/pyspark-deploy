@@ -84,11 +84,8 @@ variable "max_task_failures" {
 }
 
 # AWS / S3 packages for Spark 3.2.1.
-# NOTE: spark-hadoop-cloud needed for the "zero rename" s3 committers.
 variable "spark_packages" {
   default = [
-    "org.apache.hadoop:hadoop-aws:3.3.1",
-    "com.amazonaws:aws-java-sdk-bundle:1.11.901",
     "org.apache.spark:spark-hadoop-cloud_2.13:3.2.1"
   ]
 }
