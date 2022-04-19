@@ -95,6 +95,7 @@ write_files:
       spark.hadoop.fs.s3a.connection.maximum 1000
 
       spark.hadoop.fs.s3a.bucket.all.committer.magic.enabled=true
+      spark.sql.execution.arrow.maxRecordsPerBatch 200
 
   - path: /etc/spark/start.sh
     permissions: 0755
