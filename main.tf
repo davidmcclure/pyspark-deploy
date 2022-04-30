@@ -102,21 +102,29 @@ locals {
   }
 }
 
-// locals {
-//   log4j_properties = file("${path.module}/log4j.properties")
-// }
+locals {
+  log4j_properties = file("${path.module}/log4j.properties")
+  spark_env_sh = templatefile("${path.module}/spark-env.sh.tftpl", local.user_data_vars)
+  spark_defaults_conf = templatefile("${path.module}/spark-defaults.conf.tftpl", local.user_data_vars)
+}
 
 locals {
   master_user_data = templatefile(
     "cloud-config.yaml",
     merge(local.user_data_vars, {
       master = true
+      log4j_properties = local.log4j_properties
+      spark_env_sh = local.spark_env_sh
+      spark_defaults_conf = local.spark_defaults_conf
     })
   )
   worker_user_data = templatefile(
     "cloud-config.yaml",
     merge(local.user_data_vars, {
       master = false
+      log4j_properties = local.log4j_properties
+      spark_env_sh = local.spark_env_sh
+      spark_defaults_conf = local.spark_defaults_conf
     })
   )
 }
