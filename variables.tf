@@ -57,10 +57,6 @@ variable "spot_worker_count" {
   default = 0
 }
 
-variable "spot_price" {
-  default = 0.1
-}
-
 variable "on_demand_worker_count" {
   default = 0
 }

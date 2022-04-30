@@ -160,7 +160,6 @@ resource "aws_spot_instance_request" "workers" {
   subnet_id                   = var.aws_subnet_id
   vpc_security_group_ids      = [aws_security_group.spark.id]
   key_name                    = aws_key_pair.spark.key_name
-  spot_price                  = var.spot_price
   associate_public_ip_address = true
   wait_for_fulfillment        = true
   count                       = var.spot_worker_count
