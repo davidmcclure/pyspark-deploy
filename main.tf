@@ -102,6 +102,10 @@ locals {
   }
 }
 
+// locals {
+//   log4j_properties = file("${path.module}/log4j.properties")
+// }
+
 locals {
   master_user_data = templatefile(
     "cloud-config.yaml",
