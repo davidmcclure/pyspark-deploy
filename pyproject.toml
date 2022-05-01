@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "pyspark-deploy"
+version = "0.1.0"
+description = ""
+authors = ["David McClure <davidwilliammcclure@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+rich = "^12.3.0"
+smart-open = "^6.0.0"
+requests = "^2.27.1"
+
+[tool.poetry.dev-dependencies]
+ipython = "^8.3.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
