@@ -72,6 +72,15 @@ resource "aws_security_group" "spark" {
     cidr_blocks = ["0.0.0.0/0"]
     protocol    = "tcp"
   }
+
+  # TODO: Limit to security group.
+  # REST API.
+  ingress {
+    from_port = 6066
+    to_port   = 6066
+    cidr_blocks = ["0.0.0.0/0"]
+    protocol    = "tcp"
+  }
 }
 
 resource "aws_key_pair" "spark" {
@@ -101,10 +110,6 @@ locals {
     master_private_ip      = aws_network_interface.master.private_ip
   }
 }
-
-// locals {
-//   log4j_properties = file("${path.module}/log4j.properties")
-// }
 
 locals {
   master_user_data = templatefile(
