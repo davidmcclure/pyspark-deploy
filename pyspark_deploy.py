@@ -106,21 +106,30 @@ class Cluster:
         webbrowser.open(f'http://{self.master_dns}:8080')
 
     # TODO: app_args, spark_properties, env
-    def submit(self, path: str, *, app_args: Optional[list[str]]) -> str:
+    def submit(
+        self,
+        path: str,
+        *,
+        python_args: Optional[list[str]] = None,
+        spark_properties: Optional[dict] = None,
+        env_vars: Optional[dict] = None,
+    ) -> dict:
         """Submit a Python file and block until the job finishes.
         """
         url = f'{self.submissions_url}/create'
 
         res = requests.post(f'{self.submissions_url}/create', json={
             'appResource': f'file:{path}',
-            'appArgs': [path, '--', *app_args],
+            'appArgs': [path, '--', *(python_args or [])],
             'sparkProperties': {
-                'spark.app.name': 'os-corpus'
+                'spark.app.name': 'os-corpus',
+                **(spark_properties or {}),
             },
             'clientSparkVersion': '3.2.1',
             'mainClass': 'org.apache.spark.deploy.SparkSubmit',
             'environmentVariables': {
-                'SPARK_ENV_LOADED': '1'
+                'SPARK_ENV_LOADED': '1',
+                **(env_vars or {}),
             },
             'action': 'CreateSubmissionRequest'
         })
