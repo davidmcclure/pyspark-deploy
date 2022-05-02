@@ -119,19 +119,19 @@ class Cluster:
         url = f'{self.submissions_url}/create'
 
         res = requests.post(f'{self.submissions_url}/create', json={
+            'action': 'CreateSubmissionRequest',
+            'mainClass': 'org.apache.spark.deploy.SparkSubmit',
+            'clientSparkVersion': '3.2.1',
             'appResource': f'file:{path}',
             'appArgs': [path, '--', *(python_args or [])],
             'sparkProperties': {
                 'spark.app.name': 'pyspark-deploy',
                 **(spark_properties or {}),
             },
-            'clientSparkVersion': '3.2.1',
-            'mainClass': 'org.apache.spark.deploy.SparkSubmit',
             'environmentVariables': {
                 'SPARK_ENV_LOADED': '1',
                 **(env_vars or {}),
             },
-            'action': 'CreateSubmissionRequest'
         })
 
         if res.status_code != 200:
