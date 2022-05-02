@@ -10,6 +10,7 @@ rich = "^12.3.0"
 smart-open = "^6.0.0"
 requests = "^2.27.1"
 addict = "^2.4.0"
+pydantic = "^1.9.0"
 
 [tool.poetry.dev-dependencies]
 ipython = "^8.3.0"
