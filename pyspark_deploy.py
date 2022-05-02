@@ -79,6 +79,7 @@ class Cluster:
     def api_url(self) -> str:
         return f'http://{self.master_dns}:6066'
 
+    # TODO: Move into submit?
     @property
     def create_url(self) -> str:
         return f'{self.api_url}/v1/submissions/create'
@@ -95,8 +96,8 @@ class Cluster:
         return self.ping()
 
     # TODO: app_args, spark_properties
-    def submit(self, path: str):
-        return requests.post(self.create_url, json={
+    def submit(self, path: str) -> str:
+        res = requests.post(self.create_url, json={
             'appResource': f'file:{path}',
             'appArgs': [path],
             'sparkProperties': {
@@ -109,6 +110,15 @@ class Cluster:
             },
             'action': 'CreateSubmissionRequest'
         })
+
+        if res.status_code != 200:
+            raise RuntimeError(res.text)
+
+        return res.json()['submissionId']
+
+    def get_status(self, submission_id: str):
+        url = f'{self.api_url}/v1/submissions/status/{submission_id}'
+        return requests.get(url)
 
 
 # TODO: state_path
