@@ -12,6 +12,11 @@ from typing import Callable, Optional
 from dataclasses import dataclass
 from rich.console import Console
 
+"""
+args / spark props / env to submit()
+cluster configs
+"""
+
 
 console = Console()
 
@@ -96,14 +101,19 @@ class Cluster:
     def ready(self):
         return self.ping()
 
+    # TODO: Login too?
     def open_webui(self):
         webbrowser.open(f'http://{self.master_dns}:8080')
 
     # TODO: app_args, spark_properties, env
-    def submit(self, path: str) -> str:
+    def submit(self, path: str, *, app_args: Optional[list[str]]) -> str:
+        """Submit a Python file and block until the job finishes.
+        """
+        url = f'{self.submissions_url}/create'
+
         res = requests.post(f'{self.submissions_url}/create', json={
             'appResource': f'file:{path}',
-            'appArgs': [path],
+            'appArgs': [path, '--', *app_args],
             'sparkProperties': {
                 'spark.app.name': 'os-corpus'
             },
@@ -124,15 +134,16 @@ class Cluster:
         )
 
         # TODO: Log URL to app UI.
-        with console.status('Waiting for job to finish...'):
+        with console.status('Running job...'):
             while True:
                 status = submission.status()
-                if status == 'FAILED':
-                    raise RuntimeError('Job failed.')
+                if status == 'RUNNING':
+                    time.sleep(3)
                 elif status == 'FINISHED':
                     break
                 else:
-                    time.sleep(3)
+                    print(submission.status_json())
+                    raise Exception('Job failed.')
 
         return submission.status_json()
 
