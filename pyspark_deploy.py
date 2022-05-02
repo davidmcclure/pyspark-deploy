@@ -16,6 +16,7 @@ from rich.console import Console
 console = Console()
 
 
+# TODO: Just block until done, don't return a generator?
 def wait_for(check: Callable, interval: int = 3):
     t1 = datetime.now()
     while True:
@@ -80,6 +81,10 @@ class Cluster:
     def api_url(self) -> str:
         return f'http://{self.master_dns}:6066'
 
+    @property
+    def submissions_url(self) -> str:
+        return f'{self.api_url}/v1/submissions'
+
     # TODO: Move into submit?
     @property
     def create_url(self) -> str:
@@ -99,7 +104,7 @@ class Cluster:
     def open_webui(self):
         webbrowser.open(f'http://{self.master_dns}:8080')
 
-    # TODO: app_args, spark_properties
+    # TODO: app_args, spark_properties, env
     def submit(self, path: str) -> str:
         res = requests.post(self.create_url, json={
             'appResource': f'file:{path}',
@@ -118,11 +123,42 @@ class Cluster:
         if res.status_code != 200:
             raise RuntimeError(res.text)
 
-        return res.json()['submissionId']
+        submission = Submission(
+            api_url=self.submissions_url,
+            submission_id=res.json()['submissionId'],
+        )
 
-    def get_status(self, submission_id: str):
-        url = f'{self.api_url}/v1/submissions/status/{submission_id}'
-        return requests.get(url)
+        # TODO: Log URL to app UI.
+        with console.status('Waiting for job to finish...'):
+            while True:
+                status = submission.status()
+                if status == 'FAILED':
+                    raise RuntimeError('Job failed.')
+                elif status == 'FINISHED':
+                    break
+                else:
+                    time.sleep(3)
+
+        return submission.status_json()
+
+
+# TODO: Build link to webui for app?
+@dataclass
+class Submission:
+
+    api_url: str
+    submission_id: str
+
+    def status_json(self) -> str:
+        url = f'{self.api_url}/status/{self.submission_id}'
+        res = requests.get(url)
+        return res.json()
+
+    def status(self) -> str:
+        return self.status_json()['driverState']
+
+    def finished(self) -> bool:
+        return self.status() == 'FINISHED'
 
 
 # TODO: state_path
