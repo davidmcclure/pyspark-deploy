@@ -122,7 +122,7 @@ class Cluster:
             'appResource': f'file:{path}',
             'appArgs': [path, '--', *(python_args or [])],
             'sparkProperties': {
-                'spark.app.name': 'os-corpus',
+                'spark.app.name': 'pyspark-deploy',
                 **(spark_properties or {}),
             },
             'clientSparkVersion': '3.2.1',
