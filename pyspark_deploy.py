@@ -17,33 +17,6 @@ from pydantic import BaseModel
 console = Console()
 
 
-class ClusterConfig(BaseModel):
-    ecr_server: str
-    ecr_repo: str
-    aws_vpc_id: str
-    aws_subnet_id: str
-    aws_access_key_id: str
-    aws_secret_access_key: str
-    wandb_api_key: str
-    aws_region: str = 'us-east-1'
-    aws_ami: str = 'ami-04eb5b2f5ef92e8b8'
-    public_key_path: str = '~/.ssh/spark.pub'
-    root_vol_size: int = 100
-    master_instance_type: str = 'c5.xlarge'
-    driver_memory: str = '4g'
-    worker_instance_type: str = 'c5.xlarge'
-    executor_memory: str = '4g'
-    spot_worker_count: int = 0
-    on_demand_worker_count: int = 0
-    gpu_workers: bool = False
-    data_dir: str = '/data'
-    max_driver_result_size: str = "1g"
-    max_task_failures: int = 20
-    spark_packages: list[str] = (
-        'org.apache.spark:spark-hadoop-cloud_2.13:3.2.1',
-    )
-
-
 # TODO: Just block until done, don't return a generator?
 def wait_for(check: Callable, interval: int = 3):
     t1 = datetime.now()
@@ -128,7 +101,6 @@ class Cluster:
     def open_webui(self):
         webbrowser.open(f'http://{self.master_dns}:8080')
 
-    # TODO: app_args, spark_properties, env
     def submit(
         self,
         path: str,
@@ -194,28 +166,3 @@ class Submission:
 
     def status(self) -> str:
         return self.status_json()['driverState']
-
-
-# cluster = Cluster()
-# cluster.create(CPUClusterConfig)
-# cluster.submit('load_bennington.py', f'--sample {0.1}')
-# cluster.submit('load_v1.py', f'--sample {0.1}')
-# cluster.create(GPUClusterConfig)
-# cluster.submit('parse.py')
-# cluster.create(DedupeClusterConfig)
-# cluster.submit('dedupe.py')
-# cluster.submit('log_metrics.py')
-
-# cluster.submit('parse.py', spark_properties={
-#     'spark.executor.cores': 4,
-# })
-
-# parse = Job(
-#     path='parse.py',
-#     cluster_config=GPUClusterConfig,
-#     spark_properties={
-#         'spark.executor.cores': 4,
-#     }
-# )
-
-# parse.run()
