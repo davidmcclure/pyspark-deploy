@@ -79,6 +79,10 @@ class Cluster:
     def api_url(self) -> str:
         return f'http://{self.master_dns}:6066'
 
+    @property
+    def create_url(self) -> str:
+        return f'{self.api_url}/v1/submissions/create'
+
     def ping(self) -> bool:
         try:
             requests.get(self.api_url)
@@ -89,6 +93,22 @@ class Cluster:
     @property
     def ready(self):
         return self.ping()
+
+    # TODO: app_args, spark_properties
+    def submit(self, path: str):
+        return requests.post(self.create_url, json={
+            'appResource': f'file:{path}',
+            'appArgs': [path],
+            'sparkProperties': {
+                'spark.app.name': 'os-corpus'
+            },
+            'clientSparkVersion': '3.2.1',
+            'mainClass': 'org.apache.spark.deploy.SparkSubmit',
+            'environmentVariables': {
+                'SPARK_ENV_LOADED': '1'
+            },
+            'action': 'CreateSubmissionRequest'
+        })
 
 
 # TODO: state_path
