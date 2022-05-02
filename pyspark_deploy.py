@@ -4,6 +4,7 @@ import smart_open
 import time
 import requests
 import addict
+import webbrowser
 
 from datetime import datetime
 from pathlib import Path
@@ -94,6 +95,9 @@ class Cluster:
     @property
     def ready(self):
         return self.ping()
+
+    def open_webui(self):
+        webbrowser.open(f'http://{self.master_dns}:8080')
 
     # TODO: app_args, spark_properties
     def submit(self, path: str) -> str:
