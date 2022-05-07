@@ -2,11 +2,15 @@ import subprocess
 import json
 import tempfile
 import addict
+import requests
+import time
 
+from datetime import datetime as dt
 from pydantic import BaseModel
 from pathlib import Path
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, Callable
+from loguru import logger
 
 
 class ClusterConfig(BaseModel):
@@ -34,6 +38,15 @@ class ClusterConfig(BaseModel):
     spark_packages: list[str] = ('org.apache.spark:spark-hadoop-cloud_2.13:3.2.1',)
 
 
+def wait_for(check: Callable, interval: int = 3):
+    t1 = dt.now()
+    while True:
+        if check():
+            return
+        else:
+            time.sleep(interval)
+
+
 @dataclass
 class Cluster:
 
@@ -53,8 +66,7 @@ class Cluster:
             '-auto-approve',
         ])
 
-        # TODO: Wait for API.
-        # wait_for(self.ready)
+        wait_for(self.ping)
 
     def destroy(self):
         subprocess.run([
@@ -72,3 +84,31 @@ class Cluster:
         spark_properties: Optional[dict] = None,
     ):
         pass
+
+    def read_tfstate(self) -> dict:
+        path = Path(self.state_path)
+
+        if path.exists():
+            return json.load(path.open())
+
+        raise Exception('No Terraform state. Is the cluster up?')
+
+    @property
+    def master_dns(self) -> str:
+        state = self.read_tfstate()
+
+        if master_dns := state['outputs'].get('master_dns'):
+            return master_dns['value']
+
+        raise Exception('No `master_dns` output. Is the cluster up?')
+
+    @property
+    def api_url(self) -> Optional[str]:
+        return f'http://{self.master_dns}:6066'
+
+    def ping(self) -> bool:
+        try:
+            requests.get(self.api_url)
+            return True
+        except:
+            return False

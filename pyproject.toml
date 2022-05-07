@@ -12,6 +12,7 @@ requests = "^2.27.1"
 addict = "^2.4.0"
 pydantic = "^1.9.0"
 python-dotenv = "^0.20.0"
+loguru = "^0.6.0"
 
 [tool.poetry.dev-dependencies]
 ipython = "^8.3.0"
