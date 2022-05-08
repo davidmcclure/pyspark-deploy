@@ -11,6 +11,10 @@ from pathlib import Path
 from dataclasses import dataclass
 from typing import Optional, Callable
 from loguru import logger
+from rich.console import Console
+
+
+console = Console()
 
 
 class ClusterConfig(BaseModel):
@@ -38,13 +42,16 @@ class ClusterConfig(BaseModel):
     spark_packages: list[str] = ('org.apache.spark:spark-hadoop-cloud_2.13:3.2.1',)
 
 
-def wait_for(check: Callable, interval: int = 3):
-    t1 = dt.now()
-    while True:
-        if check():
-            return
-        else:
-            time.sleep(interval)
+def wait_for(check: Callable, msg: str, interval: int = 3):
+    with console.status(msg) as status:
+        t1 = dt.now()
+        while True:
+            if check():
+                return
+            else:
+                elapsed = dt.now() - t1
+                status.update(f'{msg} - {elapsed}')
+                time.sleep(interval)
 
 
 @dataclass
@@ -66,7 +73,7 @@ class Cluster:
             '-auto-approve',
         ])
 
-        wait_for(self.ping)
+        wait_for(self.ping, 'Waiting for API...')
 
     def destroy(self):
         subprocess.run([
@@ -108,7 +115,7 @@ class Cluster:
 
     def ping(self) -> bool:
         try:
-            requests.get(self.api_url)
+            requests.get(self.api_url, timeout=3)
             return True
         except:
             return False
