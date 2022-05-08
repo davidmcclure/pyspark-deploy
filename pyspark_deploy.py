@@ -84,6 +84,8 @@ class Cluster:
     # TODO: Params for auto_approve, show_output
     def create(self, config: ClusterConfig):
 
+        logger.info(f'Creating cluster.')
+
         config_file = tempfile.NamedTemporaryFile('w', suffix='.json')
         config_file.write(config.json())
         config_file.seek(0)
@@ -95,8 +97,8 @@ class Cluster:
             '-auto-approve',
         ])
 
-        wait_for(self.ping, 'Waiting for API...')
-        # TODO: Log web UI URL.
+        elapsed = wait_for(self.ping, 'Waiting for API...')
+        logger.info(f'Web UI: {self.webui_url}')
 
     def destroy(self):
         run_terraform([
@@ -169,6 +171,10 @@ class Cluster:
     @property
     def api_url(self) -> Optional[str]:
         return f'http://{self.master_dns}:6066/v1/submissions'
+
+    @property
+    def webui_url(self) -> Optional[str]:
+        return f'http://{self.master_dns}:8080'
 
     def ping(self) -> bool:
         try:
