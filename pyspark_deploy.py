@@ -14,6 +14,12 @@ from loguru import logger
 from rich.console import Console
 
 
+"""
+setup() function that calls terraform init
+run_terraform(args), inject cwd
+"""
+
+
 ROOT_DIR = Path(__file__).parent
 
 console = Console()
@@ -45,10 +51,13 @@ class ClusterConfig(BaseModel):
 
 
 def wait_for(check: Callable, msg: str, interval: int = 3):
+    """Call a check function every N sections until it returns true.
+    """
     with console.status(msg) as status:
         t1 = dt.now()
         while True:
             if check():
+                # TODO: Log total elapsed time.
                 return
             else:
                 elapsed = dt.now() - t1
