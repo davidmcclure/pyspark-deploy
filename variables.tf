@@ -97,8 +97,3 @@ variable "aws_secret_access_key" {
   type      = string
   sensitive = true
 }
-
-variable "wandb_api_key" {
-  default   = ""
-  sensitive = true
-}

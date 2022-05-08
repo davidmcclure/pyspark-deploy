@@ -31,7 +31,6 @@ class ClusterConfig(BaseModel):
     ecr_repo: str
     aws_access_key_id: str
     aws_secret_access_key: str
-    wandb_api_key: str
     aws_vpc_id: str
     aws_subnet_id: str
     aws_region: str = 'us-east-1'
@@ -131,7 +130,7 @@ class Cluster:
 
     @property
     def api_url(self) -> Optional[str]:
-        return f'http://{self.master_dns}:6066'
+        return f'http://{self.master_dns}:6066/v1/submissions'
 
     def ping(self) -> bool:
         try:
