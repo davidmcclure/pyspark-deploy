@@ -13,19 +13,12 @@ from loguru import logger
 from rich.console import Console
 
 
-"""
-approve / show_output
-how to handle env vars / run id
-"merge" list / dict config overrides
-log links / open browser for webui + job
-"""
-
-
 ROOT_DIR = Path(__file__).parent
 
 console = Console()
 
 
+# TODO: Set this up so we can subclass with merged list / dict values?
 class ClusterConfig(BaseModel):
     ecr_server: str
     ecr_repo: str
@@ -47,7 +40,9 @@ class ClusterConfig(BaseModel):
     data_dir: str = '/data'
     max_driver_result_size: str = '10g'
     max_task_failures: int = 20
-    spark_packages: list[str] = ('org.apache.spark:spark-hadoop-cloud_2.13:3.2.1',) # noqa
+    spark_packages: list[str] = (
+        'org.apache.spark:spark-hadoop-cloud_2.13:3.2.1',
+    )
 
 
 def wait_for(check: Callable, msg: str, interval: int = 3) -> timedelta:
@@ -81,7 +76,7 @@ class Cluster:
 
     state_path: str = 'terraform.tfstate'
 
-    # TODO: Params for auto_approve, show_output
+    # TODO: Params for auto_approve, show_output.
     def create(self, config: ClusterConfig):
 
         logger.info(f'Creating cluster.')
@@ -97,7 +92,7 @@ class Cluster:
             '-auto-approve',
         ])
 
-        elapsed = wait_for(self.ping, 'Waiting for API...')
+        wait_for(self.ping, 'Waiting for API...')
         logger.info(f'Web UI: {self.webui_url}')
 
     def destroy(self):
