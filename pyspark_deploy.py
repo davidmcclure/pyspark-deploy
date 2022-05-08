@@ -1,7 +1,6 @@
 import subprocess
 import json
 import tempfile
-import addict
 import requests
 import time
 
@@ -10,12 +9,11 @@ from pydantic import BaseModel
 from pathlib import Path
 from dataclasses import dataclass
 from typing import Optional, Callable
-from loguru import logger
+# from loguru import logger
 from rich.console import Console
 
 
 """
-submit()
 approve / show_output
 how to handle env vars / run id
 "merge" list / dict config overrides
@@ -49,7 +47,7 @@ class ClusterConfig(BaseModel):
     data_dir: str = '/data'
     max_driver_result_size: str = '10g'
     max_task_failures: int = 20
-    spark_packages: list[str] = ('org.apache.spark:spark-hadoop-cloud_2.13:3.2.1',)
+    spark_packages: list[str] = ('org.apache.spark:spark-hadoop-cloud_2.13:3.2.1',) # noqa
 
 
 def wait_for(check: Callable, msg: str, interval: int = 3):
@@ -169,7 +167,7 @@ class Cluster:
         try:
             requests.get(self.api_url, timeout=3)
             return True
-        except:
+        except ConnectionError:
             return False
 
 
