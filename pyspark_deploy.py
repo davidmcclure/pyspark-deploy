@@ -65,6 +65,10 @@ def wait_for(check: Callable, msg: str, interval: int = 3):
                 time.sleep(interval)
 
 
+def run_terraform(args: list[str]):
+    subprocess.run(['terraform'] + args, cwd=ROOT_DIR)
+
+
 @dataclass
 class Cluster:
 
@@ -77,22 +81,18 @@ class Cluster:
         config_file.write(config.json())
         config_file.seek(0)
 
-        args = [
-            'terraform',
+        run_terraform([
             'apply',
             f'-state={self.state_path}',
             f'-var-file={config_file.name}',
             '-auto-approve',
-        ]
-
-        subprocess.run(args, cwd=ROOT_DIR)
+        ])
 
         wait_for(self.ping, 'Waiting for API...')
         # TODO: Log web UI URL.
 
     def destroy(self):
-        subprocess.run([
-            'terraform',
+        run_terraform([
             'destroy',
             f'-state={self.state_path}',
             '-auto-approve',
