@@ -4,12 +4,12 @@ import tempfile
 import requests
 import time
 
-from datetime import datetime as dt
 from pydantic import BaseModel
+from datetime import datetime as dt, timedelta
 from pathlib import Path
 from dataclasses import dataclass
 from typing import Optional, Callable
-# from loguru import logger
+from loguru import logger
 from rich.console import Console
 
 
@@ -50,19 +50,22 @@ class ClusterConfig(BaseModel):
     spark_packages: list[str] = ('org.apache.spark:spark-hadoop-cloud_2.13:3.2.1',) # noqa
 
 
-def wait_for(check: Callable, msg: str, interval: int = 3):
+def wait_for(check: Callable, msg: str, interval: int = 3) -> timedelta:
     """Call a check function every N sections until it returns true.
     """
+    t1 = dt.now()
+
     with console.status(msg) as status:
-        t1 = dt.now()
         while True:
-            if check():
-                # TODO: Log total elapsed time.
-                return
+            result = check()
+            elapsed = dt.now() - t1
+            if result is True:
+                break
             else:
-                elapsed = dt.now() - t1
                 status.update(f'{msg} - {elapsed}')
                 time.sleep(interval)
+
+    return elapsed
 
 
 def run_terraform(args: list[str]):
@@ -112,6 +115,8 @@ class Cluster:
     ):
         """Submit a Python file and block until the job finishes.
         """
+        logger.info(f'Submitting: {path}')
+
         url = f'{self.api_url}/create'
 
         res = requests.post(url, json={
@@ -140,7 +145,9 @@ class Cluster:
         )
 
         # Block until the job finishes.
-        wait_for(submission.check, 'Running job...')
+        elapsed = wait_for(submission.check, 'Running job...')
+
+        logger.info(f'Job finished in {elapsed}.')
 
     def read_tfstate(self) -> dict:
         path = Path(self.state_path)
