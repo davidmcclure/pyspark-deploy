@@ -16,7 +16,6 @@ from rich.console import Console
 
 """
 setup() function that calls terraform init
-run_terraform(args), inject cwd
 """
 
 
