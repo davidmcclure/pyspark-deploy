@@ -16,6 +16,8 @@ from rich.console import Console
 
 """
 setup() function that calls terraform init
+submit()
+approve / show_output
 """
 
 
@@ -66,6 +68,10 @@ def wait_for(check: Callable, msg: str, interval: int = 3):
 
 def run_terraform(args: list[str]):
     subprocess.run(['terraform'] + args, cwd=ROOT_DIR)
+
+
+def setup():
+    run_terraform(['init'])
 
 
 @dataclass
