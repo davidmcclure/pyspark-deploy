@@ -15,9 +15,11 @@ from rich.console import Console
 
 
 """
-setup() function that calls terraform init
 submit()
 approve / show_output
+how to handle env vars / run id
+"merge" list / dict config overrides
+log links / open browser for webui + job
 """
 
 
@@ -108,8 +110,39 @@ class Cluster:
         *,
         python_args: Optional[list[str]] = None,
         spark_properties: Optional[dict] = None,
+        env_vars: Optional[dict] = None,
     ):
-        pass
+        """Submit a Python file and block until the job finishes.
+        """
+        url = f'{self.api_url}/create'
+
+        res = requests.post(url, json={
+            'action': 'CreateSubmissionRequest',
+            'mainClass': 'org.apache.spark.deploy.SparkSubmit',
+            'clientSparkVersion': '3.2.1',
+            'appResource': f'file:{path}',
+            'sparkProperties': {
+                'spark.app.name': 'pyspark-deploy',
+                **(spark_properties or {}),
+            },
+            'environmentVariables': {
+                'SPARK_ENV_LOADED': '1',
+                **(env_vars or {}),
+            },
+            'appArgs': [path, '--', *(python_args or [])],
+        })
+
+        # Raise errors for malformed requests.
+        if res.status_code != 200:
+            raise RuntimeError(res.text)
+
+        submission = Submission(
+            api_url=self.api_url,
+            submission_id=res.json()['submissionId']
+        )
+
+        # Block until the job finishes.
+        wait_for(submission.check, 'Running job...')
 
     def read_tfstate(self) -> dict:
         path = Path(self.state_path)
@@ -138,3 +171,30 @@ class Cluster:
             return True
         except:
             return False
+
+
+@dataclass
+class Submission:
+
+    api_url: str
+    submission_id: str
+
+    def status(self) -> str:
+        url = f'{self.api_url}/status/{self.submission_id}'
+        return requests.get(url).json()
+
+    def driver_state(self) -> str:
+        return self.status()['driverState']
+
+    def check(self) -> bool:
+        """Check to see if the job is finished. If it's in a state other than
+        RUNNING or FINISHED, raise an exception.
+        """
+        state = self.driver_state()
+        if state == 'FINISHED':
+            return True
+        elif state == 'RUNNING':
+            return False
+        else:
+            print(self.status())
+            raise RuntimeError('Job failed.')
